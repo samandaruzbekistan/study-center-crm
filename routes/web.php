@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\AdminController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -12,6 +12,11 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::view('/admin', 'admin.login')->name('admin.login');
+Route::prefix('admin')->group(function () {
+    Route::post('/auth', [AdminController::class, 'auth'])->name('admin.auth');
+});
 
 Route::get('/', function () {
     return view('welcome');
