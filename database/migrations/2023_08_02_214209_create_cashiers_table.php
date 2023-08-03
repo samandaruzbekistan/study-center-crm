@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('username');
             $table->string('password');
+            $table->string('phone');
+            $table->string('photo')->default('no_photo.jpg');
             $table->timestamps();
         });
     }

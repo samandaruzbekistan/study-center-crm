@@ -384,7 +384,7 @@ body {
     font-weight: var(--bs-body-font-weight);
     line-height: var(--bs-body-line-height);
     margin: 0;
-    text-align: var(--bs-body-text-align)
+
 }
 
 hr {
@@ -3203,11 +3203,6 @@ textarea.form-control-lg {
     color: transparent
 }
 
-.form-floating > .form-control-plaintext:not(:-moz-placeholder-shown),
-.form-floating > .form-control:not(:-moz-placeholder-shown) {
-    padding-bottom: .625rem;
-    padding-top: 1.625rem
-}
 
 .form-floating > .form-control-plaintext:focus,
 .form-floating > .form-control-plaintext:not(:placeholder-shown),
@@ -3228,10 +3223,7 @@ textarea.form-control-lg {
     padding-top: 1.625rem
 }
 
-.form-floating > .form-control:not(:-moz-placeholder-shown) ~ label {
-    opacity: .65;
-    transform: scale(.85) translateY(-.5rem) translateX(.15rem)
-}
+
 
 .form-floating > .form-control-plaintext ~ label,
 .form-floating > .form-control:focus ~ label,
@@ -3521,7 +3513,6 @@ textarea.form-control-lg {
 .btn {
     --bs-btn-padding-x: 0.85rem;
     --bs-btn-padding-y: 0.3rem;
-    --bs-btn-font-family: ;
     --bs-btn-font-size: 0.875rem;
     --bs-btn-font-weight: 400;
     --bs-btn-line-height: 1.5;
@@ -3539,7 +3530,6 @@ textarea.form-control-lg {
     color: var(--bs-btn-color);
     cursor: pointer;
     display: inline-block;
-    font-family: var(--bs-btn-font-family);
     font-size: var(--bs-btn-font-size);
     font-weight: var(--bs-btn-font-weight);
     line-height: var(--bs-btn-line-height);
@@ -4304,7 +4294,6 @@ fieldset:disabled .btn {
     --bs-dropdown-color: #dee2e6;
     --bs-dropdown-bg: #343a40;
     --bs-dropdown-border-color: var(--bs-border-color-translucent);
-    --bs-dropdown-box-shadow: ;
     --bs-dropdown-link-color: #dee2e6;
     --bs-dropdown-link-hover-color: #fff;
     --bs-dropdown-divider-bg: var(--bs-border-color-translucent);
@@ -4434,7 +4423,6 @@ fieldset:disabled .btn {
 .nav {
     --bs-nav-link-padding-x: 1rem;
     --bs-nav-link-padding-y: 0.5rem;
-    --bs-nav-link-font-weight: ;
     --bs-nav-link-color: var(--bs-link-color);
     --bs-nav-link-hover-color: var(--bs-link-hover-color);
     --bs-nav-link-disabled-color: #6c757d;
@@ -4448,8 +4436,6 @@ fieldset:disabled .btn {
 .nav-link {
     color: var(--bs-nav-link-color);
     display: block;
-    font-size: var(--bs-nav-link-font-size);
-    font-weight: var(--bs-nav-link-font-weight);
     padding: var(--bs-nav-link-padding-y) var(--bs-nav-link-padding-x);
     transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out
 }
@@ -4626,7 +4612,6 @@ fieldset:disabled .btn {
 .navbar-nav {
     --bs-nav-link-padding-x: 0;
     --bs-nav-link-padding-y: 0.5rem;
-    --bs-nav-link-font-weight: ;
     --bs-nav-link-color: var(--bs-navbar-color);
     --bs-nav-link-hover-color: var(--bs-navbar-hover-color);
     --bs-nav-link-disabled-color: var(--bs-navbar-disabled-color);
@@ -4703,7 +4688,6 @@ fieldset:disabled .btn {
 }
 
 .navbar-nav-scroll {
-    max-height: var(--bs-scroll-height, 75vh);
     overflow-y: auto
 }
 
@@ -5065,14 +5049,10 @@ fieldset:disabled .btn {
     --bs-card-border-width: 0;
     --bs-card-border-color: transparent;
     --bs-card-border-radius: 0.25rem;
-    --bs-card-box-shadow: ;
     --bs-card-inner-border-radius: 0.25rem;
     --bs-card-cap-padding-y: 1rem;
     --bs-card-cap-padding-x: 1.25rem;
     --bs-card-cap-bg: #fff;
-    --bs-card-cap-color: ;
-    --bs-card-height: ;
-    --bs-card-color: ;
     --bs-card-bg: #fff;
     --bs-card-img-overlay-padding: 1rem;
     --bs-card-group-margin: 12px;
@@ -5083,7 +5063,6 @@ fieldset:disabled .btn {
     border-radius: var(--bs-card-border-radius);
     display: flex;
     flex-direction: column;
-    height: var(--bs-card-height);
     min-width: 0;
     position: relative
 }
@@ -5116,7 +5095,6 @@ fieldset:disabled .btn {
 }
 
 .card-body {
-    color: var(--bs-card-color);
     flex: 1 1 auto;
     padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x)
 }
@@ -5145,7 +5123,6 @@ fieldset:disabled .btn {
 .card-header {
     background-color: var(--bs-card-cap-bg);
     border-bottom: var(--bs-card-border-width) solid var(--bs-card-border-color);
-    color: var(--bs-card-cap-color);
     margin-bottom: 0;
     padding: var(--bs-card-cap-padding-y) var(--bs-card-cap-padding-x)
 }
@@ -5157,7 +5134,6 @@ fieldset:disabled .btn {
 .card-footer {
     background-color: var(--bs-card-cap-bg);
     border-top: var(--bs-card-border-width) solid var(--bs-card-border-color);
-    color: var(--bs-card-cap-color);
     padding: var(--bs-card-cap-padding-y) var(--bs-card-cap-padding-x)
 }
 
@@ -13269,7 +13245,7 @@ fieldset:disabled .btn {
 
 @media (min-width: 768px) {
     .content {
-        max-width: auto;
+        /*max-width: ;*/
         width: auto
     }
 }
@@ -13628,7 +13604,7 @@ body {
 
 .sidebar,
 .sidebar-content {
-    background: #222e3c;
+    background: linear-gradient(135deg,#266fd9,#2359a8 40%,#2359a8);
     transition: margin-left .35s ease-in-out, left .35s ease-in-out, margin-right .35s ease-in-out, right .35s ease-in-out
 }
 
@@ -13647,7 +13623,7 @@ body {
 
 .sidebar-link,
 a.sidebar-link {
-    background: #222e3c;
+    /*background: #222e3c;*/
     border-left: 3px solid transparent;
     color: rgba(233, 236, 239, .5);
     cursor: pointer;
@@ -13672,7 +13648,7 @@ a.sidebar-link svg {
 }
 
 .sidebar-link:hover {
-    background: #222e3c;
+    /*background: #222e3c;*/
     border-left-color: transparent
 }
 
@@ -13840,7 +13816,6 @@ a {
 .cursor-grab {
     cursor: move;
     cursor: grab;
-    cursor: -webkit-grab
 }
 
 .cursor-pointer {
@@ -14417,7 +14392,6 @@ text {
 
 .flatpickr-months .flatpickr-next-month svg path,
 .flatpickr-months .flatpickr-prev-month svg path {
-    fill: inherit;
     transition: fill .1s
 }
 
@@ -14589,7 +14563,6 @@ text {
 }
 
 .flatpickr-current-month .flatpickr-monthDropdown-months {
-    appearance: menulist;
     -webkit-appearance: menulist;
     -moz-appearance: menulist;
     background: transparent;

@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('username');
             $table->string('password');
             $table->string('phone');
+            $table->string('subject');
+            $table->string('photo')->default('no_photo.jpg');
             $table->timestamps();
         });
     }

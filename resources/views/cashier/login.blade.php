@@ -28,7 +28,7 @@
                 <div class="d-table-cell align-middle">
 
                     <div class="text-center mt-4">
-                        <h1 class="h2">Admin</h1>
+                        <h1 class="h2">Kassa</h1>
                         <p class="lead">
                             Ideal Study o'quv markazi
                         </p>
@@ -40,7 +40,7 @@
                                 <div class="text-center">
                                     <img src="{{ asset('logo.png') }}" alt="Charles Hall" class="img-fluid " width="250"  />
                                 </div>
-                                <form action="{{ route('admin.auth') }}" method="post">
+                                <form action="{{ route('cashier.auth') }}" method="post">
                                     @csrf
                                     <div class="mb-3">
                                         <label class="form-label">Login</label>
@@ -79,17 +79,17 @@
 <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 <script>
     @if(session('login_error') == 1)
-        const notyf = new Notyf();
+    const notyf = new Notyf();
 
-        notyf.error({
-            message: 'Login yoki parol xato!',
-            duration: 10000,
-            dismissible : true,
-            position: {
-                x : 'center',
-                y : 'top'
-            },
-        });
+    notyf.error({
+        message: 'Login yoki parol xato!',
+        duration: 10000,
+        dismissible : true,
+        position: {
+            x : 'center',
+            y : 'top'
+        },
+    });
     @endif
 </script>
 
