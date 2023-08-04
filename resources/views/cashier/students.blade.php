@@ -1,6 +1,5 @@
 @extends('cashier.header')
 
-
 @section('subjects')
     active
 @endsection
@@ -63,9 +62,9 @@
                                 </div>
                                 <label class="form-label">O'qituvchi <span class="text-danger">*</span></label>
                                 <select class="form-select mb-3" name="teacher_id">
-                                    @foreach($teachers as $teacher)
-                                    <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
-                                    @endforeach
+{{--                                    @foreach($teachers as $teacher)--}}
+{{--                                        <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>--}}
+{{--                                    @endforeach--}}
                                 </select>
                                 <div class=" text-end">
                                     <button type="button" class="btn btn-danger cancel">Bekor qilish</button>
@@ -92,9 +91,9 @@
                                 <i class="align-middle" data-feather="filter"></i>
                                 <select class="form-select mb-3" style="width: auto; display: inline-block" id="teacher">
                                     <option value="all">Barchasi</option>
-                                    @foreach($teachers as $teacher)
-                                        <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
-                                    @endforeach
+{{--                                    @foreach($teachers as $teacher)--}}
+{{--                                        <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>--}}
+{{--                                    @endforeach--}}
                                 </select>
                                 <button class="btn btn-primary add ms-2">+ Yangi guruh</button>
                             </div>
@@ -103,30 +102,52 @@
                     <table class="table table-striped table-hover">
                         <thead>
                         <tr>
-                            <th>Nomi</th>
-                            <th>Narxi</th>
-                            <th>O'qituvchi</th>
-                            <th>Darslar soni</th>
-                            <th>Yangi o'quvchi</th>
+                            <th>#</th>
+                            <th>F.I.Sh</th>
+                            <th>Telefon</th>
+                            <th>Guruhga biriktirish</th>
+                            <th>O'chirish</th>
+{{--                            <th>Yangi o'quvchi</th>--}}
                         </tr>
                         </thead>
                         <tbody id="tbody">
-                        @foreach($subjects as $subject)
+                        @foreach($students as $id => $student)
                             <tr>
                                 <td>
-                                    {{ $subject->name }}
+                                    {{ $id+1 }}
                                 </td>
-                                <td><b>{{ number_format($subject->price, 0, '.', ' ') }}</b> so'm</td>
-                                <td>{{ $subject->teacher->name }}</td>
-                                <td>{{ $subject->lessons_count }}</td>
-                                <td style="cursor: pointer"><button class="btn btn-success new-student" id="{{ $subject->id }}"><i class="align-middle" data-feather="user-plus"></i> Yangi o'quvchi</button></td>
+                                <td>{{ $student->name }}</td>
+                                <td>{{ $student->phone }}</td>
+                                <td>+</td>
+                                <td style="cursor: pointer"><button class="btn btn-success new-student"><i class="align-middle" data-feather="user-plus"></i> Yangi o'quvchi</button></td>
                             </tr>
                         @endforeach
                         </tbody>
                     </table>
                 </div>
             </div>
+            @if ($students->hasPages())
+                <ul class="pagination">
+                    {{-- Previous Page Link --}}
+                    @if ($students->onFirstPage())
+                        <li class="disabled"><span>{{ __('Prev') }}</span></li>
+                    @else
+                        <li><a href="{{ $students->previousPageUrl() }}" rel="prev">{{ __('Prev') }}</a></li>
+                    @endif
 
+
+
+                    {{ "Page " . $students->currentPage() . "  of  " . $students->lastPage() }}
+
+
+                    {{-- Next Page Link --}}
+                    @if ($students->hasMorePages())
+                        <li><a href="{{ $students->nextPageUrl() }}" rel="next">{{ __('Next') }}</a></li>
+                    @else
+                        <li class="disabled"><span>{{ __('Next') }}</span></li>
+                    @endif
+                </ul>
+            @endif
         </div>
     </main>
 @endsection

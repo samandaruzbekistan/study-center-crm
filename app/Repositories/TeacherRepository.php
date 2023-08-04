@@ -30,4 +30,16 @@ class TeacherRepository
     public function update_password($password, $username){
         Teacher::where('username', $username)->update(['password' => Hash::make($password)]);
     }
+
+    public function getTeacherWithSubjects($teacherId)
+    {
+        $teacher = Teacher::with('subjects')->find($teacherId);
+        return $teacher;
+    }
+
+    public function allTeachersWithSubjects()
+    {
+        $teacher = Teacher::with('subjects')->get();
+        return $teacher;
+    }
 }

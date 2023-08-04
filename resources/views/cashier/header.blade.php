@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="utf-8">
@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="shortcut icon" href="{{ asset('img/icons/icon-48x48.png') }}" />
 
-
+    @stack('css')
 
     <title>Admin | Ideal Study</title>
 
@@ -25,7 +25,7 @@
 <div class="wrapper">
     <nav id="sidebar" class="sidebar js-sidebar">
         <div class="sidebar-content js-simplebar">
-            <a class="sidebar-brand" href="index.html">
+            <a class="sidebar-brand" href="/">
                 <span class="align-middle">Ideal Study <br>O'quv markazi</span>
             </a>
 
@@ -46,14 +46,14 @@
                 </li>
 
                 <li class="sidebar-item @yield('subjects')">
-                    <a class="sidebar-link" href="{{ route('cashier.groups') }}">
+                    <a class="sidebar-link" href="{{ route('cashier.subjects') }}">
                         <i class="align-middle" data-feather="grid"></i> <span class="align-middle">Guruhlar</span>
                     </a>
                 </li>
 
-                <li class="sidebar-item @yield('cashiers')">
-                    <a class="sidebar-link" href="{{ route('admin.cashiers') }}">
-                        <i class="align-middle" data-feather="inbox"></i> <span class="align-middle">Kassirlar</span>
+                <li class="sidebar-item @yield('students')">
+                    <a class="sidebar-link" href="{{ route('cashier.students') }}">
+                        <i class="align-middle" data-feather="users"></i> <span class="align-middle">O'quvchilar</span>
                     </a>
                 </li>
 
@@ -281,7 +281,7 @@
                     <div class="col-6 text-end">
                         <ul class="list-inline">
                             <li class="list-inline-item">
-                                <a class="text-muted" href="https://t.me/Samandar_developer" target="_blank">Dasturchi: Samandar Sariboyev</a>
+                                <a class="text-muted" href="https://t.me/Samandar_developer" target="_blank">Dasturchi: <span class="text-primary">Samandar Sariboyev</span></a>
                             </li>
                         </ul>
                     </div>

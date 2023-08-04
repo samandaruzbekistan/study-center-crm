@@ -281,7 +281,7 @@
                     <div class="col-6 text-end">
                         <ul class="list-inline">
                             <li class="list-inline-item">
-                                <a class="text-muted" href="https://t.me/Samandar_developer" target="_blank">Dasturchi: Samandar Sariboyev</a>
+                                <a class="text-muted" href="https://t.me/Samandar_developer" target="_blank">Dasturchi: <span class="text-primary">Samandar Sariboyev</span></a>
                             </li>
                         </ul>
                     </div>

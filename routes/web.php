@@ -44,8 +44,17 @@ Route::prefix('cashier')->group(function () {
     Route::post('/auth', [CashierController::class, 'auth'])->name('cashier.auth');
     Route::middleware(['cashier_auth'])->group(function () {
         Route::get('home', [CashierController::class, 'home'])->name('cashier.home');
-        Route::get('groups', [CashierController::class, 'groups'])->name('cashier.groups');
+
+//        Student control
+        Route::get('new', [CashierController::class, 'new'])->name('cashier.new');
+        Route::get('students', [CashierController::class, 'students'])->name('cashier.students');
+
+
+//        Subject control
+        Route::get('subjects', [CashierController::class, 'subjects'])->name('cashier.subjects');
+        Route::get('subject/{subject_id?}', [CashierController::class, 'subject'])->name('cashier.subject');
         Route::post('groups-add', [CashierController::class, 'new_subject'])->name('cashier.new.subject');
+        Route::get('teacher-groups/{teacher_id?}', [CashierController::class, 'getTeacherWithSubjects'])->name('cashier.teacher.subjects');
     });
 });
 
