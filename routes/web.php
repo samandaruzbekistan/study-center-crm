@@ -48,6 +48,8 @@ Route::prefix('cashier')->group(function () {
 //        Student control
         Route::get('new', [CashierController::class, 'new'])->name('cashier.new');
         Route::get('students', [CashierController::class, 'students'])->name('cashier.students');
+        Route::get('search', [CashierController::class, 'search'])->name('cashier.search');
+        Route::post('student-add', [CashierController::class, 'new_student'])->name('cashier.new.student');
 
 
 //        Subject control

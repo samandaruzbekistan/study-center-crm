@@ -18,6 +18,7 @@
     <title>Admin | Ideal Study</title>
 
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/new-style.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 
@@ -111,7 +112,14 @@
             <a class="sidebar-toggle js-sidebar-toggle">
                 <i class="hamburger align-self-center"></i>
             </a>
-
+            <form class="d-none d-sm-inline-block">
+                <div class="input-group input-group-navbar">
+                    <input type="text" id="modalSearchInput" class="form-control" placeholder="Search…" aria-label="Search">
+                    <button class="btn" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search align-middle"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </button>
+                </div>
+            </form>
             <div class="navbar-collapse collapse">
                 <ul class="navbar-nav navbar-align">
                     <li class="nav-item dropdown">
@@ -268,7 +276,10 @@
             </div>
         </nav>
 
-        @yield('section')
+        <div class="h-100" id="search-section">
+            @yield('section')
+        </div>
+
 
         <footer class="footer">
             <div class="container-fluid">
@@ -295,6 +306,44 @@
 <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 @yield('js')
+<script>
+    // Handle search input in modal
+    $('#modalSearchInput').on('input', function() {
+        var query = $(this).val();
+        var loadingIndicator = $('#loadingIndicator');
+
+        if(query.length > 2){
+            $('#search-section').empty();
+            $.ajax({
+                url: '/', // Replace with your backend route for handling search
+                method: 'GET',
+                data: { name: query },
+                success: function(response) {
+                    var references = response; // Assign the response directly
+                    var referencesHtml = '';
+
+
+                    // Display the references in the modal
+                    $('#modalReferences').html(referencesHtml);
+
+                    // Hide the loading indicator
+                    loadingIndicator.hide();
+                },
+                error: function() {
+                    // Handle error case
+                    // Hide the loading indicator
+                    loadingIndicator.hide();
+                }
+            });
+        }
+        // Display the loading indicator
+        loadingIndicator.show();
+
+        // Make AJAX request to fetch search results
+
+
+    });
+</script>
 <div class="notyf" style="justify-content: flex-start; align-items: center;"></div>
 <div class="notyf-announcer" aria-atomic="true" aria-live="polite" style="border: 0px; clip: rect(0px, 0px, 0px, 0px); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; outline: 0px;">Inconceivable!</div>
 </body>

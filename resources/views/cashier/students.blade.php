@@ -1,5 +1,42 @@
 @extends('cashier.header')
 
+@push('css')
+    <style>
+        .pagination{height:36px;margin:0;padding: 0;}
+        .pager,.pagination ul{margin-left:0;*zoom:1}
+        .pagination ul{padding:0;display:inline-block;*display:inline;margin-bottom:0;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 2px rgba(0,0,0,.05);-moz-box-shadow:0 1px 2px rgba(0,0,0,.05);box-shadow:0 1px 2px rgba(0,0,0,.05)}
+        .pagination li{display:inline}
+        .pagination a{float:left;padding:0 12px;line-height:30px;text-decoration:none;border:1px solid #ddd;border-left-width:0}
+        .pagination .active a,.pagination a:hover{background-color:#f5f5f5;color:#94999E}
+        .pagination .active a{color:#94999E;cursor:default}
+        .pagination .disabled a,.pagination .disabled a:hover,.pagination .disabled span{color:#94999E;background-color:transparent;cursor:default}
+        .pagination li:first-child a,.pagination li:first-child span{border-left-width:1px;-webkit-border-radius:3px 0 0 3px;-moz-border-radius:3px 0 0 3px;border-radius:3px 0 0 3px}
+        .pagination li:last-child a{-webkit-border-radius:0 3px 3px 0;-moz-border-radius:0 3px 3px 0;border-radius:0 3px 3px 0}
+        .pagination-centered{text-align:center}
+        .pagination-right{text-align:right}
+        .pager{margin-bottom:18px;text-align:center}
+        .pager:after,.pager:before{display:table;content:""}
+        .pager li{display:inline}
+        .pager a{display:inline-block;padding:5px 12px;background-color:#fff;border:1px solid #ddd;-webkit-border-radius:15px;-moz-border-radius:15px;border-radius:15px}
+        .pager a:hover{text-decoration:none;background-color:#f5f5f5}
+        .pager .next a{float:right}
+        .pager .previous a{float:left}
+        .pager .disabled a,.pager .disabled a:hover{color:#999;background-color:#fff;cursor:default}
+        .pagination .prev.disabled span{float:left;padding:0 12px;line-height:30px;text-decoration:none;border:1px solid #ddd;border-left-width:0}
+        .pagination .next.disabled span{float:left;padding:0 12px;line-height:30px;text-decoration:none;border:1px solid #ddd;border-left-width:0}
+        .pagination li.active, .pagination li.disabled {
+            float:left;padding:0 12px;line-height:30px;text-decoration:none;border:1px solid #ddd;border-left-width:0
+        }
+        .pagination li.active {
+            background: #364E63;
+            color: #fff;
+        }
+        .pagination li:first-child {
+            border-left-width: 1px;
+        }
+    </style>
+@endpush
+
 @section('subjects')
     active
 @endsection
@@ -43,29 +80,20 @@
                 <div class="">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0">Yangi guruh ochish</h5>
+                            <h5 class="card-title mb-0">Yangi o'quvchi qo'shish</h5>
                         </div>
                         <div class="card-body h-100">
-                            <form action="{{ route('cashier.new.subject') }}" method="post">
+                            <form action="{{ route('cashier.new.student') }}" method="post">
                                 @csrf
                                 <div class="mb-3">
-                                    <label class="form-label">Nomi <span class="text-danger">*</span></label>
+                                    <label class="form-label">F.I.Sh <span class="text-danger">*</span></label>
                                     <input name="name" required type="text" class="form-control" placeholder="">
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Narxi <span class="text-danger">*</span></label>
-                                    <input name="price" required type="number" class="form-control" placeholder="">
+                                <label class="form-label">Telefon <span class="text-danger">*</span></label>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">+998</span>
+                                    <input type="number" required name="phone" maxlength="9" class="form-control">
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Darslar soni <span class="text-danger">*</span></label>
-                                    <input name="lessons_count" required type="number" value="12" class="form-control" placeholder="">
-                                </div>
-                                <label class="form-label">O'qituvchi <span class="text-danger">*</span></label>
-                                <select class="form-select mb-3" name="teacher_id">
-{{--                                    @foreach($teachers as $teacher)--}}
-{{--                                        <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>--}}
-{{--                                    @endforeach--}}
-                                </select>
                                 <div class=" text-end">
                                     <button type="button" class="btn btn-danger cancel">Bekor qilish</button>
                                     <button type="submit" class="btn btn-success">Qo'shish</button>
@@ -82,31 +110,17 @@
         <div class="container-fluid p-0">
             <div class="col-12 col-xl-12">
                 <div class="card">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="col-6">
-                                <h5 class="card-title mb-0">Guruhlar ro'yhati</h5>
-                            </div>
-                            <div class="col-6 text-end">
-                                <i class="align-middle" data-feather="filter"></i>
-                                <select class="form-select mb-3" style="width: auto; display: inline-block" id="teacher">
-                                    <option value="all">Barchasi</option>
-{{--                                    @foreach($teachers as $teacher)--}}
-{{--                                        <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>--}}
-{{--                                    @endforeach--}}
-                                </select>
-                                <button class="btn btn-primary add ms-2">+ Yangi guruh</button>
-                            </div>
-                        </div>
+                    <div class="card-header d-flex justify-content-between">
+                        <h5 class="card-title mb-0">O'quvchilar ro'yhati</h5>
+                        <button class="btn btn-primary add ms-2">+ Yangi o'quvchi</button>
                     </div>
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover table-responsive">
                         <thead>
                         <tr>
                             <th>#</th>
                             <th>F.I.Sh</th>
                             <th>Telefon</th>
-                            <th>Guruhga biriktirish</th>
-                            <th>O'chirish</th>
+                            <th>Guruhga qo'shish</th>
 {{--                            <th>Yangi o'quvchi</th>--}}
                         </tr>
                         </thead>
@@ -118,36 +132,14 @@
                                 </td>
                                 <td>{{ $student->name }}</td>
                                 <td>{{ $student->phone }}</td>
-                                <td>+</td>
-                                <td style="cursor: pointer"><button class="btn btn-success new-student"><i class="align-middle" data-feather="user-plus"></i> Yangi o'quvchi</button></td>
+                                <td style="cursor: pointer"><button class="btn btn-success add-student"><i class="align-middle" data-feather="user-plus"></i></button></td>
                             </tr>
                         @endforeach
                         </tbody>
                     </table>
                 </div>
             </div>
-            @if ($students->hasPages())
-                <ul class="pagination">
-                    {{-- Previous Page Link --}}
-                    @if ($students->onFirstPage())
-                        <li class="disabled"><span>{{ __('Prev') }}</span></li>
-                    @else
-                        <li><a href="{{ $students->previousPageUrl() }}" rel="prev">{{ __('Prev') }}</a></li>
-                    @endif
-
-
-
-                    {{ "Page " . $students->currentPage() . "  of  " . $students->lastPage() }}
-
-
-                    {{-- Next Page Link --}}
-                    @if ($students->hasMorePages())
-                        <li><a href="{{ $students->nextPageUrl() }}" rel="next">{{ __('Next') }}</a></li>
-                    @else
-                        <li class="disabled"><span>{{ __('Next') }}</span></li>
-                    @endif
-                </ul>
-            @endif
+            {{ $students->links() }}
         </div>
     </main>
 @endsection
@@ -155,6 +147,8 @@
 
 @section('js')
     <script>
+
+
         $(document).on('click', '.new-student', function () {
             let sb_id = $(this).attr('id');
             $.ajax({
@@ -224,39 +218,12 @@
 
         @endif
 
-        @if(session('password_error') == 1)
-        const notyf = new Notyf();
 
-        notyf.error({
-            message: 'Parollar bir xil emas!',
-            duration: 5000,
-            dismissible : true,
-            position: {
-                x : 'center',
-                y : 'top'
-            },
-        });
-        @endif
-
-        @if(session('add') == 1)
+        @if(session('success') == 1)
         const notyf = new Notyf();
 
         notyf.success({
-            message: 'Yangi guruh ochildi!',
-            duration: 5000,
-            dismissible : true,
-            position: {
-                x : 'center',
-                y : 'top'
-            },
-        });
-        @endif
-
-        @if(session('change') == 2)
-        const notyf = new Notyf();
-
-        notyf.success({
-            message: 'Parol muvaffaqiyatli o\'zgartirildi',
+            message: 'Yangi o\'quvchi qo\'shildi!',
             duration: 5000,
             dismissible : true,
             position: {
@@ -270,7 +237,7 @@
         const notyf = new Notyf();
 
         notyf.error({
-            message: 'Xatolik! Bunday login mavjud',
+            message: 'Xatolik! Bunday ism mavjud',
             duration: 5000,
             dismissible : true,
             position: {

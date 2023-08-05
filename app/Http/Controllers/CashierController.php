@@ -61,6 +61,21 @@ class CashierController extends Controller
         return view('cashier.students', ['students' => $this->studentRepository->getStudents()]);
     }
 
+    public function search(Request $request){
+
+    }
+
+    public function new_student(Request $request){
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|numeric|digits:9'
+        ]);
+        $student = $this->studentRepository->getStudentByName($request->name);
+        if (!empty($student)) return back()->with('username_error',1);
+        $this->studentRepository->addStudentCashier($request->name, $request->phone);
+        return back()->with('success',1);
+    }
+
     public function new(Request $request){
         $request->validate([
             'name' => 'required|string|max:255',
