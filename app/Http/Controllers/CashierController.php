@@ -46,6 +46,39 @@ class CashierController extends Controller
         return redirect()->route('cashier.login');
     }
 
+    public function profile(){
+        $admin = $this->cashierRepository->getCashier(session('username'));
+        return view('cashier.profile', ['user' => $admin]);
+    }
+
+    public function update(Request $request){
+        $request->validate([
+            'password1' => 'required|string',
+            'password2' => 'required|string',
+            'username' => 'required|string',
+        ]);
+        if ($request->input('password1') != $request->input('password2')) return back()->with('password_error',1);
+        $this->cashierRepository->update_password($request->password1, $request->username);
+        return back()->with('success',1);
+    }
+
+    public function update_avatar(Request $request){
+        $request->validate([
+            'photo' => 'required|image|max:2048',
+        ]);
+        $cashier = $this->cashierRepository->getCashier(session('username'));
+        if ($cashier->photo != 'no_photo.jpg') unlink('img/avatars/'.$cashier->photo);
+        $file = $request->file('photo')->extension();
+        $name = md5(microtime());
+        $photo_name = $name.".".$file;
+        session()->put('photo', $photo_name);
+        $path = $request->file('photo')->move('img/avatars/',$photo_name);
+        $this->cashierRepository->update_photo($photo_name);
+        return back()->with('success_photo',1);
+    }
+
+
+
     public function home(){
         return view('cashier.home');
     }
@@ -62,7 +95,8 @@ class CashierController extends Controller
     }
 
     public function search(Request $request){
-
+        $students = $this->studentRepository->getStudentsByName($request->name);
+        return response()->json($students);
     }
 
     public function new_student(Request $request){
@@ -75,6 +109,24 @@ class CashierController extends Controller
         $this->studentRepository->addStudentCashier($request->name, $request->phone);
         return back()->with('success',1);
     }
+
+    public function add_to_subject($id){
+        $student = $this->studentRepository->getStudentById($id);
+        $subjects = $this->subjectRepository->getAllSubjects();
+        return view('cashier.add_to_subject',['student' => $student, 'subjects' => $subjects]);
+    }
+
+    public function attach(Request $request){
+        $request->validate([
+            "amount"=> "required|numeric|regex:/^[+-]?\d+(\.\d+)?$/",
+            "data"=> "required|date",
+            "student_id"=> "required|numeric",
+            "teacher_id"=> "required|numeric",
+            "subject_id"=> "required|numeric"
+        ]);
+    }
+
+
 
     public function new(Request $request){
         $request->validate([
@@ -137,7 +189,7 @@ class CashierController extends Controller
     }
 
     public function subject($subject_id){
-       return $this->subjectRepository->getSubject($subject_id);
+       return $this->subjectRepository->getSubjectWithTeacher($subject_id);
     }
 
     public function new_subject(Request $request){

@@ -44,12 +44,18 @@ Route::prefix('cashier')->group(function () {
     Route::post('/auth', [CashierController::class, 'auth'])->name('cashier.auth');
     Route::middleware(['cashier_auth'])->group(function () {
         Route::get('home', [CashierController::class, 'home'])->name('cashier.home');
+        Route::get('logout', [AdminController::class, 'logout'])->name('cashier.logout');
+        Route::get('profile', [CashierController::class, 'profile'])->name('cashier.profile');
+        Route::post('update',[CashierController::class,'update'])->name('cashier.update');
+        Route::post('update-avatar',[CashierController::class,'update_avatar'])->name('cashier.avatar');
 
 //        Student control
         Route::get('new', [CashierController::class, 'new'])->name('cashier.new');
         Route::get('students', [CashierController::class, 'students'])->name('cashier.students');
         Route::get('search', [CashierController::class, 'search'])->name('cashier.search');
         Route::post('student-add', [CashierController::class, 'new_student'])->name('cashier.new.student');
+        Route::get('student-add-to-subject/{student_id?}', [CashierController::class, 'add_to_subject'])->name('cashier.add_to_subject');
+        Route::post('attach-to-group', [CashierController::class, 'attach'])->name('cashier.attach');
 
 
 //        Subject control

@@ -10,6 +10,10 @@ class StudentRepository
         return Student::orderBy('name', 'asc')->paginate(100);
     }
 
+    public function getStudentById($id){
+        return Student::find($id);
+    }
+
     public function getStudentByName($name){
         return Student::where('name', $name)->first();
     }
@@ -22,9 +26,9 @@ class StudentRepository
         $st->save();
     }
 
-    public function getUsersByName($name){
+    public function getStudentsByName($name){
         if ($name == '') return [];
-        $users = Student::whereRaw('LOWER(users.name) LIKE ?', ['%' . strtolower($name) . '%'])
+        $users = Student::whereRaw('LOWER(students.name) LIKE ?', ['%' . strtolower($name) . '%'])
             ->get();
         return $users;
     }

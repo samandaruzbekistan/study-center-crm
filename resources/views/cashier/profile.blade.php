@@ -1,4 +1,4 @@
-@extends('admin.header')
+@extends('cashier.header')
 
 @section('profile')
     active
@@ -20,7 +20,7 @@
                         <div class="card-body text-center">
                             <img src="{{ asset('img/avatars/'.$user->photo) }}" alt="Christina Mason" class="img-fluid rounded-circle mb-2" width="128" height="128">
                             <h5 class="card-title mb-0">{{ $user->name }}</h5>
-                            <div class="text-muted mb-2">Direktor</div>
+                            <div class="text-muted mb-2">Kassir</div>
 
                             <div>
                                 <a class="btn btn-primary btn-sm" href="#">Follow</a>
@@ -29,10 +29,10 @@
                         </div>
                         <hr class="my-0">
                         <div class="card-body">
-                            <h5 class="h6 card-title">Fan</h5>
-                            <a href="#" class="badge bg-primary me-1 my-1">Tarix</a>
-                            <a href="#" class="badge bg-primary me-1 my-1">Direktor</a>
-                            <a href="#" class="badge bg-primary me-1 my-1">Founder</a>
+                            <h5 class="h6 card-title">Vazifa</h5>
+                            <a href="{{ route('cashier.home') }}" class="badge bg-primary me-1 my-1">To'lovlar</a>
+                            <a href="{{ route('cashier.subjects') }}" class="badge bg-primary me-1 my-1">Yangi guruh</a>
+                            <a href="{{ route('cashier.students') }}" class="badge bg-primary me-1 my-1">O'quvchilar</a>
                         </div>
                         <hr class="my-0">
                         <div class="card-body">
@@ -47,16 +47,16 @@
                             </ul>
                         </div>
                         <hr class="my-0">
-{{--                        <div class="card-body">--}}
-{{--                            <h5 class="h6 card-title">Elsewhere</h5>--}}
-{{--                            <ul class="list-unstyled mb-0">--}}
-{{--                                <li class="mb-1"><a href="#">staciehall.co</a></li>--}}
-{{--                                <li class="mb-1"><a href="#">Twitter</a></li>--}}
-{{--                                <li class="mb-1"><a href="#">Facebook</a></li>--}}
-{{--                                <li class="mb-1"><a href="#">Instagram</a></li>--}}
-{{--                                <li class="mb-1"><a href="#">LinkedIn</a></li>--}}
-{{--                            </ul>--}}
-{{--                        </div>--}}
+                        {{--                        <div class="card-body">--}}
+                        {{--                            <h5 class="h6 card-title">Elsewhere</h5>--}}
+                        {{--                            <ul class="list-unstyled mb-0">--}}
+                        {{--                                <li class="mb-1"><a href="#">staciehall.co</a></li>--}}
+                        {{--                                <li class="mb-1"><a href="#">Twitter</a></li>--}}
+                        {{--                                <li class="mb-1"><a href="#">Facebook</a></li>--}}
+                        {{--                                <li class="mb-1"><a href="#">Instagram</a></li>--}}
+                        {{--                                <li class="mb-1"><a href="#">LinkedIn</a></li>--}}
+                        {{--                            </ul>--}}
+                        {{--                        </div>--}}
                     </div>
                 </div>
                 <div class="col-md-8 col-xl-9">
@@ -66,8 +66,9 @@
                                 <h5 class="card-title mb-0">Parolni yangilash</h5>
                             </div>
                             <div class="card-body h-100">
-                                <form action="{{ route('admin.update') }}" method="post">
+                                <form action="{{ route('cashier.update') }}" method="post">
                                     @csrf
+                                    <input type="hidden" name="username" value="{{ $user->username }}">
                                     <div class="mb-3">
                                         <label class="form-label">Yangi parol</label>
                                         <input required name="password1" type="password" class="form-control" placeholder="">
@@ -85,25 +86,25 @@
                     </div>
 
                     <div class="">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">Profil rasmini yangilash</h5>
-                        </div>
-                        <div class="card-body h-100">
-                            <form action="{{ route('admin.avatar') }}" method="post" enctype="multipart/form-data">
-                                @csrf
-                                <div class="">
-                                    <label class="form-label">Yangi rasm</label>
-                                    <input class="form-control" type="file" name="photo" accept="image/*">
-                                </div>
-                                <small class="text-danger">Rasm hajmi 2 mb dan oshmasligi kerak</small>
-                                <div class=" text-end">
-                                    <button type="submit" class="btn btn-primary">Yangilash</button>
-                                </div>
-                            </form>
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Profil rasmini yangilash</h5>
+                            </div>
+                            <div class="card-body h-100">
+                                <form action="{{ route('cashier.avatar') }}" method="post" enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="">
+                                        <label class="form-label">Yangi rasm</label>
+                                        <input class="form-control" type="file" name="photo" accept="image/*">
+                                    </div>
+                                    <small class="text-danger">Rasm hajmi 2 mb dan oshmasligi kerak</small>
+                                    <div class=" text-end">
+                                        <button type="submit" class="btn btn-primary">Yangilash</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </div>
                 </div>
             </div>
 

@@ -37,7 +37,7 @@
     </style>
 @endpush
 
-@section('subjects')
+@section('students')
     active
 @endsection
 @section('section')
@@ -121,7 +121,6 @@
                             <th>F.I.Sh</th>
                             <th>Telefon</th>
                             <th>Guruhga qo'shish</th>
-{{--                            <th>Yangi o'quvchi</th>--}}
                         </tr>
                         </thead>
                         <tbody id="tbody">
@@ -132,7 +131,7 @@
                                 </td>
                                 <td>{{ $student->name }}</td>
                                 <td>{{ $student->phone }}</td>
-                                <td style="cursor: pointer"><button class="btn btn-success add-student"><i class="align-middle" data-feather="user-plus"></i></button></td>
+                                <td style="cursor: pointer"><a href="{{ route('cashier.add_to_subject') }}/{{ $student->id }}" class="btn btn-success add-student"><i class="align-middle" data-feather="user-plus"></i></a></td>
                             </tr>
                         @endforeach
                         </tbody>
@@ -147,8 +146,6 @@
 
 @section('js')
     <script>
-
-
         $(document).on('click', '.new-student', function () {
             let sb_id = $(this).attr('id');
             $.ajax({

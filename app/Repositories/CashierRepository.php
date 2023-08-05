@@ -31,4 +31,8 @@ class CashierRepository
     public function update_password($password, $username){
         Cashier::where('username', $username)->update(['password' => Hash::make($password)]);
     }
+
+    public function update_photo($photo){
+        Cashier::where('id', session('id'))->update(['photo' => $photo]);
+    }
 }

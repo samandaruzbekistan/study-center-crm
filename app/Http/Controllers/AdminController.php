@@ -64,7 +64,7 @@ class AdminController extends Controller
             'photo' => 'required|image|max:2048',
         ]);
         $admin = $this->adminRepository->getAdmin(session('username'));
-        unlink('img/avatars/'.$admin->photo);
+        if ($admin->photo != 'no_photo.jpg') unlink('img/avatars/'.$admin->photo);
         $file = $request->file('photo')->extension();
         $name = md5(microtime());
         $photo_name = $name.".".$file;

@@ -107,7 +107,6 @@
                             <th>Narxi</th>
                             <th>O'qituvchi</th>
                             <th>Darslar soni</th>
-                            <th>Yangi o'quvchi</th>
                         </tr>
                         </thead>
                         <tbody id="tbody">
@@ -119,7 +118,6 @@
                                 <td><b>{{ number_format($subject->price, 0, '.', ' ') }}</b> so'm</td>
                                 <td>{{ $subject->teacher->name }}</td>
                                 <td>{{ $subject->lessons_count }}</td>
-                                <td style="cursor: pointer"><button class="btn btn-success new-student" id="{{ $subject->id }}"><i class="align-middle" data-feather="user-plus"></i> Yangi o'quvchi</button></td>
                             </tr>
                         @endforeach
                         </tbody>

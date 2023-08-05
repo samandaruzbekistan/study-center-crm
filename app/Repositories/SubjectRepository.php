@@ -15,8 +15,8 @@ class SubjectRepository
         return Subject::orderBy('name', 'asc')->get();
     }
 
-    public function getSubject($id){
-        return Subject::find($id);
+    public function getSubjectWithTeacher($id){
+        return Subject::with('teacher')->find($id);
     }
 
     public function addSubject($name, $price, $l_count, $teacher_id){
