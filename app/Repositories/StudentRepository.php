@@ -32,4 +32,11 @@ class StudentRepository
             ->get();
         return $users;
     }
+
+
+    public function getStudentWithSubjects($studentId){
+        return Student::with('attachs')->find($studentId);
+    }
+
+
 }

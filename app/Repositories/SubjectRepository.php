@@ -15,6 +15,10 @@ class SubjectRepository
         return Subject::orderBy('name', 'asc')->get();
     }
 
+    public function getSubject($id){
+        return Subject::find($id);
+    }
+
     public function getSubjectWithTeacher($id){
         return Subject::with('teacher')->find($id);
     }
@@ -27,4 +31,7 @@ class SubjectRepository
         $subject->teacher_id = $teacher_id;
         $subject->save();
     }
+
+
+
 }

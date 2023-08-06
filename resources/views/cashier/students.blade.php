@@ -121,6 +121,7 @@
                             <th>F.I.Sh</th>
                             <th>Telefon</th>
                             <th>Guruhga qo'shish</th>
+                            <th>To'lov</th>
                         </tr>
                         </thead>
                         <tbody id="tbody">
@@ -131,7 +132,8 @@
                                 </td>
                                 <td>{{ $student->name }}</td>
                                 <td>{{ $student->phone }}</td>
-                                <td style="cursor: pointer"><a href="{{ route('cashier.add_to_subject') }}/{{ $student->id }}" class="btn btn-success add-student"><i class="align-middle" data-feather="user-plus"></i></a></td>
+                                <td style="cursor: pointer"><a href="{{ route('cashier.add_to_subject') }}/{{ $student->id }}" class="btn btn-success add-student"><i class="align-middle" data-feather="user-plus"></i> Biriktirish</a></td>
+                                <td style="cursor: pointer"><a href="{{ route('cashier.payment') }}/{{ $student->id }}" class="btn btn-info add-student"><i class="align-middle" data-feather="dollar-sign"></i> To'lov</a></td>
                             </tr>
                         @endforeach
                         </tbody>

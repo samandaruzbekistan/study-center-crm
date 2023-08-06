@@ -17,7 +17,7 @@
                             <div class="row">
                                 <div class="mb-3 col-md-6">
                                     <label class="form-label" for="inputEmail4">O'quvchi</label>
-                                    <input readonly type="text" class="form-control" id="inputEmail4" placeholder="O'quvchi ismi" value="{{ $student->name }}">
+                                    <input readonly type="text" disabled class="form-control" id="inputEmail4" placeholder="O'quvchi ismi" value="{{ $student->name }}">
                                 </div>
                                 <div class="mb-3 col-md-6">
                                     <label class="form-label" for="inputEmail4">Guruh</label>
@@ -36,11 +36,11 @@
                                 </div>
                                 <div class="mb-3 col-md-6">
                                     <label class="form-label" for="inputAddress2">O'qituvchi</label>
-                                    <input type="text" class="form-control" id="teacherName" readonly>
+                                    <input type="text" class="form-control" disabled id="teacherName" readonly>
                                 </div>
                                 <div class="mb-3 col-md-3">
                                     <label class="form-label" for="inputCity">Kelgan sanasi</label>
-                                    <input type="date" name="data" value="{{ date('Y-m-d') }}" class="form-control" id="inputCity">
+                                    <input type="date" name="date" value="{{ date('Y-m-d') }}" max="{{ date('Y-m-d') }}" class="form-control" id="inputCity">
                                 </div>
                             </div>
                             <input type="hidden" name="student_id" value="{{ $student->id }}">
@@ -106,7 +106,20 @@
             },
         });
         @endforeach
+        @endif
 
+        @if(session('attach_error') == 1)
+        const notyf = new Notyf();
+
+        notyf.error({
+            message: 'Xatolik! O\'quvchi bu guruhga biriktirilgan',
+            duration: 5000,
+            dismissible : true,
+            position: {
+                x : 'center',
+                y : 'top'
+            },
+        });
         @endif
     </script>
 @endsection

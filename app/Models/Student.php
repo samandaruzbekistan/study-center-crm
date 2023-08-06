@@ -9,8 +9,8 @@ class Student extends Model
 {
     use HasFactory;
 
-    public function subjects()
+    public function attachs()
     {
-        return $this->belongsToMany(Subject::class, 'student_subject');
+        return $this->hasMany(Attach::class);
     }
 }

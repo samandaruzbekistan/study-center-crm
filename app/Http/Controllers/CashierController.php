@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
+use App\Repositories\AttachRepository;
 use App\Repositories\CashierRepository;
+use App\Repositories\MonthlyPaymentRepository;
 use App\Repositories\StudentRepository;
 use App\Repositories\SubjectRepository;
 use App\Repositories\TeacherRepository;
@@ -18,6 +20,8 @@ class CashierController extends Controller
         protected CashierRepository $cashierRepository,
         protected SubjectRepository $subjectRepository,
         protected StudentRepository $studentRepository,
+        protected MonthlyPaymentRepository $monthlyPaymentRepository,
+        protected AttachRepository $attachRepository,
     )
     {
     }
@@ -119,35 +123,35 @@ class CashierController extends Controller
     public function attach(Request $request){
         $request->validate([
             "amount"=> "required|numeric|regex:/^[+-]?\d+(\.\d+)?$/",
-            "data"=> "required|date",
+            "date"=> "required|date",
             "student_id"=> "required|numeric",
             "teacher_id"=> "required|numeric",
             "subject_id"=> "required|numeric"
         ]);
-    }
 
-
-
-    public function new(Request $request){
-        $request->validate([
-            'name' => 'required|string|max:255',
-
-        ]);
-        $now = Carbon::now();
-        $currentYear = 2023;
-        $currentMonth = 9;
-        $currentDay = $now->day;
-        $price = 300000;
-        $daysInMonth = $now->daysInMonth;
-        $firstMonthPrice = $price - (($price/$daysInMonth)*($currentDay-1));
-        $firstMonthPrice = ceil($firstMonthPrice / 1000) * 1000;
-        $now = date('Y-m-d H:i:s');
+        $student = $this->studentRepository->getStudentById($request->student_id);
+        $subject = $this->subjectRepository->getSubject($request->subject_id);
+        $attach = $this->attachRepository->getAttach($request->student_id, $request->subject_id);
+        if ($attach) return back()->with('attach_error', 1);
+        $attachedSubjectId = $this->attachRepository->addAttach($student->id, $subject->id, $subject->name);
+        $carbonDate = Carbon::parse($request->date);
+        $currentYear = $carbonDate->year;
+        $currentMonth = $carbonDate->month;
+        $price = $request->amount;
+        $daysInMonth = $carbonDate->daysInMonth;
+        $firstMonthPrice = ceil(($price - (($price / $daysInMonth) * ($carbonDate->day - 1))) / 1000) * 1000;
         $rowsToInsert = [];
         if ($currentMonth > 8){
+            $countdown = 0;
             for ($month = $currentMonth; $month <= 12; $month++){
+                $countdown++;
                 $row = [
-                    'user_id' => 'samandar',
-                    'oy' => Carbon::create($currentYear, $month, 1)->format('Y-m-d')
+                    'attach_id' => $attachedSubjectId,
+                    'student_id' => $student->id,
+                    'subject_id' => $subject->id,
+                    'teacher_id' => $subject->teacher_id,
+                    'amount' => ($countdown == 1) ? $firstMonthPrice : $price,
+                    'month' => Carbon::create($currentYear, $month, 1)->format('Y-m-d'),
                 ];
 
                 $rowsToInsert[] = $row;
@@ -155,24 +159,38 @@ class CashierController extends Controller
             $currentYear++;
             for ($month = 1; $month <= 8; $month++){
                 $row = [
-                    'user_id' => 'samandar',
-                    'oy' => Carbon::create($currentYear, $month, 1)->format('Y-m-d')
+                    'attach_id' => $attachedSubjectId,
+                    'student_id' => $student->id,
+                    'subject_id' => $subject->id,
+                    'teacher_id' => $subject->teacher_id,
+                    'amount' => $price,
+                    'month' => Carbon::create($currentYear, $month, 1)->format('Y-m-d'),
                 ];
-
                 $rowsToInsert[] = $row;
             }
         }
         elseif ($currentMonth <= 8){
+            $countdown = 0;
             for ($month = $currentMonth; $month <= 8; $month++){
+                $countdown++;
                 $row = [
-                    'user_id' => 'samandar',
-                    'oy' => Carbon::create($currentYear, $month, 1)->format('Y-m-d')
+                    'attach_id' => $attachedSubjectId,
+                    'student_id' => $student->id,
+                    'subject_id' => $subject->id,
+                    'teacher_id' => $subject->teacher_id,
+                    'amount' => ($countdown == 1) ? $firstMonthPrice : $price,
+                    'month' => Carbon::create($currentYear, $month, 1)->format('Y-m-d'),
                 ];
-
                 $rowsToInsert[] = $row;
             }
         }
-        return [$firstMonthPrice,$daysInMonth,$currentMonth,$currentYear, $currentDay, $now,$rowsToInsert];
+        $this->monthlyPaymentRepository->add($rowsToInsert);
+    }
+
+    public function payment($id){
+        if (!$id) return back();
+        $student = $this->studentRepository->getStudentWithSubjects($id);
+        return view('cashier.payment',['student' => $student]);
     }
 
 
@@ -205,5 +223,15 @@ class CashierController extends Controller
 
     public function getTeacherWithSubjects($teacher_id){
         return $this->teacherRepository->getTeacherWithSubjects($teacher_id);
+    }
+
+
+
+    public function getMonthlyPayments($attach_id){
+        return $this->attachRepository->getAttachWithMonthlyPayments($attach_id);
+    }
+
+    public function getPayment($payment_id){
+        return $this->monthlyPaymentRepository->getPayment($payment_id);
     }
 }
