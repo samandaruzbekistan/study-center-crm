@@ -21,6 +21,10 @@ class AttachRepository
             ->where('subject_id', $subject)->first();
     }
 
+    public function getAttachStudentId($student_id){
+        return Attach::where('student_id', $student_id)->get();
+    }
+
     public function getAttachWithMonthlyPayments($attachId)
     {
         $attach = Attach::with('monthlyPayments')->find($attachId);

@@ -14,6 +14,11 @@ class MonthlyPayment extends Model
         return $this->belongsTo(Teacher::class);
     }
 
+    public function student()
+    {
+        return $this->belongsTo(Student::class, 'student_id');
+    }
+
     public function attach()
     {
         return $this->belongsTo(Attach::class);

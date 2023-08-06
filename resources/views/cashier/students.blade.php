@@ -119,9 +119,8 @@
                         <tr>
                             <th>#</th>
                             <th>F.I.Sh</th>
-                            <th>Telefon</th>
+                            <th class="d-none d-sm-table-cell">Telefon</th>
                             <th>Guruhga qo'shish</th>
-                            <th>To'lov</th>
                         </tr>
                         </thead>
                         <tbody id="tbody">
@@ -130,10 +129,9 @@
                                 <td>
                                     {{ $id+1 }}
                                 </td>
-                                <td>{{ $student->name }}</td>
-                                <td>{{ $student->phone }}</td>
-                                <td style="cursor: pointer"><a href="{{ route('cashier.add_to_subject') }}/{{ $student->id }}" class="btn btn-success add-student"><i class="align-middle" data-feather="user-plus"></i> Biriktirish</a></td>
-                                <td style="cursor: pointer"><a href="{{ route('cashier.payment') }}/{{ $student->id }}" class="btn btn-info add-student"><i class="align-middle" data-feather="dollar-sign"></i> To'lov</a></td>
+                                <td><a href="{{ route('cashier.student') }}/{{ $student->id }}">{{ $student->name }}</a></td>
+                                <td class="d-none d-sm-table-cell">{{ $student->phone }}</td>
+                                <td style="cursor: pointer"><a href="{{ route('cashier.add_to_subject') }}/{{ $student->id }}" class="btn btn-success add-student"><i class="align-middle" data-feather="user-plus"></i></a></td>
                             </tr>
                         @endforeach
                         </tbody>

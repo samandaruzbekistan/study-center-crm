@@ -34,8 +34,8 @@ class StudentRepository
     }
 
 
-    public function getStudentWithSubjects($studentId){
-        return Student::with('attachs')->find($studentId);
+    public function getStudentWithSubjectsPayments($studentId){
+        return Student::with('attachs', 'monthlyPayments')->find($studentId);
     }
 
 

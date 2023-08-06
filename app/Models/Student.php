@@ -13,4 +13,9 @@ class Student extends Model
     {
         return $this->hasMany(Attach::class);
     }
+
+    public function monthlyPayments()
+    {
+        return $this->hasMany(MonthlyPayment::class, 'student_id');
+    }
 }

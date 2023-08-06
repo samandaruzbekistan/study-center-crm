@@ -84,7 +84,8 @@ class CashierController extends Controller
 
 
     public function home(){
-        return view('cashier.home');
+        $payments = $this->monthlyPaymentRepository->getPaymentsByDate(date('Y-m-d'));
+        return view('cashier.payment', ['payments' => $payments]);
     }
 
 
@@ -96,6 +97,11 @@ class CashierController extends Controller
 
     public function students(){
         return view('cashier.students', ['students' => $this->studentRepository->getStudents()]);
+    }
+
+    public function student($id){
+        $student = $this->studentRepository->getStudentWithSubjectsPayments($id);
+        return view('cashier.student', ['student' => $student]);
     }
 
     public function search(Request $request){
@@ -187,6 +193,10 @@ class CashierController extends Controller
         $this->monthlyPaymentRepository->add($rowsToInsert);
     }
 
+    public function getAttachs($student_id){
+        return $this->attachRepository->getAttachStudentId($student_id);
+    }
+
     public function payment($id){
         if (!$id) return back();
         $student = $this->studentRepository->getStudentWithSubjects($id);
@@ -233,5 +243,33 @@ class CashierController extends Controller
 
     public function getPayment($payment_id){
         return $this->monthlyPaymentRepository->getPayment($payment_id);
+    }
+
+    public function paid(Request $request){
+        $request->validate([
+            'id' => 'required|numeric',
+            'amount' => 'required|numeric',
+            'type' => 'required|string',
+        ]);
+        $payment = $this->monthlyPaymentRepository->getPayment($request->id);
+        $student = $this->studentRepository->getStudentById($payment->student_id);
+        $subject = $this->subjectRepository->getSubject($payment->subject_id);
+        if ($request->amount > $payment->amount) return back()->with('amount_error',1);
+        if (!$payment) return back()->with('payment_error',1);
+        $status = 0;
+        if ($request->has('status')){
+            $amount = $request->amount + $payment->amount_paid;
+            $this->monthlyPaymentRepository->payment($payment->id, 0, $amount,$request->type, 1);
+        }
+        elseif ($request->amount == $payment->amount){
+            $amount = $request->amount + $payment->amount_paid;
+            $this->monthlyPaymentRepository->payment($payment->id, 0, $amount,$request->type, 1);
+        }
+        else{
+            $amount_paid = $request->amount + $payment->amount_paid;
+            $amount = $payment->amount - $request->amount;
+            $this->monthlyPaymentRepository->payment($payment->id, $amount, $amount_paid,$request->type, 0);
+        }
+
     }
 }

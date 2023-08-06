@@ -51,11 +51,11 @@ Route::prefix('cashier')->group(function () {
 
 //        Student control
         Route::get('new', [CashierController::class, 'new'])->name('cashier.new');
+        Route::get('student-profile/{id?}', [CashierController::class, 'student'])->name('cashier.student');
         Route::get('students', [CashierController::class, 'students'])->name('cashier.students');
         Route::get('search', [CashierController::class, 'search'])->name('cashier.search');
         Route::post('student-add', [CashierController::class, 'new_student'])->name('cashier.new.student');
         Route::get('student-add-to-subject/{student_id?}', [CashierController::class, 'add_to_subject'])->name('cashier.add_to_subject');
-        Route::get('payment/{id?}', [CashierController::class, 'payment'])->name('cashier.payment');
 
 
 //        Subject control
@@ -67,11 +67,13 @@ Route::prefix('cashier')->group(function () {
 
 //        Monthly payments control
         Route::get('monthly-payments/{attach_id?}', [CashierController::class, 'getMonthlyPayments'])->name('cashier.payments');
-        Route::get('monthly-payment/{payment_id?}', [CashierController::class, 'getPayment'])->name('cashier.payment');
+        Route::get('monthly-payment/{payment_id?}', [CashierController::class, 'getPayment'])->name('cashier.getPayment');
+        Route::post('paid', [CashierController::class, 'paid'])->name('cashier.paid');
 
 
 //        Attach control
         Route::post('attach-to-group', [CashierController::class, 'attach'])->name('cashier.attach');
+        Route::get('getAttachs/{student_id?}', [CashierController::class, 'getAttachs'])->name('cashier.getAttachs');
     });
 });
 
