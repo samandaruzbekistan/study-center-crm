@@ -74,6 +74,13 @@ Route::prefix('cashier')->group(function () {
 //        Attach control
         Route::post('attach-to-group', [CashierController::class, 'attach'])->name('cashier.attach');
         Route::get('getAttachs/{student_id?}', [CashierController::class, 'getAttachs'])->name('cashier.getAttachs');
+
+
+//        Outlay control
+        Route::get('outlays',[CashierController::class, 'outlays'])->name('cashier.outlays');
+        Route::post('new-outlay-type',[CashierController::class, 'add_outlay_type'])->name('cashier.outlay.new.type');
+        Route::post('new-outlay',[CashierController::class, 'add_outlay'])->name('cashier.outlay.new');
+        Route::get('get-outlays/{type_id?}',[CashierController::class, 'get_outlays'])->name('cashier.outlays.get');
     });
 });
 

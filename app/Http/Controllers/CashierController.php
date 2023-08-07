@@ -6,6 +6,7 @@ use App\Http\Requests\LoginRequest;
 use App\Repositories\AttachRepository;
 use App\Repositories\CashierRepository;
 use App\Repositories\MonthlyPaymentRepository;
+use App\Repositories\OutlayRepository;
 use App\Repositories\StudentRepository;
 use App\Repositories\SubjectRepository;
 use App\Repositories\TeacherRepository;
@@ -22,6 +23,7 @@ class CashierController extends Controller
         protected StudentRepository $studentRepository,
         protected MonthlyPaymentRepository $monthlyPaymentRepository,
         protected AttachRepository $attachRepository,
+        protected OutlayRepository $outlayRepository,
     )
     {
     }
@@ -90,9 +92,6 @@ class CashierController extends Controller
 
 
 
-
-
-
 //    Student control
 
     public function students(){
@@ -101,6 +100,7 @@ class CashierController extends Controller
 
     public function student($id){
         $student = $this->studentRepository->getStudentWithSubjectsPayments($id);
+//        return $student;
         return view('cashier.student', ['student' => $student]);
     }
 
@@ -191,12 +191,14 @@ class CashierController extends Controller
             }
         }
         $this->monthlyPaymentRepository->add($rowsToInsert);
+        return redirect()->route('cashier.student', ['id' => $student->id])->with('attach',1);
     }
 
     public function getAttachs($student_id){
         return $this->attachRepository->getAttachStudentId($student_id);
     }
 
+//    Not use
     public function payment($id){
         if (!$id) return back();
         $student = $this->studentRepository->getStudentWithSubjects($id);
@@ -207,9 +209,7 @@ class CashierController extends Controller
 
 
 
-
-
-
+//  Subject control
     public function subjects(){
         $subs = $this->subjectRepository->getAllSubjects();
         $teachers = $this->teacherRepository->getTeachers();
@@ -236,7 +236,7 @@ class CashierController extends Controller
     }
 
 
-
+//  Payment control
     public function getMonthlyPayments($attach_id){
         return $this->attachRepository->getAttachWithMonthlyPayments($attach_id);
     }
@@ -271,5 +271,38 @@ class CashierController extends Controller
             $this->monthlyPaymentRepository->payment($payment->id, $amount, $amount_paid,$request->type, 0);
         }
 
+    }
+
+
+//    Outlay control
+    public function outlays(){
+        $outlays = $this->outlayRepository->getOutlaysWithTypes();
+        $types = $this->outlayRepository->getOutlayTypes();
+        return view('cashier.outlays', ['outlays' => $outlays, 'types' => $types]);
+    }
+
+    public function add_outlay_type(Request $request){
+        $request->validate([
+            'name' => 'required|string'
+        ]);
+        $o = $this->outlayRepository->getOutlayTypeByName($request->name);
+        if ($o) return back()->with('name_error', 1);
+        $this->outlayRepository->addType($request->name);
+        return back()->with('add',1);
+    }
+
+    public function add_outlay(Request $request){
+        $request->validate([
+            'type_id' => 'required|numeric',
+            'amount' => 'required|numeric',
+            'date' => 'required|date',
+            'description' => 'required|string',
+        ]);
+        $this->outlayRepository->addOutlay($request->type_id, $request->amount, $request->date, session('id'), $request->description);
+        return back()->with('success',1);
+    }
+
+    public function get_outlays($type_id){
+        return $this->outlayRepository->get_outlays($type_id);
     }
 }

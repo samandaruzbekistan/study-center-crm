@@ -26,7 +26,7 @@
 <div class="wrapper">
     <nav id="sidebar" class="sidebar js-sidebar">
         <div class="sidebar-content js-simplebar">
-            <a class="sidebar-brand" href="/">
+            <a class="sidebar-brand" href="/cashier/home">
                 <span class="align-middle">Ideal Study <br>O'quv markazi</span>
             </a>
 
@@ -35,7 +35,7 @@
 
                 <li class="sidebar-item @yield('home')">
                     <a class="sidebar-link" href="{{ route('cashier.home') }}">
-                        <i class="align-middle" data-feather="arrow-down-circle"></i> <span class="align-middle">To'lov</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-down-circle align-middle"><circle cx="12" cy="12" r="10"></circle><polyline points="8 12 12 16 16 12"></polyline><line x1="12" y1="8" x2="12" y2="16"></line></svg> <span class="align-middle">To'lov</span>
                     </a>
                 </li>
 
@@ -48,19 +48,19 @@
 
                 <li class="sidebar-item @yield('subjects')">
                     <a class="sidebar-link" href="{{ route('cashier.subjects') }}">
-                        <i class="align-middle" data-feather="grid"></i> <span class="align-middle">Guruhlar</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-grid align-middle"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg> <span class="align-middle">Guruhlar</span>
                     </a>
                 </li>
 
                 <li class="sidebar-item @yield('students')">
                     <a class="sidebar-link" href="{{ route('cashier.students') }}">
-                        <i class="align-middle" data-feather="users"></i> <span class="align-middle">O'quvchilar</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users align-middle"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> <span class="align-middle">O'quvchilar</span>
                     </a>
                 </li>
 
-                <li class="sidebar-item @yield('profile')">
-                    <a class="sidebar-link" href="{{ route('cashier.profile') }}">
-                        <i class="align-middle" data-feather="user"></i> <span class="align-middle">Profil</span>
+                <li class="sidebar-item @yield('outlays')">
+                    <a class="sidebar-link" href="{{ route('cashier.outlays') }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up-circle align-middle"><circle cx="12" cy="12" r="10"></circle><polyline points="16 12 12 8 8 12"></polyline><line x1="12" y1="16" x2="12" y2="8"></line></svg> <span class="align-middle">Xarajatlar</span>
                     </a>
                 </li>
 
@@ -71,25 +71,13 @@
 
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="charts-chartjs.html">
-                        <i class="align-middle" data-feather="bar-chart-2"></i> <span class="align-middle">To'lovlar</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2 align-middle"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg> <span class="align-middle">To'lovlar</span>
                     </a>
                 </li>
 
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="maps-google.html">
-                        <i class="align-middle" data-feather="map"></i> <span class="align-middle">O'quvchilar</span>
-                    </a>
-                </li>
-
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="maps-google.html">
-                        <i class="align-middle" data-feather="map"></i> <span class="align-middle">Darslar</span>
-                    </a>
-                </li>
-
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="maps-google.html">
-                        <i class="align-middle" data-feather="map"></i> <span class="align-middle">Davomat</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-check align-middle"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg> <span class="align-middle">Davomat</span>
                     </a>
                 </li>
 
@@ -98,7 +86,16 @@
                 </li>
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="maps-google.html">
-                        <i class="align-middle" data-feather="map"></i> <span class="align-middle">Sms xizmati</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-circle align-middle"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg> <span class="align-middle">Sms xizmati</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-header">
+                    Profil
+                </li>
+                <li class="sidebar-item @yield('profile')">
+                    <a class="sidebar-link" href="{{ route('cashier.profile') }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user align-middle"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> <span class="align-middle">Profil</span>
                     </a>
                 </li>
             </ul>

@@ -6,37 +6,7 @@
 @endsection
 @section('section')
 
-    <main class="content add-student" style="padding-bottom: 0; display: none">
-        <div class="container-fluid p-0">
-            <div class="col-md-8 col-xl-9">
-                <div class="">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0"><span id="name" class="text-danger"></span> guruhiga o'quvchi qo'shish</h5>
-                        </div>
-                        <div class="card-body h-100">
-                            <form action="{{ route('admin.update.teacher') }}" method="post">
-                                @csrf
-                                <input type="hidden" name="username" id="username">
-                                <div class="mb-3">
-                                    <label class="form-label">Yangi parol</label>
-                                    <input required name="password1" type="password" class="form-control" placeholder="">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Yangi parolni takrorlang</label>
-                                    <input required name="password2" type="password" class="form-control" placeholder="">
-                                </div>
-                                <div class=" text-end">
-                                    <button type="button" class="btn btn-danger cancel1">Bekor qilish</button>
-                                    <button type="submit" class="btn btn-success">Yangilash</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
+
 
     <main class="content forma" style="padding-bottom: 0; display: none">
         <div class="container-fluid p-0">
