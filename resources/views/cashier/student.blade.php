@@ -286,7 +286,7 @@
         @if(session('attach') == 1)
         const notyf = new Notyf();
 
-        notyf.error({
+        notyf.success({
             message: 'O\'quvchi guruhga biriktirildi',
             duration: 5000,
             dismissible : true,

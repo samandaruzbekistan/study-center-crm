@@ -16,7 +16,7 @@ class MonthlyPaymentRepository
     }
 
     public function getPaymentsByDate($date){
-        return MonthlyPayment::with('student')->where('date', $date)->latest()->get();
+        return MonthlyPayment::with('student','attach')->where('date', $date)->latest()->get();
     }
 
     public function payment($id,$amount,$amount_paid,$type,$status){

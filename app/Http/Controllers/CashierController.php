@@ -270,8 +270,9 @@ class CashierController extends Controller
             $amount = $payment->amount - $request->amount;
             $this->monthlyPaymentRepository->payment($payment->id, $amount, $amount_paid,$request->type, 0);
         }
-
+        return redirect()->route('cashier.home');
     }
+
 
 
 //    Outlay control
