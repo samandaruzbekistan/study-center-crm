@@ -100,7 +100,6 @@ class CashierController extends Controller
 
     public function student($id){
         $student = $this->studentRepository->getStudentWithSubjectsPayments($id);
-//        return $student;
         return view('cashier.student', ['student' => $student]);
     }
 

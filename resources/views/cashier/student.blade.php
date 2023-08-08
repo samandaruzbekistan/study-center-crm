@@ -27,7 +27,7 @@
                             <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#subjects" role="tab" aria-selected="false" tabindex="-1">
                                 Guruhlar
                             </a>
-                            <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#" role="tab" aria-selected="false" tabindex="-1">
+                            <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#payments" role="tab" aria-selected="false" tabindex="-1">
                                 To'lovlar
                             </a>
                             <a class="list-group-item list-group-item-action text-danger" data-bs-toggle="list" href="#" role="tab" aria-selected="false" tabindex="-1">
@@ -118,6 +118,51 @@
                                     <div class="text-end">
                                         <a href="{{ route('cashier.add_to_subject') }}/{{ $student->id }}" class="btn btn-primary">Yangi guruhga biriktirish</a>
                                     </div>
+                            </div>
+                        </div>
+                    </div>
+                        <div class="tab-pane fade" id="payments" role="tabpanel">
+                            <div class="card col-8">
+                                <div class="card-header">
+                                    <div class="row justify-content-between">
+                                        <h5 class="card-title mb-0 col">Profil malumotlari</h5>
+                                        <select class="form-select mb-0 col" id="attach">
+                                            <option>Barchasi</option>
+                                            @foreach($student->attachs as $attach)
+                                                <option value="{{ $attach->id }}">{{ $attach->subject_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-striped" >
+                                        <thead>
+                                            <tr>
+                                                <th>Guruh</th>
+                                                <th>Oy</th>
+                                                <th>Summa</th>
+                                                <th>Sana</th>
+                                                <th>Print</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="old-data">
+                                        @foreach($student->monthlyPayments as $payment)
+                                            @if($payment->status ==1)
+                                                <tr>
+                                                    <td>{{ $payment->attach->subject_name }}</td>
+                                                    <td>{{ \Carbon\Carbon::parse($payment->month)->format('F Y') }}</td>
+                                                    <td>{{ number_format($payment->amount_paid, 0, '.', ' ') }}</td>
+                                                    <td>{{ $payment->date  }}</td>
+                                                    <td class=""><button type="button" class="btn btn-success"><i class="align-middle" data-feather="printer"></i></button></td>
+                                                </tr>
+                                            @endif
+                                        @endforeach
+                                        </tbody>
+                                        <tbody class="new-data" style="display: none">
+
+                                        </tbody>
+                                    </table>
+
                             </div>
                         </div>
                     </div>
@@ -232,6 +277,45 @@
 
 @section('js')
     <script>
+        $(document).on('change', '#attach', function() {
+            let selectedId = $(this).val();
+            if(selectedId === 'all'){
+                window.location = "{{ route('cashier.subjects') }}";
+            }
+            $("#tbody").empty();
+
+            $.ajax({
+                url: '{{ route('cashier.payments') }}/' + selectedId,
+                method: 'GET',
+                success: function(data) {
+                    const tableBody = $(".new-data");
+                    $(".new-data").empty();
+                    data.monthly_payments.forEach(monthly_payment => {
+                        if (monthly_payment.status === 1){
+                            let formattedMonth = moment(monthly_payment.month).locale('uz').format('MMMM YYYY');
+                            let newRow = `
+                        <tr>
+                            <td>${data.subject_name}</td>
+                            <td><b>${formattedMonth}</b></td>
+                            <td>${monthly_payment.amount_paid}</td>
+                            <td>${monthly_payment.date}</td>
+                            <td class="edit-btn" style="cursor: pointer">
+                                <button type="button" class="btn btn-success"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-printer align-middle"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg></button>
+                            </td>
+                        </tr>
+                        `;
+                            tableBody.append(newRow);
+
+                        }
+
+                        $(".old-data").hide();
+                        $(".new-data").show();
+                    });
+                }
+            });
+        });
+
+
         (function (factory) {
             if (typeof define === 'function' && define.amd) {
                 define(['moment'], factory); // AMD
@@ -283,6 +367,7 @@
                 }
             });
         }));
+
         @if(session('attach') == 1)
         const notyf = new Notyf();
 
@@ -296,6 +381,7 @@
             },
         });
         @endif
+
         function printdiv(elem) {
             var header_str = '<html><head><title>' + document.title  + '</title></head><body>';
             var footer_str = '</body></html>';
