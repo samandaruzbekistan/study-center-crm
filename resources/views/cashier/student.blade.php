@@ -30,6 +30,9 @@
                             <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#payments" role="tab" aria-selected="false" tabindex="-1">
                                 To'lovlar
                             </a>
+                            <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#sms" role="tab" aria-selected="false" tabindex="-1">
+                                SMS yuborish
+                            </a>
                             <a class="list-group-item list-group-item-action text-danger" data-bs-toggle="list" href="#" role="tab" aria-selected="false" tabindex="-1">
                                 Delete account
                             </a>
@@ -166,69 +169,32 @@
                             </div>
                         </div>
                     </div>
-                </div>
-
-                    <div class="col-md-4 col-xl-3 d-none">
-                        <div class="card mb-3">
-                            <div class="card-header">
-                                <h5 class="card-title mb-0">Profil malumotlari</h5>
+                        <div class="tab-pane fade" id="sms" role="tabpanel">
+                            <div class="card col-8">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0 col"><b class="text-primary">{{ $student->name }}</b> ga sms yuborish</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form action="{{ route('cashier.sms.student') }}" method="post">
+                                        @csrf
+                                        <input type="hidden" name="number" value="{{ $student->phone }}">
+                                        <div class="mb-3">
+                                            <label class="form-label">SMS matni</label>
+                                            <textarea class="form-control" rows="3" required name="message"></textarea>
+                                        </div>
+                                        <div class=" text-end">
+                                            <button type="submit" class="btn btn-success">Xabar yuborish</button>
+                                        </div>
+                                    </form>
                             </div>
-                            <div class="card-body text-center">
-                                <h5 class="card-title mb-0">{{ $student->name }}</h5>
-                                <div class="text-muted mb-2">O'quvchi</div>
-
-                            </div>
-                            <hr class="my-0">
-                            <div class="card-body">
-                                <h5 class="h6 card-title">Guruhlar</h5>
-                                @foreach($student->attachs as $subject)
-                                <a href="#" class="badge bg-primary me-1 my-1">{{ $subject->subject_name }}</a>
-                                @endforeach
-                            </div>
-                            <hr class="my-0">
-                            <div class="card-body">
-                                <h5 class="h6 card-title">About</h5>
-                                <ul class="list-unstyled mb-0">
-                                    <li class="mb-1">
-                                        <i class="align-middle me-1" data-feather="user"></i>F.I.SH: <a href="#">{{ $student->name }}</a>
-                                    </li>
-                                    <li class="mb-1">
-                                        <i class="align-middle me-1" data-feather="briefcase"></i>O'qish joyi: <a href="#">Ideal Study</a></li>
-                                    <li class="mb-1"><i class="align-middle me-1" data-feather="phone"></i>Telefon: <a href="#">{{ $student->phone }}</a></li>
-                                </ul>
-                            </div>
-                            <hr class="my-0">
                         </div>
                     </div>
-
-                    <div class="col-12 col-xl-5 d-none" style="max-height: 550px; overflow-y: auto;">
-                    <div class="card">
-                        <div class="card-body">
-                            <table class="table table-striped" >
-                                <thead>
-                                <tr>
-                                    <th style="width:40%;">Sana</th>
-                                    <th style="width:30%">Summa</th>
-                                    <th>Check</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($student->monthlyPayments as $payment)
-                                    @if($payment->status ==1)
-                                    <tr>
-                                        <td>{{ $payment->date }}</td>
-                                        <td>{{ number_format($payment->amount_paid, 0, '.', ' ') }}</td>
-                                        <td class=""><button type="button" class="btn btn-success"><i class="align-middle" data-feather="printer"></i></button></td>
-                                    </tr>
-                                    @endif
-                                @endforeach
-                                </tbody>
-                            </table>
-                        </div>
                     </div>
                 </div>
 
-                    <div class="col-12 col-xl-4 d-none">
+            </div>
+
+            <div class="col-12 col-xl-4 d-none">
                     <div class="card">
                         <div class="card-header">
                             <h5 class="card-title">Faktura</h5>
@@ -266,10 +232,7 @@
                             <button type="button" id="printButton" onClick="printdiv('printContent');" class="btn btn-success"><i class="align-middle" data-feather="printer"></i> Chop etish</button>
                         </div>
                     </div>
-                </div>
             </div>
-
-        </div>
         </div>
     </main>
 @endsection
@@ -373,6 +336,34 @@
 
         notyf.success({
             message: 'O\'quvchi guruhga biriktirildi',
+            duration: 5000,
+            dismissible : true,
+            position: {
+                x : 'center',
+                y : 'top'
+            },
+        });
+        @endif
+
+        @if(session('sms_error') == 1)
+        const notyf = new Notyf();
+
+        notyf.error({
+            message: 'Xatolik. Xabar yuborilmadi',
+            duration: 5000,
+            dismissible : true,
+            position: {
+                x : 'center',
+                y : 'top'
+            },
+        });
+        @endif
+
+        @if(session('sms_send') == 1)
+        const notyf = new Notyf();
+
+        notyf.success({
+            message: 'Xabar yuborildi',
             duration: 5000,
             dismissible : true,
             position: {

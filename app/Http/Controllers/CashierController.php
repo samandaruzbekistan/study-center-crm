@@ -10,6 +10,7 @@ use App\Repositories\OutlayRepository;
 use App\Repositories\StudentRepository;
 use App\Repositories\SubjectRepository;
 use App\Repositories\TeacherRepository;
+use App\Services\SmsService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -24,6 +25,7 @@ class CashierController extends Controller
         protected MonthlyPaymentRepository $monthlyPaymentRepository,
         protected AttachRepository $attachRepository,
         protected OutlayRepository $outlayRepository,
+        protected SmsService $smsService,
     )
     {
     }
@@ -195,6 +197,17 @@ class CashierController extends Controller
 
     public function getAttachs($student_id){
         return $this->attachRepository->getAttachStudentId($student_id);
+    }
+
+    public function sendSmsStudent(Request $request){
+        $request->validate([
+            'number' => 'required|numeric|digits:12',
+            'message' => 'required|string'
+        ]);
+        $result = $this->smsService->sendStudent($request->number, $request->message);
+        $jsonEncoded = json_decode($result);
+        if ($jsonEncoded->status != "waiting") return back()->with('sms_error', 1);
+        return back()->with('sms_send',1);
     }
 
 //    Not use

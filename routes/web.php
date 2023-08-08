@@ -55,6 +55,7 @@ Route::prefix('cashier')->group(function () {
         Route::get('students', [CashierController::class, 'students'])->name('cashier.students');
         Route::get('search', [CashierController::class, 'search'])->name('cashier.search');
         Route::post('student-add', [CashierController::class, 'new_student'])->name('cashier.new.student');
+        Route::post('student-sms', [CashierController::class, 'sendSmsStudent'])->name('cashier.sms.student');
         Route::get('student-add-to-subject/{student_id?}', [CashierController::class, 'add_to_subject'])->name('cashier.add_to_subject');
 
 
@@ -81,6 +82,9 @@ Route::prefix('cashier')->group(function () {
         Route::post('new-outlay-type',[CashierController::class, 'add_outlay_type'])->name('cashier.outlay.new.type');
         Route::post('new-outlay',[CashierController::class, 'add_outlay'])->name('cashier.outlay.new');
         Route::get('get-outlays/{type_id?}',[CashierController::class, 'get_outlays'])->name('cashier.outlays.get');
+
+
+//        Sms xizmati
     });
 });
 
