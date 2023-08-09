@@ -6,6 +6,15 @@ use App\Models\Attach;
 
 class AttachRepository
 {
+    public function getAttachWithStudentsAndTeacher($subject_id){
+        return Attach::query()
+            ->with(['student' => function ($query) {
+                $query->select('id', 'name','phone');
+            }, 'teacher' => function ($query) {
+                $query->select('id', 'name');
+            }])->where('subject_id', $subject_id)->get();
+    }
+
     public function addAttach($student, $subject,$name){
         $attach = new Attach;
         $attach->student_id = $student;

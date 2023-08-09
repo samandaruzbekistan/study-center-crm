@@ -26,7 +26,7 @@ class Teacher extends Model
         return $this->hasMany(Attendance::class);
     }
 
-    public function attach()
+    public function attachs()
     {
         return $this->hasMany(Attach::class);
     }

@@ -18,4 +18,11 @@ class Subject extends Model
     {
         return $this->belongsToMany(Student::class, 'student_subject');
     }
+
+    public function monthlyPayments()
+    {
+        return $this->hasMany(MonthlyPayment::class, 'subject_id');
+    }
+
+
 }

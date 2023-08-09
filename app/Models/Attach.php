@@ -16,6 +16,11 @@ class Attach extends Model
         return $this->belongsTo(Student::class);
     }
 
+    public function teacher()
+    {
+        return $this->belongsTo(Teacher::class);
+    }
+
     public function monthlyPayments()
     {
         return $this->hasMany(MonthlyPayment::class);

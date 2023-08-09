@@ -3,7 +3,9 @@
 namespace App\Repositories;
 
 use App\Models\MonthlyPayment;
+use App\Models\Subject;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class MonthlyPaymentRepository
 {
@@ -31,5 +33,27 @@ class MonthlyPaymentRepository
                 'paid_cashier_id' => session('id'),
                 'created_at' => $currentDateTime
             ]);
+    }
+
+    public function monthPaymentsBySubjectId($subject_id){
+        $payments = MonthlyPayment::where('subject_id', $subject_id)
+            ->select('month', DB::raw('SUM(amount_paid) as total'),DB::raw('SUM(amount) as debt'))
+            ->groupBy('month')
+            ->get();
+
+
+        return $payments;
+    }
+
+    public function getPaymentsByMonth($subject_id){
+        $payments_success = MonthlyPayment::where('subject_id', $subject_id)
+            ->where('amount_paid','>',0)
+            ->select('month', DB::raw('SUM(amount_paid) as total'))
+            ->groupBy('month')
+            ->get();
+
+
+
+        return $payments_success;
     }
 }

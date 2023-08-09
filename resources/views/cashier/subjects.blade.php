@@ -83,7 +83,7 @@
                         @foreach($subjects as $subject)
                             <tr>
                                 <td>
-                                    {{ $subject->name }}
+                                    <a href="{{ route('cashier.subject.students', ['subject_id' => $subject->id]) }}">{{ $subject->name }}</a>
                                 </td>
                                 <td><b>{{ number_format($subject->price, 0, '.', ' ') }}</b> so'm</td>
                                 <td>{{ $subject->teacher->name }}</td>

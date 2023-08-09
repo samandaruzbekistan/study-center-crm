@@ -61,6 +61,7 @@ Route::prefix('cashier')->group(function () {
 
 //        Subject control
         Route::get('subjects', [CashierController::class, 'subjects'])->name('cashier.subjects');
+        Route::get('cashier-subject-students/{subject_id?}', [CashierController::class, 'subjectStudents'])->name('cashier.subject.students');
         Route::get('subject/{subject_id?}', [CashierController::class, 'subject'])->name('cashier.subject');
         Route::post('groups-add', [CashierController::class, 'new_subject'])->name('cashier.new.subject');
         Route::get('teacher-groups/{teacher_id?}', [CashierController::class, 'getTeacherWithSubjects'])->name('cashier.teacher.subjects');
@@ -70,6 +71,7 @@ Route::prefix('cashier')->group(function () {
         Route::get('monthly-payments/{attach_id?}', [CashierController::class, 'getMonthlyPayments'])->name('cashier.payments');
         Route::get('monthly-payment/{payment_id?}', [CashierController::class, 'getPayment'])->name('cashier.getPayment');
         Route::post('paid', [CashierController::class, 'paid'])->name('cashier.paid');
+        Route::get('month-payment/{subject_id}',[CashierController::class, 'month_payment'])->name('cashier.month.payments');
 
 
 //        Attach control
@@ -85,6 +87,7 @@ Route::prefix('cashier')->group(function () {
 
 
 //        Sms xizmati
+        Route::get('sms', [CashierController::class, 'sms'])->name('cashier.sms');
     });
 });
 

@@ -232,6 +232,13 @@ class CashierController extends Controller
        return $this->subjectRepository->getSubjectWithTeacher($subject_id);
     }
 
+    public function subjectStudents($subject_id){
+        $payments = $this->monthlyPaymentRepository->monthPaymentsBySubjectId($subject_id);
+        $attach = $this->attachRepository->getAttachWithStudentsAndTeacher($subject_id);
+        $payments_success = $this->monthlyPaymentRepository->getPaymentsByMonth($subject_id);
+        return view('cashier.subject_students',['attachs' => $attach, 'payments' => $payments,'payments_success' => $payments_success]);
+    }
+
     public function new_subject(Request $request){
         $request->validate([
             'name' => 'required|string',
@@ -283,6 +290,11 @@ class CashierController extends Controller
             $this->monthlyPaymentRepository->payment($payment->id, $amount, $amount_paid,$request->type, 0);
         }
         return redirect()->route('cashier.home');
+    }
+
+    public function month_payment($subject_id){
+        $payments = $this->monthlyPaymentRepository->monthPaymentsBySubjectId($subject_id);
+        return $payments;
     }
 
 
