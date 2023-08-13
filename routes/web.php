@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CashierController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\CashierController;
 Route::view('/admin', 'admin.login')->name('admin.login');
 Route::view('/teacher', 'teacher.login')->name('teacher.login');
 Route::view('/cashier', 'cashier.login')->name('cashier.login');
+Route::redirect('/','teacher/login');
 
 Route::prefix('admin')->group(function () {
     Route::post('/auth', [AdminController::class, 'auth'])->name('admin.auth');
@@ -39,6 +41,16 @@ Route::prefix('admin')->group(function () {
         Route::post('update-cashier',[AdminController::class, 'update_cashier'])->name('admin.update.cashier');
     });
 });
+
+Route::prefix('teacher')->group(function () {
+    Route::post('/auth', [TeacherController::class, 'auth'])->name('teacher.auth');
+    Route::middleware(['teacher_auth'])->group(function () {
+        Route::get('home', [TeacherController::class, 'home'])->name('teacher.home');
+        Route::get('group/{id?}', [TeacherController::class, 'subject_detail'])->name('teacher.subject.detail');        Route::get('payment-details',[CashierController::class, 'payment_details'])->name('cashier.payment.details');
+        Route::get('payment-details',[TeacherController::class, 'payment_details'])->name('teacher.payment.details');
+    });
+});
+
 
 Route::prefix('cashier')->group(function () {
     Route::post('/auth', [CashierController::class, 'auth'])->name('cashier.auth');
@@ -108,8 +120,3 @@ Route::prefix('cashier')->group(function () {
 
 
 
-
-
-Route::get('/', function () {
-    return view('welcome');
-});

@@ -1,4 +1,4 @@
-@extends('cashier.header')
+@extends('teacher.header')
 
 @push('css')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
@@ -39,7 +39,7 @@
     </style>
 @endpush
 
-@section('students')
+@section('subjects')
     active
 @endsection
 @section('section')
@@ -62,9 +62,6 @@
                                 Tushumlar
                             </a>
 
-                            <a class="btn btn-sm btn-light" data-bs-toggle="list" href="#sms" role="tab" aria-selected="true">
-                                SMS xizmati
-                            </a>
                         </div>
                     </div>
                     <div class="tab-content">
@@ -72,23 +69,17 @@
                             <table class="table table-striped table-hover table-responsive" id="old-data">
                                 <thead>
                                 <tr>
-                                    <th>#</th>
                                     <th>Oy</th>
                                     <th>To'langan</th>
                                     <th>To'lanmagan</th>
-                                    <th>Ko'rish</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 @foreach($payments as $id => $payment)
                                     <tr>
-                                        <td>
-                                            {{ $id+1 }}
-                                        </td>
-                                        <td>{{ \Carbon\Carbon::parse($payment->month)->format('F Y') }}</td>
+                                        <td><a href="#"  class="detail" subject_id="{{ $attachs[0]->subject_id }}" month="{{ $payment->month }}">{{ \Carbon\Carbon::parse($payment->month)->format('F Y') }}</a></td>
                                         <td class="text-success">{{  number_format($payment->total, 0, '.', ' ') }} so'm</td>
                                         <td class="text-danger">{{  number_format($payment->debt, 0, '.', ' ') }} so'm</td>
-                                        <td class="text-danger"><button class="btn btn-success detail" subject_id="{{ $attachs[0]->subject_id }}" month="{{ $payment->month }}"><i class="align-middle" data-feather="eye"></i></button></td>
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -134,7 +125,6 @@
                                     <th>#</th>
                                     <th>F.I.Sh</th>
                                     <th class="d-none d-sm-table-cell">Telefon</th>
-                                    <th>Guruhga qo'shish</th>
                                 </tr>
                                 </thead>
                                 <tbody id="tbody">
@@ -143,46 +133,12 @@
                                         <td>
                                             {{ $id+1 }}
                                         </td>
-                                        <td><a href="{{ route('cashier.student') }}/{{ $attach->id }}">{{ $attach->student->name }}</a></td>
+                                        <td>{{ $attach->student->name }}</td>
                                         <td class="d-none d-sm-table-cell">+{{ preg_replace('/(\d{3})(\d{2})(\d{3})(\d{2})(\d{2})/', '$1 $2 $3 $4 $5', $attach->student->phone) }}</td>
-                                        <td style="cursor: pointer"><a href="{{ route('cashier.add_to_subject') }}/{{ $attach->id }}" class="btn btn-success add-student"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus align-middle"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg></a></td>
                                     </tr>
                                 @endforeach
                                 </tbody>
                             </table>
-                        </div>
-                        <div class=" tab-pane fade  " id="sms">
-                            <div class="card">
-                                <div class="card-body row">
-                                    <div class="col-6">
-                                        <h6 class="card-title">Barchaga sms jo'natish</h6>
-                                        <form>
-                                            @csrf
-                                            <input type="hidden" name="subject_id" value="{{ $attachs[0]->subject_id }}">
-                                            <textarea required name="message" class="form-control" rows="3" placeholder="Xabar matni"></textarea>
-                                            <input type="submit" class="btn btn-success mt-3" value="yuborish">
-                                        </form>
-                                    </div>
-                                    <div class="col-6">
-                                        <h6 class="card-title">Qarzdorlarga sms jo'natish</h6>
-                                        <form action="{{ route('cashier.sms.debt') }}" method="post">
-                                            <input type="hidden" name="subject_id" value="{{ $attachs[0]->subject_id }}">
-                                            <select class="form-select mb-3" name="month" id="monthInput">
-                                                <option selected="" value="all">Oyni tanlang</option>
-                                                @foreach($payments as $id => $payment)
-                                                    @if($payment->debt > 0)
-                                                        <option value="{{ $payment->month }}">{{ \Carbon\Carbon::parse($payment->month)->format('F Y') }}</option>
-                                                    @endif
-                                                @endforeach
-                                            </select>
-                                            @csrf
-                                            <textarea required name="message" class="form-control" rows="3" placeholder="Xabar matni"></textarea>
-                                            <button type="submit" style="display: none" id="realButton">s</button>
-                                            <button type="button" class="btn btn-success mt-3" id="fakeButton">Yuborish</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                         <div class=" tab-pane fade active " id="payments_by_month">
                             <table class="table table-striped table-hover table-responsive">
@@ -310,7 +266,7 @@
             let formattedMonth = moment(month).locale('uz').format('MMMM YYYY');
 
             $.ajax({
-                url: '{{ route('cashier.payment.details') }}',
+                url: '{{ route('teacher.payment.details') }}',
                 method: 'GET',
                 data: {month:month,subject_id:subject_id},
                 success: function(data) {
