@@ -44,7 +44,7 @@ Route::prefix('cashier')->group(function () {
     Route::post('/auth', [CashierController::class, 'auth'])->name('cashier.auth');
     Route::middleware(['cashier_auth'])->group(function () {
         Route::get('home', [CashierController::class, 'home'])->name('cashier.home');
-        Route::get('logout', [AdminController::class, 'logout'])->name('cashier.logout');
+        Route::get('logout', [CashierController::class, 'logout'])->name('cashier.logout');
         Route::get('profile', [CashierController::class, 'profile'])->name('cashier.profile');
         Route::post('update',[CashierController::class,'update'])->name('cashier.update');
         Route::post('update-avatar',[CashierController::class,'update_avatar'])->name('cashier.avatar');
@@ -55,7 +55,6 @@ Route::prefix('cashier')->group(function () {
         Route::get('students', [CashierController::class, 'students'])->name('cashier.students');
         Route::get('search', [CashierController::class, 'search'])->name('cashier.search');
         Route::post('student-add', [CashierController::class, 'new_student'])->name('cashier.new.student');
-        Route::post('student-sms', [CashierController::class, 'sendSmsStudent'])->name('cashier.sms.student');
         Route::get('student-add-to-subject/{student_id?}', [CashierController::class, 'add_to_subject'])->name('cashier.add_to_subject');
 
 
@@ -68,10 +67,13 @@ Route::prefix('cashier')->group(function () {
 
 
 //        Monthly payments control
+        Route::get('all-payments',[CashierController::class, 'payments'])->name('cashier.payments.all');
         Route::get('monthly-payments/{attach_id?}', [CashierController::class, 'getMonthlyPayments'])->name('cashier.payments');
         Route::get('monthly-payment/{payment_id?}', [CashierController::class, 'getPayment'])->name('cashier.getPayment');
         Route::post('paid', [CashierController::class, 'paid'])->name('cashier.paid');
         Route::get('month-payment/{subject_id}',[CashierController::class, 'month_payment'])->name('cashier.month.payments');
+        Route::get('payment-details',[CashierController::class, 'payment_details'])->name('cashier.payment.details');
+        Route::get('payment-filtr/{date?}',[CashierController::class, 'payment_filtr'])->name('cashier.payment.filtr');
 
 
 //        Attach control
@@ -88,6 +90,9 @@ Route::prefix('cashier')->group(function () {
 
 //        Sms xizmati
         Route::get('sms', [CashierController::class, 'sms'])->name('cashier.sms');
+        Route::post('student-sms', [CashierController::class, 'sendSmsStudent'])->name('cashier.sms.student');
+        Route::post('debt', [CashierController::class, 'debt'])->name('cashier.sms.debt');
+        Route::post('subject', [CashierController::class, 'subject'])->name('cashier.sms.subject');
     });
 });
 

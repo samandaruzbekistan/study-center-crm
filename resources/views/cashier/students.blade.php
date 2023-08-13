@@ -89,11 +89,23 @@
                                     <label class="form-label">F.I.Sh <span class="text-danger">*</span></label>
                                     <input name="name" required type="text" class="form-control" placeholder="">
                                 </div>
-                                <label class="form-label">Telefon <span class="text-danger">*</span></label>
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text">+998</span>
-                                    <input type="number" required name="phone" maxlength="9" class="form-control">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label">Telefoni <span class="text-danger">*</span></label>
+                                        <div class="input-group mb-3 col-6">
+                                            <span class="input-group-text">+998</span>
+                                            <input type="number" required name="phone" maxlength="9" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">Ota-ona telefoni<span class="text-danger">*</span></label>
+                                        <div class="input-group mb-3 col-6">
+                                            <span class="input-group-text">+998</span>
+                                            <input type="number" required name="phone" maxlength="9" class="form-control">
+                                        </div>
+                                    </div>
                                 </div>
+
                                 <div class=" text-end">
                                     <button type="button" class="btn btn-danger cancel">Bekor qilish</button>
                                     <button type="submit" class="btn btn-success">Qo'shish</button>

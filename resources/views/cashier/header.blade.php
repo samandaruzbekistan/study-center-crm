@@ -69,8 +69,8 @@
                     Malumotlar
                 </li>
 
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="charts-chartjs.html">
+                <li class="sidebar-item @yield('payments')">
+                    <a class="sidebar-link" href="{{ route('cashier.payments.all') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2 align-middle"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg> <span class="align-middle">To'lovlar</span>
                     </a>
                 </li>
@@ -84,7 +84,7 @@
                 <li class="sidebar-header">
                     Xizmatlar
                 </li>
-                <li class="sidebar-item">
+                <li class="sidebar-item @yield('sms')">
                     <a class="sidebar-link" href="{{ route('cashier.sms') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-circle align-middle"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg> <span class="align-middle">Sms xizmati</span>
                     </a>
@@ -251,6 +251,13 @@
                             </div>
                         </div>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-icon d-none d-lg-block" href="#" id="fullscreenLink">
+                            <div class="position-relative">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-maximize align-middle"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+                            </div>
+                        </a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" data-bs-toggle="dropdown">
                             <i class="align-middle" data-feather="settings"></i>
@@ -382,6 +389,55 @@
 
 
     });
+
+    const fullscreenLink = document.getElementById('fullscreenLink');
+    let isFullScreen = false;
+
+    fullscreenLink.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent the default behavior of the link
+        toggleFullScreen();
+    });
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            exitFullScreen();
+        }
+    });
+
+    function toggleFullScreen() {
+        if (!isFullScreen) {
+            requestFullScreen();
+        } else {
+            exitFullScreen();
+        }
+    }
+
+    function requestFullScreen() {
+        const element = document.documentElement;
+        if (element.requestFullscreen) {
+            element.requestFullscreen();
+        } else if (element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+        } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+        } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+        }
+        isFullScreen = true;
+    }
+
+    function exitFullScreen() {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+        isFullScreen = false;
+    }
 </script>
 <div class="notyf" style="justify-content: flex-start; align-items: center;"></div>
 <div class="notyf-announcer" aria-atomic="true" aria-live="polite" style="border: 0px; clip: rect(0px, 0px, 0px, 0px); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; outline: 0px;">Inconceivable!</div>

@@ -13,6 +13,17 @@ class MonthlyPaymentRepository
         MonthlyPayment::insert($data);
     }
 
+    public function getPayments(){
+        return MonthlyPayment::query()
+            ->with(['student' => function ($query) {
+                $query->select('id', 'name');
+            }, 'teacher' => function ($query) {
+                $query->select('id', 'name');
+            }, 'subject' => function ($query) {
+                $query->select('id', 'name');
+            }])->where('date','!=', null)->orderBy('date', 'desc')->paginate(100);
+    }
+
     public function getPayment($id){
         return MonthlyPayment::find($id);
     }
@@ -37,15 +48,14 @@ class MonthlyPaymentRepository
 
     public function monthPaymentsBySubjectId($subject_id){
         $payments = MonthlyPayment::where('subject_id', $subject_id)
-            ->select('month', DB::raw('SUM(amount_paid) as total'),DB::raw('SUM(amount) as debt'))
+            ->select('month','subject_id', DB::raw('SUM(amount_paid) as total'),DB::raw('SUM(amount) as debt'))
             ->groupBy('month')
             ->get();
-
 
         return $payments;
     }
 
-    public function getPaymentsByMonth($subject_id){
+    public function getPaidPaymentsByMonth($subject_id){
         $payments_success = MonthlyPayment::where('subject_id', $subject_id)
             ->where('amount_paid','>',0)
             ->select('month', DB::raw('SUM(amount_paid) as total'))
@@ -55,5 +65,33 @@ class MonthlyPaymentRepository
 
 
         return $payments_success;
+    }
+
+    public function getPaymentsByMonth($month, $subject_id){
+        return MonthlyPayment::query()
+            ->with(['student' => function ($query) {
+                $query->select('id', 'name');
+            },'teacher' => function ($query) {
+                $query->select('id', 'name');
+            },'subject' => function ($query) {
+                $query->select('id', 'name');
+            }])->where('month', $month)->where('subject_id', $subject_id)->get();
+    }
+
+    public function getDebtStudents($month, $subject_id){
+        return MonthlyPayment::query()
+            ->with(['student' => function ($query) {
+                $query->select('id','phone');
+            }])->where('month', $month)->where('subject_id', $subject_id)
+            ->where('status', 0)->get();
+    }
+
+    public function filtr($date){
+        return MonthlyPayment::query()
+            ->with(['student' => function ($query) {
+                $query->select('id','name');
+            },'subject' => function ($query) {
+            $query->select('id', 'name');
+            }])->where('date', $date)->get();
     }
 }

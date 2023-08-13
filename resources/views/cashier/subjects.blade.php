@@ -171,19 +171,6 @@
 
         @endif
 
-        @if(session('password_error') == 1)
-        const notyf = new Notyf();
-
-        notyf.error({
-            message: 'Parollar bir xil emas!',
-            duration: 5000,
-            dismissible : true,
-            position: {
-                x : 'center',
-                y : 'top'
-            },
-        });
-        @endif
 
         @if(session('add') == 1)
         const notyf = new Notyf();
@@ -199,11 +186,12 @@
         });
         @endif
 
-        @if(session('change') == 2)
+
+        @if(session('attach_error') == 1)
         const notyf = new Notyf();
 
-        notyf.success({
-            message: 'Parol muvaffaqiyatli o\'zgartirildi',
+        notyf.error({
+            message: 'Guruhda o\'quvchilar mavjud emas!',
             duration: 5000,
             dismissible : true,
             position: {

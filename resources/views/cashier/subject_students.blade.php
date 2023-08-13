@@ -1,6 +1,8 @@
 @extends('cashier.header')
 
 @push('css')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
     <style>
         .pagination{height:36px;margin:0;padding: 0;}
         .pager,.pagination ul{margin-left:0;*zoom:1}
@@ -42,39 +44,6 @@
 @endsection
 @section('section')
 
-
-    <main class="content forma" style="padding-bottom: 0; display: none">
-        <div class="container-fluid p-0">
-            <div class="col-md-8 col-xl-9">
-                <div class="">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">Yangi o'quvchi qo'shish</h5>
-                        </div>
-                        <div class="card-body h-100">
-                            <form action="{{ route('cashier.new.student') }}" method="post">
-                                @csrf
-                                <div class="mb-3">
-                                    <label class="form-label">F.I.Sh <span class="text-danger">*</span></label>
-                                    <input name="name" required type="text" class="form-control" placeholder="">
-                                </div>
-                                <label class="form-label">Telefon <span class="text-danger">*</span></label>
-                                <div class="input-group mb-3">
-                                    <span class="input-group-text">+998</span>
-                                    <input type="number" required name="phone" maxlength="9" class="form-control">
-                                </div>
-                                <div class=" text-end">
-                                    <button type="button" class="btn btn-danger cancel">Bekor qilish</button>
-                                    <button type="submit" class="btn btn-success">Qo'shish</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
     <main class="content teachers">
         <div class="container-fluid p-0">
             <div class="col-12 col-xl-12">
@@ -93,22 +62,21 @@
                                 To'lovlar
                             </a>
 
-
-                            <input type="radio" class="btn-check" name="btnradio" id="30m" autocomplete="off">
-                            <label class="btn btn-sm btn-light" for="30m">SMS xizmati</label>
-
-
+                            <a class="btn btn-sm btn-light" data-bs-toggle="list" href="#sms" role="tab" aria-selected="true">
+                                SMS xizmati
+                            </a>
                         </div>
                     </div>
                     <div class="tab-content">
                         <div class="tab-pane fade  " id="payments" role="tabpanel">
-                            <table class="table table-striped table-hover table-responsive">
+                            <table class="table table-striped table-hover table-responsive" id="old-data">
                                 <thead>
                                 <tr>
                                     <th>#</th>
                                     <th>Oy</th>
                                     <th>To'langan</th>
                                     <th>To'lanmagan</th>
+                                    <th>Ko'rish</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -120,10 +88,44 @@
                                         <td>{{ \Carbon\Carbon::parse($payment->month)->format('F Y') }}</td>
                                         <td class="text-success">{{  number_format($payment->total, 0, '.', ' ') }} so'm</td>
                                         <td class="text-danger">{{  number_format($payment->debt, 0, '.', ' ') }} so'm</td>
+                                        <td class="text-danger"><button class="btn btn-success detail" subject_id="{{ $attachs[0]->subject_id }}" month="{{ $payment->month }}"><i class="align-middle" data-feather="eye"></i></button></td>
                                     </tr>
                                 @endforeach
                                 </tbody>
                             </table>
+                            <div class="p-3" id="new-data" style="display: none">
+                                <table class="table table-striped table-hover table-responsive"  id="tbl_exporttable_to_xls">
+                                    <thead>
+                                    <tr>
+                                        <td>O'qituvchi:</td>
+                                        <th id="teacher_name">O'qituvchi</th>
+                                    </tr>
+                                    <tr>
+                                        <td>O'quv oyi:</td>
+                                        <th id="month_name">O'qituvchi</th>
+                                    </tr>
+                                    <tr>
+                                        <td>Guruh:</td>
+                                        <th id="group_name">O'qituvchi</th>
+                                    </tr>
+                                    <tr>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Ismi</th>
+                                        <th>To'langan</th>
+                                        <th>Qarzdorlik</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="tbody">
+                                    </tbody>
+                                </table>
+                                <div class="text-end">
+                                    <button class="btn btn-success" onclick="ExportToExcel('xlsx')">Excel yuklash</button>
+                                    <button class="btn btn-primary" id="back">Orqaga</button>
+                                </div>
+                            </div>
                         </div>
                         <div class=" tab-pane fade active show " id="students">
                             <table class="table table-striped table-hover w-100 table-responsive">
@@ -148,6 +150,39 @@
                                 @endforeach
                                 </tbody>
                             </table>
+                        </div>
+                        <div class=" tab-pane fade  " id="sms">
+                            <div class="card">
+                                <div class="card-body row">
+                                    <div class="col-6">
+                                        <h6 class="card-title">Barchaga sms jo'natish</h6>
+                                        <form>
+                                            @csrf
+                                            <input type="hidden" name="subject_id" value="{{ $attachs[0]->subject_id }}">
+                                            <textarea required name="message" class="form-control" rows="3" placeholder="Xabar matni"></textarea>
+                                            <input type="submit" class="btn btn-success mt-3" value="yuborish">
+                                        </form>
+                                    </div>
+                                    <div class="col-6">
+                                        <h6 class="card-title">Qarzdorlarga sms jo'natish</h6>
+                                        <form action="{{ route('cashier.sms.debt') }}" method="post">
+                                            <input type="hidden" name="subject_id" value="{{ $attachs[0]->subject_id }}">
+                                            <select class="form-select mb-3" name="month" id="monthInput">
+                                                <option selected="" value="all">Oyni tanlang</option>
+                                                @foreach($payments as $id => $payment)
+                                                    @if($payment->debt > 0)
+                                                        <option value="{{ $payment->month }}">{{ \Carbon\Carbon::parse($payment->month)->format('F Y') }}</option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                            @csrf
+                                            <textarea required name="message" class="form-control" rows="3" placeholder="Xabar matni"></textarea>
+                                            <button type="submit" style="display: none" id="realButton">s</button>
+                                            <button type="button" class="btn btn-success mt-3" id="fakeButton">Yuborish</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class=" tab-pane fade active " id="payments_by_month">
                             <table class="table table-striped table-hover table-responsive">
@@ -183,54 +218,122 @@
 
 @section('js')
     <script>
-        $(document).on('click', '.new-student', function () {
-            let sb_id = $(this).attr('id');
-            $.ajax({
-                url: '{{ route('cashier.subject') }}/' + sb_id,
-                method: 'GET',
-                success: function(data) {
-                    $('#name').text(data.name);
-
-                    $('.add-student').show();
-                    $('.teachers').hide();
+        (function (factory) {
+            if (typeof define === 'function' && define.amd) {
+                define(['moment'], factory); // AMD
+            } else if (typeof exports === 'object') {
+                module.exports = factory(require('../moment')); // Node
+            } else {
+                factory(window.moment); // Browser global
+            }
+        }(function (moment) {
+            return moment.defineLocale('uz', {
+                months: 'Yanvar_Fevral_Mart_Aprel_May_Iyun_Iyul_Avgust_Sentabr_Oktabr_Noyabr_Dekabr'.split('_'),
+                monthsShort: 'янв_фев_мар_апр_май_июн_июл_авг_сен_окт_ноя_дек'.split('_'),
+                weekdays: 'Якшанба_Душанба_Сешанба_Чоршанба_Пайшанба_Жума_Шанба'.split('_'),
+                weekdaysShort: 'Якш_Душ_Сеш_Чор_Пай_Жум_Шан'.split('_'),
+                weekdaysMin: 'Як_Ду_Се_Чо_Па_Жу_Ша'.split('_'),
+                longDateFormat: {
+                    LT: 'HH:mm',
+                    L: 'DD/MM/YYYY',
+                    LL: 'D MMMM YYYY',
+                    LLL: 'D MMMM YYYY LT',
+                    LLLL: 'D MMMM YYYY, dddd LT'
+                },
+                calendar: {
+                    sameDay: '[Бугун соат] LT [да]',
+                    nextDay: '[Эртага] LT [да]',
+                    nextWeek: 'dddd [куни соат] LT [да]',
+                    lastDay: '[Кеча соат] LT [да]',
+                    lastWeek: '[Утган] dddd [куни соат] LT [да]',
+                    sameElse: 'L'
+                },
+                relativeTime: {
+                    future: 'Якин %s ичида',
+                    past: 'Бир неча %s олдин',
+                    s: 'фурсат',
+                    m: 'бир дакика',
+                    mm: '%d дакика',
+                    h: 'бир соат',
+                    hh: '%d соат',
+                    d: 'бир кун',
+                    dd: '%d кун',
+                    M: 'бир ой',
+                    MM: '%d ой',
+                    y: 'бир йил',
+                    yy: '%d йил'
+                },
+                week: {
+                    dow: 1, // Monday is the first day of the week.
+                    doy: 7  // The week that contains Jan 4th is the first week of the year.
                 }
             });
+        }));
+        $(document).on('click', '#back', function() {
+            $('#old-data').show();
+            $('#new-data').hide();
         });
 
-        $(document).on('change', '#teacher', function() {
-            let selectedId = $(this).val();
-            if(selectedId === 'all'){
-                window.location = "{{ route('cashier.subjects') }}";
+        $(document).on('click', '#fakeButton', function() {
+            let val = $('#monthInput').val();
+            if(val === "all"){
+                const notyf = new Notyf();
+
+                notyf.error({
+                    message: 'O\'quv oyi tanlamadi',
+                    duration: 5000,
+                    dismissible : true,
+                    position: {
+                        x : 'center',
+                        y : 'top'
+                    },
+                });
             }
-            $("#tbody").empty();
+            else{
+                $('#realButton').click();
+            }
+        });
+
+
+        function ExportToExcel(type, fn, dl) {
+            var elt = document.getElementById('tbl_exporttable_to_xls');
+            var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+            return dl ?
+                XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }):
+                XLSX.writeFile(wb, fn || ('xisobot.' + (type || 'xlsx')));
+        }
+
+        $(document).on('click', '.detail', function() {
+            let month = $(this).attr('month');
+            let subject_id = $(this).attr('subject_id');
+
+            let formattedMonth = moment(month).locale('uz').format('MMMM YYYY');
 
             $.ajax({
-                url: '{{ route('cashier.teacher.subjects') }}/' + selectedId,
+                url: '{{ route('cashier.payment.details') }}',
                 method: 'GET',
+                data: {month:month,subject_id:subject_id},
                 success: function(data) {
+                    $('#teacher_name').text(data[0].teacher.name);
+                    $('#month_name').text(formattedMonth);
+                    $('#group_name').text(data[0].subject.name);
                     const tableBody = $("#tbody");
-                    data.subjects.forEach(subject => {
+                    tableBody.empty();
+                    let countdown = 0;
+                    data.forEach(detail => {
+                        countdown++;
                         const newRow = `
                             <tr>
-                                <td>${subject.name}</td>
-                                <td><b>${subject.price} so'm</b></td>
-                                <td>${data.name}</td>
-                                <td>${subject.lessons_count}</td>
-                                <td class="edit-btn" style="cursor: pointer">
-                                    <button class="btn btn-success new-student" id="${subject.id}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus align-middle">
-                                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                            <circle cx="8.5" cy="7" r="4"></circle>
-                                            <line x1="20" y1="8" x2="20" y2="14"></line>
-                                            <line x1="23" y1="11" x2="17" y2="11"></line>
-                                        </svg> Yangi o'quvchi
-                                    </button>
-                                </td>
+                                <td>${countdown}</td>
+                                <td>${detail.student.name}</td>
+                                <td><b>${detail.amount_paid}</b> so'm</td>
+                                <td><b>${detail.amount}</b> so'm</td>
                             </tr>
                         `;
                         tableBody.append(newRow);
                     });
-
+                    $('#old-data').hide();
+                    $('#new-data').show();
                 }
             });
         });
@@ -280,23 +383,5 @@
             },
         });
         @endif
-
-        $(".add").on("click", function() {
-            $('.forma').show();
-            $('.teachers').hide();
-        });
-
-        $(".cancel").on("click", function() {
-            event.stopPropagation();
-            $('.forma').hide();
-            $('.teachers').show();
-        });
-
-        $(".cancel1").on("click", function() {
-            event.stopPropagation();
-            $('.add-student').hide();
-            $('.teachers').show();
-        });
-
     </script>
 @endsection

@@ -217,6 +217,11 @@ class CashierController extends Controller
         return view('cashier.payment',['student' => $student]);
     }
 
+    public function payments(){
+        $payments = $this->monthlyPaymentRepository->getPayments();
+        return view('cashier.payments',['payments' => $payments]);
+    }
+
 
 
 
@@ -233,9 +238,10 @@ class CashierController extends Controller
     }
 
     public function subjectStudents($subject_id){
-        $payments = $this->monthlyPaymentRepository->monthPaymentsBySubjectId($subject_id);
         $attach = $this->attachRepository->getAttachWithStudentsAndTeacher($subject_id);
-        $payments_success = $this->monthlyPaymentRepository->getPaymentsByMonth($subject_id);
+        if (count($attach) < 1) return back()->with('attach_error',1);
+        $payments = $this->monthlyPaymentRepository->monthPaymentsBySubjectId($subject_id);
+        $payments_success = $this->monthlyPaymentRepository->getPaidPaymentsByMonth($subject_id);
         return view('cashier.subject_students',['attachs' => $attach, 'payments' => $payments,'payments_success' => $payments_success]);
     }
 
@@ -255,9 +261,20 @@ class CashierController extends Controller
     }
 
 
+
+
 //  Payment control
     public function getMonthlyPayments($attach_id){
         return $this->attachRepository->getAttachWithMonthlyPayments($attach_id);
+    }
+
+    public function payment_details(Request $request){
+        return $this->monthlyPaymentRepository->getPaymentsByMonth($request->month, $request->subject_id);
+    }
+
+    public function payment_filtr($date){
+        if (!$date) return 'date not detected';
+        return $this->monthlyPaymentRepository->filtr($date);
     }
 
     public function getPayment($payment_id){
@@ -299,6 +316,7 @@ class CashierController extends Controller
 
 
 
+
 //    Outlay control
     public function outlays(){
         $outlays = $this->outlayRepository->getOutlaysWithTypes();
@@ -329,5 +347,23 @@ class CashierController extends Controller
 
     public function get_outlays($type_id){
         return $this->outlayRepository->get_outlays($type_id);
+    }
+
+
+
+//    SMS control
+    public function debt(Request $request){
+        $request->validate([
+            'subject_id' => 'required|numeric',
+            'message' => 'required|string',
+            'month' => 'required|string',
+        ]);
+        $students = $this->monthlyPaymentRepository->getDebtStudents($request->month, $request->subject_id);
+        return $students;
+    }
+
+    public function sms(){
+        $subjects = $this->subjectRepository->getAllSubjects();
+        return view('cashier.sms',['subjects' => $subjects]);
     }
 }
