@@ -39,6 +39,10 @@ Route::prefix('admin')->group(function () {
         Route::get('cashiers',[AdminController::class, 'cashiers'])->name('admin.cashiers');
         Route::post('cashier-add',[AdminController::class, 'add_cashier'])->name('admin.new.cashier');
         Route::post('update-cashier',[AdminController::class, 'update_cashier'])->name('admin.update.cashier');
+
+
+//        Payment manage
+        Route::get('payments', [AdminController::class, 'payments'])->name('admin.payments');
     });
 });
 
@@ -48,6 +52,9 @@ Route::prefix('teacher')->group(function () {
         Route::get('home', [TeacherController::class, 'home'])->name('teacher.home');
         Route::get('group/{id?}', [TeacherController::class, 'subject_detail'])->name('teacher.subject.detail');        Route::get('payment-details',[CashierController::class, 'payment_details'])->name('cashier.payment.details');
         Route::get('payment-details',[TeacherController::class, 'payment_details'])->name('teacher.payment.details');
+        Route::get('attendances/{subject_id?}',[TeacherController::class, 'attendances'])->name('teacher.attendances');
+        Route::post('attendances-check',[TeacherController::class, 'attendance_check'])->name('teacher.attendances.check');
+
     });
 });
 

@@ -49,7 +49,7 @@
             <div class="col-12 col-xl-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title mb-0"><span class="text-danger">{{ $attachs[0]->subject_name }}</span> guruhi haqida malumotlar</h5>
+                        <h5 class="card-title mb-3"><span class="text-danger">{{ $attachs[0]->subject_name }}</span> guruhi haqida malumotlar</h5>
                         <div class="card-actions float-end" role="tablist"  >
                             <a class="btn btn-sm btn-light active" data-bs-toggle="list" href="#students" role="tab" aria-selected="true">
                                 O'quvchilar

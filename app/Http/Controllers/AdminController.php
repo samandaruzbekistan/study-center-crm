@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
 use App\Repositories\AdminRepository;
 use App\Repositories\CashierRepository;
+use App\Repositories\MonthlyPaymentRepository;
+use App\Repositories\OutlayRepository;
 use App\Repositories\SubjectRepository;
 use App\Repositories\TeacherRepository;
 use Illuminate\Http\Request;
@@ -12,7 +14,14 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
-    public function __construct(protected CashierRepository $cashierRepository, protected SubjectRepository $subjectRepository, protected AdminRepository $adminRepository, protected TeacherRepository $teacherRepository)
+    public function __construct(
+        protected CashierRepository $cashierRepository,
+        protected SubjectRepository $subjectRepository,
+        protected AdminRepository $adminRepository,
+        protected TeacherRepository $teacherRepository,
+        protected MonthlyPaymentRepository $monthlyPaymentRepository,
+        protected OutlayRepository $outlayRepository
+    )
     {
     }
 
@@ -41,7 +50,20 @@ class AdminController extends Controller
     }
 
     public function home(){
-        return view('admin.home');
+        $payments_arr = $this->monthlyPaymentRepository->monthPaymentsByDateOrderType(date('Y-m-d'));
+        $outlay = $this->outlayRepository->getOutlayByDate('2023-08-07');
+        $payments = $this->monthlyPaymentRepository->getPayments7();
+        $cash = 0;
+        $transfer = 0;
+        $credit_card = 0;
+        if (count($payments_arr) > 0){
+            foreach ($payments_arr as $item){
+                if ($item->type == 'cash') $cash = $item->total;
+                else if ($item->type == 'transfer') $transfer = $item->total;
+                else $credit_card = $item->total;
+            }
+        }
+        return view('admin.home', ['payments' => $payments,'outlay' => $outlay,'cash' => $cash, 'credit_card' => $credit_card, 'transfer' => $transfer]);
     }
 
     public function profile(){
@@ -163,5 +185,14 @@ class AdminController extends Controller
         if ($request->input('password1') != $request->input('password2')) return back()->with('password_error',1);
         $this->cashierRepository->update_password($request->password1, $request->username);
         return back()->with('change',2);
+    }
+
+
+
+
+//    Payment control
+    public function payments(){
+        $payments = $this->monthlyPaymentRepository->getPayments();
+        return view('admin.payments',['payments' => $payments]);
     }
 }

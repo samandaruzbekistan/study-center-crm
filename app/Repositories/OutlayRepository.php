@@ -3,10 +3,14 @@
 namespace App\Repositories;
 
 use App\Models\Outlay;
-use App\Models\OutlayType;
 
 class OutlayRepository
 {
+    public function getOutlayByDate($date){
+        return Outlay::where('date', $date)
+            ->sum('amount');
+    }
+
     public function getOutlaysWithTypes(){
         return Outlay::with('types')->latest()->get();
     }

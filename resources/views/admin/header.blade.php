@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="{{ asset('img/icons/icon-48x48.png') }}" />
 
 
-
+    @stack('css')
     <title>Admin | Ideal Study</title>
 
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
@@ -69,14 +69,14 @@
                 </li>
 
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="charts-chartjs.html">
+                    <a class="sidebar-link" href="{{ route('admin.payments') }}">
                         <i class="align-middle" data-feather="bar-chart-2"></i> <span class="align-middle">To'lovlar</span>
                     </a>
                 </li>
 
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="maps-google.html">
-                        <i class="align-middle" data-feather="map"></i> <span class="align-middle">O'quvchilar</span>
+                        <i class="align-middle" data-feather="users"></i> <span class="align-middle">O'quvchilar</span>
                     </a>
                 </li>
 

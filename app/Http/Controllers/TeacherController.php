@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Repositories\AttachRepository;
+use App\Repositories\AttendanceRepository;
 use App\Repositories\MonthlyPaymentRepository;
+use App\Repositories\NotComeDaysRepository;
 use App\Repositories\SubjectRepository;
 use App\Repositories\TeacherRepository;
 use Illuminate\Http\Request;
@@ -17,6 +19,8 @@ class TeacherController extends Controller
         protected SubjectRepository $subjectRepository,
         protected AttachRepository $attachRepository,
         protected MonthlyPaymentRepository $monthlyPaymentRepository,
+        protected AttendanceRepository $attendanceRepository,
+        protected NotComeDaysRepository $notComeDaysRepository,
     )
     {
     }
@@ -58,5 +62,32 @@ class TeacherController extends Controller
 
     public function payment_details(Request $request){
         return $this->monthlyPaymentRepository->getPaymentsByMonth($request->month, $request->subject_id);
+    }
+
+    public function attendances($subject_id){
+        $attachs = $this->attachRepository->getAttachWithStudentsAndTeacher($subject_id);
+        $attendances = $this->attendanceRepository->getAttendanceBySubjectId($subject_id);
+//        return ['attendances' => $attendances, 'attachs' => $attachs, 'subject_id' => $subject_id];
+        return view('teacher.attendances', ['attendances' => $attendances, 'attachs' => $attachs, 'subject_id' => $subject_id]);
+    }
+
+    public function attendance_check(Request $request){
+        $selectedStudentIds= $request->input('student_ids', []);
+        $d = date('Y-m-d');
+        $c= count($selectedStudentIds);
+        $att = $this->attendanceRepository->getAttendanceBySubjectIdDate($request->subject_id, $d);
+        if ($att) return back()->with('error',1);
+        $attendance_id = $this->attendanceRepository->add($request->subject_id,session('id'), $d,$c);
+        $inserted_row = [];
+        foreach ($selectedStudentIds as $id){
+            $inserted_row[] = [
+                'student_id' => $id,
+                'subject_id' => $request->subject_id,
+                'date' => $d,
+                'attendance_id' => $attendance_id
+            ];
+        }
+        $this->notComeDaysRepository->add($inserted_row);
+        return back()->with('success',1);
     }
 }

@@ -24,6 +24,17 @@ class MonthlyPaymentRepository
             }])->where('date','!=', null)->orderBy('date', 'desc')->paginate(100);
     }
 
+    public function getPayments7(){
+        return MonthlyPayment::query()
+            ->with(['student' => function ($query) {
+                $query->select('id', 'name');
+            }, 'teacher' => function ($query) {
+                $query->select('id', 'name');
+            }, 'subject' => function ($query) {
+                $query->select('id', 'name');
+            }])->where('date','!=', null)->orderBy('date', 'desc')->paginate(7);
+    }
+
     public function getPayment($id){
         return MonthlyPayment::find($id);
     }
@@ -50,6 +61,15 @@ class MonthlyPaymentRepository
         $payments = MonthlyPayment::where('subject_id', $subject_id)
             ->select('month','subject_id', DB::raw('SUM(amount_paid) as total'),DB::raw('SUM(amount) as debt'))
             ->groupBy('month')
+            ->get();
+
+        return $payments;
+    }
+
+    public function monthPaymentsByDateOrderType($date){
+        $payments = MonthlyPayment::where('date', $date)
+            ->select('type', DB::raw('SUM(amount_paid) as total'))
+            ->groupBy('type')
             ->get();
 
         return $payments;

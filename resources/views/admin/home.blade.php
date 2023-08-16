@@ -1,5 +1,7 @@
 @extends('admin.header')
-
+@push('css')
+    <link href="{{ asset('css/pagination.css') }}" rel="stylesheet">
+@endpush
 @section('home')
     active
 @endsection
@@ -27,7 +29,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <h1 class="mt-1 mb-3">2.382</h1>
+                                        <h1 class="mt-1 mb-3">{{  number_format($cash, 0, '.', ' ') }}</h1>
                                         <div class="mb-0">
                                             <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i>Naqd</span>
                                             <span class="text-muted"> pulda to'landi</span>
@@ -49,7 +51,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <h1 class="mt-1 mb-3">14.212</h1>
+                                    <h1 class="mt-1 mb-3">{{  number_format($credit_card, 0, '.', ' ') }}</h1>
                                     <div class="mb-0">
                                         <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i>Karta</span>
                                         <span class="text-muted"> orqali to'landi</span>
@@ -71,7 +73,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <h1 class="mt-1 mb-3">$21.300</h1>
+                                    <h1 class="mt-1 mb-3">{{  number_format($transfer, 0, '.', ' ') }}</h1>
                                     <div class="mb-0">
                                         <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i>Hisob</span>
                                         <span class="text-muted"> raqamga o'tkazma</span>
@@ -93,7 +95,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <h1 class="mt-1 mb-3">64</h1>
+                                    <h1 class="mt-1 mb-3">{{ number_format($outlay, 0, '.', ' ') }}</h1>
                                     <div class="mb-0">
                                         <span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i>Xarajatlar</span>
                                         <span class="text-muted"> summasi</span>
@@ -112,7 +114,7 @@
                     <div class="card flex-fill w-100">
                         <div class="card-header">
 
-                            <h5 class="card-title mb-0">Browser Usage</h5>
+                            <h5 class="card-title mb-0">To'lov turlari</h5>
                         </div>
                         <div class="card-body d-flex">
                             <div class="align-self-center w-100">
@@ -126,15 +128,15 @@
                                     <tbody>
                                     <tr>
                                         <td>Naqd</td>
-                                        <td class="text-end">4306</td>
+                                        <td class="text-end">{{ $cash }}</td>
                                     </tr>
                                     <tr>
                                         <td>Karta</td>
-                                        <td class="text-end">3801</td>
+                                        <td class="text-end">{{ $credit_card }}</td>
                                     </tr>
                                     <tr>
                                         <td>Bank</td>
-                                        <td class="text-end">1689</td>
+                                        <td class="text-end">{{ $transfer }}</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -159,64 +161,24 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>Project Apollo</td>
-                                <td class="d-none d-xl-table-cell">01/01/2021</td>
-                                <td class="d-none d-xl-table-cell">31/06/2021</td>
-                                <td><span class="badge bg-success">Done</span></td>
-                                <td class="d-none d-md-table-cell">Vanessa Tucker</td>
-                            </tr>
-                            <tr>
-                                <td>Project Fireball</td>
-                                <td class="d-none d-xl-table-cell">01/01/2021</td>
-                                <td class="d-none d-xl-table-cell">31/06/2021</td>
-                                <td><span class="badge bg-danger">Cancelled</span></td>
-                                <td class="d-none d-md-table-cell">William Harris</td>
-                            </tr>
-                            <tr>
-                                <td>Project Hades</td>
-                                <td class="d-none d-xl-table-cell">01/01/2021</td>
-                                <td class="d-none d-xl-table-cell">31/06/2021</td>
-                                <td><span class="badge bg-success">Done</span></td>
-                                <td class="d-none d-md-table-cell">Sharon Lessman</td>
-                            </tr>
-                            <tr>
-                                <td>Project Nitro</td>
-                                <td class="d-none d-xl-table-cell">01/01/2021</td>
-                                <td class="d-none d-xl-table-cell">31/06/2021</td>
-                                <td><span class="badge bg-warning">In progress</span></td>
-                                <td class="d-none d-md-table-cell">Vanessa Tucker</td>
-                            </tr>
-                            <tr>
-                                <td>Project Phoenix</td>
-                                <td class="d-none d-xl-table-cell">01/01/2021</td>
-                                <td class="d-none d-xl-table-cell">31/06/2021</td>
-                                <td><span class="badge bg-success">Done</span></td>
-                                <td class="d-none d-md-table-cell">William Harris</td>
-                            </tr>
-                            <tr>
-                                <td>Project X</td>
-                                <td class="d-none d-xl-table-cell">01/01/2021</td>
-                                <td class="d-none d-xl-table-cell">31/06/2021</td>
-                                <td><span class="badge bg-success">Done</span></td>
-                                <td class="d-none d-md-table-cell">Sharon Lessman</td>
-                            </tr>
-                            <tr>
-                                <td>Project Romeo</td>
-                                <td class="d-none d-xl-table-cell">01/01/2021</td>
-                                <td class="d-none d-xl-table-cell">31/06/2021</td>
-                                <td><span class="badge bg-success">Done</span></td>
-                                <td class="d-none d-md-table-cell">Christina Mason</td>
-                            </tr>
-                            <tr>
-                                <td>Project Wombat</td>
-                                <td class="d-none d-xl-table-cell">01/01/2021</td>
-                                <td class="d-none d-xl-table-cell">31/06/2021</td>
-                                <td><span class="badge bg-warning">In progress</span></td>
-                                <td class="d-none d-md-table-cell">William Harris</td>
-                            </tr>
+                                @foreach($payments as $payment)
+                                    <tr>
+                                        <td>{{ $payment->student->name }}</td>
+                                        <td class="d-none d-xl-table-cell">{{ $payment->date }}</td>
+                                        <td class="d-none d-xl-table-cell">{{ $payment->amount_paid }}</td>
+                                        @if($payment->type == 'cash')
+                                            <td class=""><a href="#" class="badge bg-success me-1 my-1">Naqd</a></td>
+                                        @elseif($payment->type == 'credit_card')
+                                            <td class=""><a href="#" class="badge bg-warning text-dark me-1 my-1">Karta</a></td>
+                                        @else
+                                            <td class=""><a href="#" class="badge bg-danger me-1 my-1">Bank</a></td>
+                                        @endif
+                                        <td class="d-none d-md-table-cell">{{ $payment->teacher->name }}</td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
+                        <div class="m-2">{{ $payments->links() }}</div>
                     </div>
                 </div>
             </div>
@@ -232,9 +194,9 @@
             new Chart(document.getElementById("chartjs-dashboard-pie"), {
                 type: "pie",
                 data: {
-                    labels: ["Chrome", "Firefox", "IE"],
+                    labels: ["Naqd", "Karta", "Bank"],
                     datasets: [{
-                        data: [4306, 3801, 1689],
+                        data: [{{ $cash }}, {{ $credit_card }}, {{ $transfer }}],
                         backgroundColor: [
                             window.theme.primary,
                             window.theme.warning,
