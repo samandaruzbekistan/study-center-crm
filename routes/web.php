@@ -122,6 +122,16 @@ Route::prefix('cashier')->group(function () {
         Route::post('student-sms', [CashierController::class, 'sendSmsStudent'])->name('cashier.sms.student');
         Route::post('debt', [CashierController::class, 'debt'])->name('cashier.sms.debt');
         Route::post('subject', [CashierController::class, 'subject'])->name('cashier.sms.subject');
+
+//        Attendance control
+        Route::get('/attendances',[CashierController::class,'attendances'])->name('cashier.attendance.subjects');
+        Route::get('/attendance/{subject_id?}',[CashierController::class,'attendance'])->name('cashier.attendances');
+        Route::get('attendance-detail/{subject_id?}/{month?}',[TeacherController::class, 'attendance_detail'])->name('cashier.attendance.detail');
+        Route::get('day-detail/{id?}',[TeacherController::class, 'attendance_detail_day'])->name('cashier.attendance.day');
+
+//        Region control
+        Route::get('districts/{region_id?}', [CashierController::class,'districts'])->name('cashier.district.regionID');
+        Route::get('quarters/{district_id?}', [CashierController::class,'quarters'])->name('cashier.quarter.districtID');
     });
 });
 

@@ -145,4 +145,9 @@ class TeacherController extends Controller
         $this->notComeDaysRepository->add($inserted_row);
         return back()->with('success',1);
     }
+
+
+
+
+
 }

@@ -51,7 +51,7 @@ class AdminController extends Controller
 
     public function home(){
         $payments_arr = $this->monthlyPaymentRepository->monthPaymentsByDateOrderType(date('Y-m-d'));
-        $outlay = $this->outlayRepository->getOutlayByDate('2023-08-07');
+        $outlay = $this->outlayRepository->getOutlayByDate(date('Y-m-d'));
         $payments = $this->monthlyPaymentRepository->getPayments7();
         $cash = 0;
         $transfer = 0;

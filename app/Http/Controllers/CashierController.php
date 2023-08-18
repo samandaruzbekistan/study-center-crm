@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Repositories\AttachRepository;
+use App\Repositories\AttendanceRepository;
 use App\Repositories\CashierRepository;
+use App\Repositories\DistrictRepository;
 use App\Repositories\MonthlyPaymentRepository;
 use App\Repositories\NotComeDaysRepository;
 use App\Repositories\OutlayRepository;
@@ -28,6 +30,8 @@ class CashierController extends Controller
         protected OutlayRepository $outlayRepository,
         protected SmsService $smsService,
         protected NotComeDaysRepository $notComeDaysRepository,
+        protected AttendanceRepository $attendanceRepository,
+        protected DistrictRepository $districtRepository,
     )
     {
     }
@@ -113,13 +117,18 @@ class CashierController extends Controller
     }
 
     public function new_student(Request $request){
+//        return $request;
         $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'required|numeric|digits:9'
+            'phone' => 'required|numeric|digits:9',
+            'phone2' => 'required|numeric|digits:9',
+            'region_id' => 'required|numeric',
+            'quarter_id' => 'required|numeric',
+            'district_id' => 'required|numeric',
         ]);
         $student = $this->studentRepository->getStudentByName($request->name);
         if (!empty($student)) return back()->with('username_error',1);
-        $this->studentRepository->addStudentCashier($request->name, $request->phone);
+        $this->studentRepository->addStudentCashier($request->name, $request->phone,$request->phone2,$request->region_id, $request->district_id,$request->quarter_id);
         return back()->with('success',1);
     }
 
@@ -406,5 +415,28 @@ class CashierController extends Controller
     public function sms(){
         $subjects = $this->subjectRepository->getAllSubjects();
         return view('cashier.sms',['subjects' => $subjects]);
+    }
+
+
+//    Attendance control
+    public function attendances(){
+        $subjects = $this->subjectRepository->getAllSubjects();
+        return view('cashier.attendance', ['subjects' => $subjects]);
+    }
+
+    public function attendance($subject_id){
+        $attendances = $this->attendanceRepository->getAttendanceBySubjectId($subject_id, '09');
+        $absentDay = $this->notComeDaysRepository->getTotalAbsentDays($subject_id,'09');
+//        return ['attendances' => $attendances, 'attachs' => $attachs, 'subject_id' => $subject_id];
+        return view('cashier.attendances', ['absentDay'=> $absentDay,'attendances' => $attendances, 'subject_id' => $subject_id]);
+    }
+
+    //    Region control
+    public function districts($region_id){
+        return $this->districtRepository->districts($region_id);
+    }
+
+    public function quarters($district_id){
+        return $this->districtRepository->quarters($district_id);
     }
 }

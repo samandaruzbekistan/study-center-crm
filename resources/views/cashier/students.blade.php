@@ -101,11 +101,44 @@
                                         <label class="form-label">Ota-ona telefoni<span class="text-danger">*</span></label>
                                         <div class="input-group mb-3 col-6">
                                             <span class="input-group-text">+998</span>
-                                            <input type="number" required name="phone" maxlength="9" class="form-control">
+                                            <input type="number" required name="phone2" maxlength="9" class="form-control">
                                         </div>
                                     </div>
                                 </div>
-
+                                <div class="row">
+                                    <div class="mb-3 col-sm-4 col-4">
+                                        <label for="region" class="form-label">Viloyat</label> <sup class="text-danger">*</sup>
+                                        <select id="region" required="" class="form-select" name="region_id">
+                                            <option disabled="" selected="" hidden>Tanlang</option>
+                                            <option value="2">Andijon viloyati</option>
+                                            <option value="3">Buxoro viloyati</option>
+                                            <option value="12">Farg‘ona viloyati</option>
+                                            <option value="4">Jizzax viloyati</option>
+                                            <option value="7">Namangan viloyati</option>
+                                            <option value="6">Navoiy viloyati</option>
+                                            <option value="5">Qashqadaryo viloyati</option>
+                                            <option value="1">Qoraqalpog‘iston Respublikasi</option>
+                                            <option value="8">Samarqand viloyati</option>
+                                            <option value="10">Sirdaryo viloyati</option>
+                                            <option value="9">Surxandaryo viloyati</option>
+                                            <option value="14">Toshkent shahri</option>
+                                            <option value="11">Toshkent viloyati</option>
+                                            <option value="13">Xorazm viloyati</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 col-sm-4 col-4">
+                                        <label for="district" class="form-label">Tuman</label> <sup class="text-danger">*</sup>
+                                        <select id="district" name="district_id" required class="form-select">
+                                            <option disabled="" selected="" hidden>Tanlang</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 col-sm-4 col-4">
+                                        <label for="quarter" class="form-label">Mahalla</label> <sup class="text-danger">*</sup>
+                                        <select id="quarter" name="quarter_id" required class="form-select">
+                                            <option disabled="" selected="" hidden>Tanlang</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class=" text-end">
                                     <button type="button" class="btn btn-danger cancel">Bekor qilish</button>
                                     <button type="submit" class="btn btn-success">Qo'shish</button>
@@ -158,6 +191,45 @@
 
 @section('js')
     <script>
+        $(document).on('change', '#region', function() {
+            let selectedId = $(this).val();
+            let firstOption = $('#district option:first');
+
+            $("#district").empty();
+            $('#district').append('<option value="" disabled selected hidden>Tanlash...</option>');
+            $.ajax({
+                url: '{{ route('cashier.district.regionID') }}/' + selectedId,
+                method: 'GET',
+                success: function(data) {
+                    $("#district").empty();
+                    $('#district').append('<option value="" disabled selected hidden>Tanlash...</option>');
+                    $.each(data, function(key, value){
+                        $('#district').append('<option value="' + value.id+ '">' + value.name + '</option>');
+                    });
+                }
+            });
+        });
+
+        $(document).on('change', '#district', function() {
+            let selectedId = $(this).val();
+            let firstOption = $('#quarter option:first');
+
+            $("#quarter").empty();
+            $('#quarter').append('<option value="" disabled selected hidden>Tanlash...</option>');
+            $.ajax({
+                url: '{{ route('cashier.quarter.districtID') }}/' + selectedId,
+                method: 'GET',
+                success: function(data) {
+                    $("#quarter").empty();
+                    $('#quarter').append('<option value="" disabled selected hidden>Tanlash...</option>');
+                    $.each(data, function(key, value){
+                        $('#quarter').append('<option value="' + value.id+ '">' + value.name + '</option>');
+                    });
+                }
+            });
+        });
+
+
         $(document).on('click', '.new-student', function () {
             let sb_id = $(this).attr('id');
             $.ajax({

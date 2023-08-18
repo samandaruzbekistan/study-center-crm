@@ -21,13 +21,13 @@ class MonthlyPaymentRepository
     }
 
     public function daleteNowAndNextPayments($monthToDelete,$attach_id){
-        MonthlyPayment::where('date', '>=', $monthToDelete)
+        MonthlyPayment::where('month', '>=', $monthToDelete)
             ->where('attach_id',$attach_id)
             ->delete();
     }
 
     public function daleteNextPayments($monthToDelete,$attach_id){
-        MonthlyPayment::where('date', '>', $monthToDelete)
+        MonthlyPayment::where('month', '>', $monthToDelete)
             ->where('attach_id',$attach_id)
             ->delete();
     }
