@@ -4,9 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Repositories\AdminRepository;
+use App\Repositories\AttachRepository;
+use App\Repositories\AttendanceRepository;
 use App\Repositories\CashierRepository;
 use App\Repositories\MonthlyPaymentRepository;
+use App\Repositories\NotComeDaysRepository;
 use App\Repositories\OutlayRepository;
+use App\Repositories\StudentRepository;
 use App\Repositories\SubjectRepository;
 use App\Repositories\TeacherRepository;
 use Illuminate\Http\Request;
@@ -20,7 +24,11 @@ class AdminController extends Controller
         protected AdminRepository $adminRepository,
         protected TeacherRepository $teacherRepository,
         protected MonthlyPaymentRepository $monthlyPaymentRepository,
-        protected OutlayRepository $outlayRepository
+        protected OutlayRepository $outlayRepository,
+        protected StudentRepository $studentRepository,
+        protected AttachRepository $attachRepository,
+        protected AttendanceRepository $attendanceRepository,
+        protected NotComeDaysRepository $notComeDaysRepository,
     )
     {
     }
@@ -194,5 +202,48 @@ class AdminController extends Controller
     public function payments(){
         $payments = $this->monthlyPaymentRepository->getPayments();
         return view('admin.payments',['payments' => $payments]);
+    }
+
+
+//    Student control
+    public function students(){
+        $students = $this->studentRepository->getStudents();
+        return view('admin.students',['students' =>$students]);
+    }
+
+//    subjects control
+    public function subjects(){
+        $subs = $this->subjectRepository->getAllSubjects();
+        return view('admin.subjects', ['subjects' => $subs]);
+    }
+
+    public function subjectStudents($subject_id){
+        $attach = $this->attachRepository->getAttachWithStudentsAndTeacher($subject_id);
+        if (count($attach) < 1) return back()->with('attach_error',1);
+        $payments = $this->monthlyPaymentRepository->monthPaymentsBySubjectId($subject_id);
+        $payments_success = $this->monthlyPaymentRepository->getPaidPaymentsByMonth($subject_id);
+        return view('admin.subject_students',['subject_id'=>$subject_id,'attachs' => $attach, 'payments' => $payments,'payments_success' => $payments_success]);
+    }
+
+
+
+
+    public function attendances(){
+        $subjects = $this->subjectRepository->getAllSubjects();
+        return view('admin.attendance', ['subjects' => $subjects]);
+    }
+
+    public function attendance($subject_id){
+        $attendances = $this->attendanceRepository->getAttendanceBySubjectId($subject_id, '09');
+        $absentDay = $this->notComeDaysRepository->getTotalAbsentDays($subject_id,'09');
+//        return ['attendances' => $attendances, 'attachs' => $attachs, 'subject_id' => $subject_id];
+        return view('admin.attendances', ['absentDay'=> $absentDay,'attendances' => $attendances, 'subject_id' => $subject_id]);
+    }
+
+
+
+    public function sms(){
+        $subjects = $this->subjectRepository->getAllSubjects();
+        return view('admin.sms',['subjects' => $subjects]);
     }
 }

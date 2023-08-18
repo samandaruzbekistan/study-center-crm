@@ -43,6 +43,23 @@ Route::prefix('admin')->group(function () {
 
 //        Payment manage
         Route::get('payments', [AdminController::class, 'payments'])->name('admin.payments');
+        Route::get('payment-details',[CashierController::class, 'payment_details'])->name('admin.payment.details');
+
+//       Student conrol
+        Route::get('students',[AdminController::class,'students'])->name('admin.students');
+
+//        Sms control
+        Route::get('sms', [AdminController::class, 'sms'])->name('admin.sms');
+
+//        Subject control
+        Route::get('subjects',[AdminController::class,'subjects'])->name('admin.subjects');
+        Route::get('admin-subject-students/{subject_id?}', [AdminController::class, 'subjectStudents'])->name('admin.subject.students');
+
+//        Attendance control
+        Route::get('/attendances',[AdminController::class,'attendances'])->name('admin.attendance.subjects');
+        Route::get('/attendance/{subject_id?}',[AdminController::class,'attendance'])->name('admin.attendances');
+        Route::get('attendance-detail/{subject_id?}/{month?}',[TeacherController::class, 'attendance_detail'])->name('admin.attendance.detail');
+        Route::get('day-detail/{id?}',[TeacherController::class, 'attendance_detail_day'])->name('admin.attendance.day');
     });
 });
 
