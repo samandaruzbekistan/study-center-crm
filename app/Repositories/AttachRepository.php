@@ -12,7 +12,7 @@ class AttachRepository
                 $query->select('id', 'name','phone');
             }, 'teacher' => function ($query) {
                 $query->select('id', 'name');
-            }])->where('subject_id', $subject_id)->get();
+            }])->where('subject_id', $subject_id)->where('status', 1)->get();
     }
 
     public function addAttach($student, $subject,$name){
@@ -28,6 +28,12 @@ class AttachRepository
     public function getAttach($student, $subject){
         return Attach::where('student_id', $student)
             ->where('subject_id', $subject)->first();
+    }
+
+    public function deActiveAttach($id){
+        Attach::where('id', $id)->update([
+            'status' => 0
+        ]);
     }
 
     public function getAttachStudentId($student_id){

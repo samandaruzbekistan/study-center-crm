@@ -45,8 +45,8 @@
 @section('section')
 
     <main class="content teachers">
-        <div class="container-fluid p-0">
-            <div class="col-12 col-xl-12">
+        <div class="container-fluid p-0 ">
+            <div class="col-12 col-xl-12" id="datas">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title mb-0"><span class="text-danger">{{ $attachs[0]->subject_name }}</span> guruhi haqida malumotlar</h5>
@@ -134,7 +134,7 @@
                                     <th>#</th>
                                     <th>F.I.Sh</th>
                                     <th class="d-none d-sm-table-cell">Telefon</th>
-                                    <th>Guruhga qo'shish</th>
+                                    <th>Guruhdan chiqarish</th>
                                 </tr>
                                 </thead>
                                 <tbody id="tbody">
@@ -145,7 +145,7 @@
                                         </td>
                                         <td><a href="{{ route('cashier.student') }}/{{ $attach->id }}">{{ $attach->student->name }}</a></td>
                                         <td class="d-none d-sm-table-cell">+{{ preg_replace('/(\d{3})(\d{2})(\d{3})(\d{2})(\d{2})/', '$1 $2 $3 $4 $5', $attach->student->phone) }}</td>
-                                        <td style="cursor: pointer"><a href="{{ route('cashier.add_to_subject') }}/{{ $attach->id }}" class="btn btn-success add-student"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus align-middle"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg></a></td>
+                                        <td><button name="{{ $attach->student->name }}" id="{{ $attach->student->id }}" class="btn btn-danger chiqarish"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-x align-middle me-2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="18" y1="8" x2="23" y2="13"></line><line x1="23" y1="8" x2="18" y2="13"></line></svg></button></td>
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -210,7 +210,44 @@
                     </div>
                 </div>
             </div>
-
+            <div class="row">
+                <div class="col-12 col-xl-6" id="tekshirish" style="display: none">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Guruhdan chiqarish</h4>
+                        </div>
+                        <div class="card-body">
+                            <form action="{{ route('cashier.student.deActiveAttach') }}" method="post">
+                                @csrf
+                                <div class="mb-3">
+                                    <label class="form-label" for="ismi">Ismi</label>
+                                    <input type="text" class="form-control" disabled id="ismi">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label" for="sanasi">Ketish sanasi</label>
+                                    <input type="date" id="sanasi" name="date" class="form-control"  value="{{ date('Y-m-d') }}" max="{{ date('Y-m-d') }}">
+                                </div>
+                                <input type="hidden" name="student_id" class="form-control" id="studentID">
+                                <input type="hidden" name="subject_id" class="form-control" value="{{ $subject_id }}" id="subject_id">
+                                <button type="button" class="btn btn-danger canc1">Bekor qilish</button>
+                                <button type="button" class="btn btn-warning text-dark" id="tekshir">Tekshirish</button>
+                                <input type="submit" style="display: none" id="sbm-button">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-xl-6" id="natija" style="display: none">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Tavsilotlar</h4>
+                        </div>
+                        <div class="card-body">
+                            <h4 id="message" class="text-danger"></h4>
+                            <button type="button" style="display: none" class="btn btn-success fake">Chiqarish</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 @endsection
@@ -269,9 +306,19 @@
                 }
             });
         }));
+        $(document).on('click', '.fake', function() {
+            $('#sbm-button').click();
+        });
+
         $(document).on('click', '#back', function() {
             $('#old-data').show();
             $('#new-data').hide();
+        });
+
+        $(document).on('click', '.canc1', function() {
+            $('#datas').show();
+            $('#tekshirish').hide();
+            $('#natija').hide();
         });
 
         $(document).on('click', '#fakeButton', function() {
@@ -302,6 +349,42 @@
                 XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }):
                 XLSX.writeFile(wb, fn || ('xisobot.' + (type || 'xlsx')));
         }
+
+        $(document).on('click', '#tekshir', function() {
+            let StudentID = $('#studentID').val();
+            let DateVal = $('#sanasi').val();
+            let SubjectID = $('#subject_id').val();
+            $.ajax({
+                url: '{{ route('cashier.student.check') }}/'+StudentID+'/'+DateVal+'/'+SubjectID,
+                method: 'GET',
+                success: function (data) {
+                    if(data === 'payment_error'){
+                        $('.fake').hide();
+                        $('#message').text('Chiqarish mumkin emas! Ketish oyi uchun to\'lovni xisoblang va amalga oshiring');
+                        $('#natija').show();
+                    }
+                    else if(data === 'month_error'){
+                        $('.fake').hide();
+                        $('#message').text('O\'quv oyi topilmadi');
+                        $('#natija').show();
+                    }
+                    else if(data === 'true'){
+                        $('#message').text('Barchasi to\'g\'ri. Guruhdan chiqarishingiz mumkin');
+                        $('.fake').show();
+                        $('#natija').show();
+                    }
+                },
+            });
+        });
+
+        $(document).on('click', '.chiqarish', function() {
+            let stuentId = $(this).attr('id');
+            let stuentName = $(this).attr('name');
+            $('#ismi').val(stuentName);
+            $('#studentID').val(stuentId);
+            $('#datas').hide();
+            $('#tekshirish').show();
+        });
 
         $(document).on('click', '.detail', function() {
             let month = $(this).attr('month');
@@ -361,6 +444,19 @@
 
         notyf.success({
             message: 'Yangi o\'quvchi qo\'shildi!',
+            duration: 5000,
+            dismissible : true,
+            position: {
+                x : 'center',
+                y : 'top'
+            },
+        });
+        @endif
+        @if(session('deActivated') == 1)
+        const notyf = new Notyf();
+
+        notyf.success({
+            message: 'O\'quvchi guruhdan chiqarildi',
             duration: 5000,
             dismissible : true,
             position: {

@@ -6,6 +6,7 @@ use App\Http\Requests\LoginRequest;
 use App\Repositories\AttachRepository;
 use App\Repositories\CashierRepository;
 use App\Repositories\MonthlyPaymentRepository;
+use App\Repositories\NotComeDaysRepository;
 use App\Repositories\OutlayRepository;
 use App\Repositories\StudentRepository;
 use App\Repositories\SubjectRepository;
@@ -26,6 +27,7 @@ class CashierController extends Controller
         protected AttachRepository $attachRepository,
         protected OutlayRepository $outlayRepository,
         protected SmsService $smsService,
+        protected NotComeDaysRepository $notComeDaysRepository,
     )
     {
     }
@@ -119,6 +121,45 @@ class CashierController extends Controller
         if (!empty($student)) return back()->with('username_error',1);
         $this->studentRepository->addStudentCashier($request->name, $request->phone);
         return back()->with('success',1);
+    }
+
+    public function check($id, $date,$subject_id){
+        $attach = $this->attachRepository->getAttach($id, $subject_id);
+        $newDate = Carbon::createFromFormat('Y-m-d', $date)
+            ->startOfMonth()
+            ->format('Y-m-d');
+        $carbonDate = Carbon::parse($date);
+        $payment = $this->monthlyPaymentRepository->getPaymentByMonth($id, $newDate,$subject_id);
+        if (!$payment) return 'month_error';
+        if ($payment->status == 0){
+            if ($carbonDate->day > 6){
+                return 'payment_error';
+            }
+            else{
+                return 'true';
+            }
+        }
+        return 'true';
+    }
+
+    public function deActiveAttach(Request $request){
+//        return $request;
+        $attach = $this->attachRepository->getAttach($request->student_id, $request->subject_id);
+        $newDate = Carbon::createFromFormat('Y-m-d', $request->date)
+            ->startOfMonth()
+            ->format('Y-m-d');
+        $carbonDate = Carbon::parse($request->date);
+        $payment = $this->monthlyPaymentRepository->getPaymentByMonth($request->student_id, $newDate,$request->subject_id);
+        if (($payment->status == 0) and ($carbonDate->day < 6)){
+            $this->monthlyPaymentRepository->daleteNowAndNextPayments($newDate, $attach->id);
+            $this->attachRepository->deActiveAttach($attach->id);
+            return back()->with('deActivated',1);
+        }
+        if ($payment->status == 1){
+            $this->monthlyPaymentRepository->daleteNextPayments($newDate, $attach->id);
+            $this->attachRepository->deActiveAttach($attach->id);
+            return back()->with('deActivated',1);
+        }
     }
 
     public function add_to_subject($id){
@@ -242,7 +283,7 @@ class CashierController extends Controller
         if (count($attach) < 1) return back()->with('attach_error',1);
         $payments = $this->monthlyPaymentRepository->monthPaymentsBySubjectId($subject_id);
         $payments_success = $this->monthlyPaymentRepository->getPaidPaymentsByMonth($subject_id);
-        return view('cashier.subject_students',['attachs' => $attach, 'payments' => $payments,'payments_success' => $payments_success]);
+        return view('cashier.subject_students',['subject_id'=>$subject_id,'attachs' => $attach, 'payments' => $payments,'payments_success' => $payments_success]);
     }
 
     public function new_subject(Request $request){

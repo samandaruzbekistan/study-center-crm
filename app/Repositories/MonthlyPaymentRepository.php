@@ -13,6 +13,25 @@ class MonthlyPaymentRepository
         MonthlyPayment::insert($data);
     }
 
+    public function getPaymentByMonth($student_id, $month, $subject_id){
+        return MonthlyPayment::where('student_id', $student_id)
+            ->where('subject_id', $subject_id)
+            ->where('month', $month)
+            ->first();
+    }
+
+    public function daleteNowAndNextPayments($monthToDelete,$attach_id){
+        MonthlyPayment::where('date', '>=', $monthToDelete)
+            ->where('attach_id',$attach_id)
+            ->delete();
+    }
+
+    public function daleteNextPayments($monthToDelete,$attach_id){
+        MonthlyPayment::where('date', '>', $monthToDelete)
+            ->where('attach_id',$attach_id)
+            ->delete();
+    }
+
     public function getPayments(){
         return MonthlyPayment::query()
             ->with(['student' => function ($query) {
