@@ -50,6 +50,44 @@ class TeacherController extends Controller
         return view('teacher.subjects', ['subjects' => $subjects]);
     }
 
+    public function logout(){
+        session()->flush();
+        return redirect()->route('teacher.login');
+    }
+
+    public function profile(){
+        $admin = $this->teacherRepository->getTeacher(session('username'));
+        return view('teacher.profile', ['user' => $admin]);
+    }
+
+    public function update(Request $request){
+        $request->validate([
+            'password1' => 'required|string',
+            'password2' => 'required|string',
+            'username' => 'required|string',
+        ]);
+        if ($request->input('password1') != $request->input('password2')) return back()->with('password_error',1);
+        $this->teacherRepository->update_password($request->password1, $request->username);
+        return back()->with('success',1);
+    }
+
+    public function update_avatar(Request $request){
+        $request->validate([
+            'photo' => 'required|image|max:2048',
+        ]);
+        $cashier = $this->teacherRepository->getTeacher(session('username'));
+        if ($cashier->photo != 'no_photo.jpg') unlink('img/avatars/'.$cashier->photo);
+        $file = $request->file('photo')->extension();
+        $name = md5(microtime());
+        $photo_name = $name.".".$file;
+        session()->put('photo', $photo_name);
+        $path = $request->file('photo')->move('img/avatars/',$photo_name);
+        $this->teacherRepository->update_photo($photo_name);
+        return back()->with('success_photo',1);
+    }
+
+
+
     public function subject_detail($id){
         $subject = $this->subjectRepository->getSubject($id);
         if ($subject->teacher_id != session('id')) return redirect()->route('teacher.login');
@@ -66,10 +104,27 @@ class TeacherController extends Controller
 
     public function attendances($subject_id){
         $attachs = $this->attachRepository->getAttachWithStudentsAndTeacher($subject_id);
-        $attendances = $this->attendanceRepository->getAttendanceBySubjectId($subject_id);
+        $attendances = $this->attendanceRepository->getAttendanceBySubjectId($subject_id, '09');
+        $absentDay = $this->notComeDaysRepository->getTotalAbsentDays($subject_id,'09');
 //        return ['attendances' => $attendances, 'attachs' => $attachs, 'subject_id' => $subject_id];
-        return view('teacher.attendances', ['attendances' => $attendances, 'attachs' => $attachs, 'subject_id' => $subject_id]);
+        return view('teacher.attendances', ['absentDay'=> $absentDay,'attendances' => $attendances, 'attachs' => $attachs, 'subject_id' => $subject_id]);
     }
+
+    public function attendance(){
+        $subjects = $this->subjectRepository->getTeacherSubjects(session('id'));
+        return view('teacher.attendance', ['subjects' => $subjects]);
+    }
+
+    public function attendance_detail($subject_id, $month){
+        $attendances = $this->attendanceRepository->getAttendanceBySubjectId($subject_id, $month);
+        $absentDay = $this->notComeDaysRepository->getTotalAbsentDays($subject_id,$month);
+        return [$absentDay,$attendances];
+    }
+
+    public function attendance_detail_day($id){
+        return $this->notComeDaysRepository->getWithStudentName($id);
+    }
+
 
     public function attendance_check(Request $request){
         $selectedStudentIds= $request->input('student_ids', []);

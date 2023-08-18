@@ -50,9 +50,17 @@ Route::prefix('teacher')->group(function () {
     Route::post('/auth', [TeacherController::class, 'auth'])->name('teacher.auth');
     Route::middleware(['teacher_auth'])->group(function () {
         Route::get('home', [TeacherController::class, 'home'])->name('teacher.home');
+        Route::get('logout', [TeacherController::class, 'logout'])->name('teacher.logout');
+        Route::get('profile', [TeacherController::class, 'profile'])->name('teacher.profile');
+        Route::post('update',[TeacherController::class,'update'])->name('teacher.update');
+        Route::post('update-avatar',[TeacherController::class,'update_avatar'])->name('teacher.avatar');
+
         Route::get('group/{id?}', [TeacherController::class, 'subject_detail'])->name('teacher.subject.detail');        Route::get('payment-details',[CashierController::class, 'payment_details'])->name('cashier.payment.details');
         Route::get('payment-details',[TeacherController::class, 'payment_details'])->name('teacher.payment.details');
         Route::get('attendances/{subject_id?}',[TeacherController::class, 'attendances'])->name('teacher.attendances');
+        Route::get('attendance',[TeacherController::class, 'attendance'])->name('teacher.attendance');
+        Route::get('attendance-detail/{subject_id?}/{month?}',[TeacherController::class, 'attendance_detail'])->name('teacher.attendance.detail');
+        Route::get('day-detail/{id?}',[TeacherController::class, 'attendance_detail_day'])->name('teacher.attendance.day');
         Route::post('attendances-check',[TeacherController::class, 'attendance_check'])->name('teacher.attendances.check');
 
     });

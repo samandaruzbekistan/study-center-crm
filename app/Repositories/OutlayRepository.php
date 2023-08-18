@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Outlay;
+use App\Models\OutlayType;
 
 class OutlayRepository
 {
@@ -42,4 +43,5 @@ class OutlayRepository
     public function get_outlays($type_id){
         return Outlay::with('types')->where('type_id', $type_id)->latest()->get();
     }
+
 }

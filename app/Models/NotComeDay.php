@@ -13,4 +13,9 @@ class NotComeDay extends Model
     {
         return $this->belongsTo(Attendance::class);
     }
+
+    public function student()
+    {
+        return $this->belongsTo(Student::class, 'student_id');
+    }
 }

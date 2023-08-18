@@ -41,10 +41,16 @@
                     </a>
                 </li>
 
+                <li class="sidebar-item @yield('attendance')">
+                    <a class="sidebar-link" href="{{ route('teacher.attendance') }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-check align-middle me-2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg> <span class="align-middle">Davomat</span>
+                    </a>
+                </li>
+
 
 
                 <li class="sidebar-item @yield('profile')">
-                    <a class="sidebar-link" href="{{ route('cashier.profile') }}">
+                    <a class="sidebar-link" href="{{ route('teacher.profile') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user align-middle"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> <span class="align-middle">Profil</span>
                     </a>
                 </li>
@@ -77,13 +83,9 @@
                             <img src="{{ asset('/img/avatars/') }}/{{ session('photo') }}" class="avatar img-fluid rounded me-1" alt="user photo" /> <span class="text-dark">{{ session('name') }}</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item" href="pages-profile.html"><i class="align-middle me-1" data-feather="user"></i> Profile</a>
-                            <a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="pie-chart"></i> Analytics</a>
+                            <a class="dropdown-item" href="{{ route('teacher.profile') }}"><i class="align-middle me-1" data-feather="user"></i> Profile</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="index.html"><i class="align-middle me-1" data-feather="settings"></i> Settings & Privacy</a>
-                            <a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="help-circle"></i> Help Center</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="{{ route('cashier.logout') }}">Chiqish</a>
+                            <a class="dropdown-item" href="{{ route('teacher.logout') }}">Chiqish</a>
                         </div>
                     </li>
                 </ul>
@@ -125,80 +127,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 @yield('js')
 <script>
-    // Handle search input in modal
-    $('#modalSearchInput').on('input', function() {
-        var query = $(this).val();
-        var loadingIndicator = $('#loadingIndicator');
-        if (query.length === 0){
-            $('#main').show();
-            $('#search-section').hide();
-        }
-        if(query.length > 2){
-            $('#search-section').empty();
-            $.ajax({
-                url: '{{ route('cashier.search') }}', // Replace with your backend route for handling search
-                method: 'GET',
-                data: { name: query },
-                success: function(response) {
-                    console.log(response);
-                    var references = response; // Assign the response directly
-                    var referencesHtml =
-                        `<main class="content teachers">
-                        <div class="container-fluid p-0">
-                            <div class="col-12 col-xl-12">
-                                <div class="card">
-                                    <div class="card-header d-flex justify-content-between">
-                                        <h5 class="card-title mb-0">O'quvchilar ro'yhati</h5>
-                                        <button class="btn btn-primary add ms-2">+ Yangi o'quvchi</button>
-                                    </div>
-                                    <table class="table table-striped table-hover table-responsive">
-                                        <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>F.I.Sh</th>
-                                            <th>Telefon</th>
-                                            <th>Guruhga qo'shish</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody id="tbody">`;
-                    let countdown = 0;
-                    for (var i = 0; i < references.length; i++) {
-                        countdown++;
-                        referencesHtml += '<tr>';
-                        referencesHtml += '<td>' + countdown + '</td>';
-                        referencesHtml += '<td><a href="{{ route('cashier.student') }}/'+references[i].id+'">' + references[i].name + '</a></td>';
-                        referencesHtml += '<td>' + references[i].phone + '</td>';
-                        referencesHtml += `<td><a href="{{ route('cashier.add_to_subject') }}/`+references[i].id+`" class="btn btn-success add-student"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus align-middle"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg></a></td>`;
-                        referencesHtml += '</tr>';
-                    }
-                    referencesHtml +=   `</tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </main>`;
-                    // Display the references in the modal
-
-                    $('#search-section').html(referencesHtml);
-                    $('#main').hide();
-                    $('#search-section').show();
-                    // Hide the loading indicator
-                    loadingIndicator.hide();
-                },
-                error: function() {
-                    // Handle error case
-                    // Hide the loading indicator
-                    loadingIndicator.hide();
-                }
-            });
-        }
-        // Display the loading indicator
-        loadingIndicator.show();
-
-        // Make AJAX request to fetch search results
-
-
-    });
 
     const fullscreenLink = document.getElementById('fullscreenLink');
     let isFullScreen = false;

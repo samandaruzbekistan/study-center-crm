@@ -37,6 +37,10 @@ class TeacherRepository
         return $teacher;
     }
 
+    public function update_photo($photo){
+        Teacher::where('id', session('id'))->update(['photo' => $photo]);
+    }
+
     public function allTeachersWithSubjects()
     {
         $teacher = Teacher::with('subjects')->get();

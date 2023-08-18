@@ -18,4 +18,9 @@ class Student extends Model
     {
         return $this->hasMany(MonthlyPayment::class, 'student_id');
     }
+
+    public function notComeDays()
+    {
+        return $this->hasMany(NotComeDay::class, 'student_id');
+    }
 }

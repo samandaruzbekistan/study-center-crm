@@ -21,7 +21,6 @@
                         <thead>
                         <tr>
                             <th>Nomi</th>
-                            <th>Davomat</th>
                             <th>Tafsilotlar</th>
                         </tr>
                         </thead>
@@ -31,7 +30,6 @@
                                 <td>
                                     {{ $subject->name }}
                                 </td>
-                                <td><a class="btn btn-success" href="{{ route('teacher.attendances',['subject_id' => $subject->id]) }}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-check align-middle me-2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg></a></td>
                                 <td><a class="btn btn-primary" href="{{ route('teacher.subject.detail',['id' => $subject->id]) }}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-eye align-middle"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg></a></td>
                             </tr>
                         @endforeach

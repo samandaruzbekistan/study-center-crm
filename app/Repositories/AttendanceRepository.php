@@ -6,10 +6,10 @@ use App\Models\Attendance;
 
 class AttendanceRepository
 {
-    public function getAttendanceBySubjectId($id){
+    public function getAttendanceBySubjectId($id, $month){
         return Attendance::where('subject_id', $id)
-            ->where('teacher_id', session('id'))
-            ->orderBy('date','asc')
+            ->whereMonth('date', $month)
+            ->orderBy('date','desc')
             ->get();
     }
 
@@ -28,4 +28,6 @@ class AttendanceRepository
         $attendance->save();
         return $attendance->id;
     }
+
+
 }

@@ -78,12 +78,13 @@ class MonthlyPaymentRepository
     public function getPaidPaymentsByMonth($subject_id){
         $payments_success = MonthlyPayment::where('subject_id', $subject_id)
             ->where('amount_paid','>',0)
-            ->select('month', DB::raw('SUM(amount_paid) as total'))
-            ->groupBy('month')
+            ->select(
+                DB::raw('DATE_FORMAT(date, "%Y-%m") as month'),
+                DB::raw('SUM(amount_paid) as total')
+            )
+            ->groupBy(DB::raw('DATE_FORMAT(date, "%Y-%m")'))
+            ->orderBy(DB::raw('DATE_FORMAT(date, "%Y-%m")'), 'desc')
             ->get();
-
-
-
         return $payments_success;
     }
 
