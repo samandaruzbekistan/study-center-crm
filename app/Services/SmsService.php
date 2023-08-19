@@ -124,4 +124,78 @@ class SmsService
         }
     }
 
+    public function sendSMSparents($users, $message){
+        $token = SmsConfig::find(1);
+        $current_date = Carbon::now();
+        $token_expiry_date = Carbon::parse($token->updated_at)->addMonth();
+        if($current_date->greaterThan($token_expiry_date)){
+            $re = $this->getToken();
+            if ($re['message'] == 'error') return response()->json(['message'=> 'error'], 200);
+        }
+        $token = $token->token;
+        $messages = [];
+        foreach ($users as $index => $number) {
+            $messages[] = [
+                "user_sms_id" => "sms" . ($index + 1),
+                "to" => $number->phone2,
+                "text" => $message,
+            ];
+        }
+
+        $data = [
+            "messages" => $messages,
+            "from" => "4546",
+            "dispatch_id" => 123
+        ];
+//        dd(json_encode($data));
+        $response = Http::withToken($token)
+            ->withHeaders(['Content-Type' => 'application/json'])
+            ->post('https://notify.eskiz.uz/api/message/sms/send-batch', $data);
+        // Check if the request was successful
+        if ($response->successful()) {
+            // Return the response JSON or extract specific data as needed
+            return $response->json();
+        } else {
+            // Return an error message or handle the failed request
+            return json_decode($response->body(), true);
+        }
+    }
+
+    public function sendSmsSubject($users, $message){
+        $token = SmsConfig::find(1);
+        $current_date = Carbon::now();
+        $token_expiry_date = Carbon::parse($token->updated_at)->addMonth();
+        if($current_date->greaterThan($token_expiry_date)){
+            $re = $this->getToken();
+            if ($re['message'] == 'error') return response()->json(['message'=> 'error'], 200);
+        }
+        $token = $token->token;
+        $messages = [];
+        foreach ($users as $index => $number) {
+            $messages[] = [
+                "user_sms_id" => "sms" . ($index + 1),
+                "to" => $number->student->phone,
+                "text" => $message,
+            ];
+        }
+
+        $data = [
+            "messages" => $messages,
+            "from" => "4546",
+            "dispatch_id" => 123
+        ];
+//        dd(json_encode($data));
+        $response = Http::withToken($token)
+            ->withHeaders(['Content-Type' => 'application/json'])
+            ->post('https://notify.eskiz.uz/api/message/sms/send-batch', $data);
+        // Check if the request was successful
+        if ($response->successful()) {
+            // Return the response JSON or extract specific data as needed
+            return $response->json();
+        } else {
+            // Return an error message or handle the failed request
+            return json_decode($response->body(), true);
+        }
+    }
+
 }

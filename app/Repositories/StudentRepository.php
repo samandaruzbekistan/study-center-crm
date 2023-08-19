@@ -31,6 +31,20 @@ class StudentRepository
         $st->parents_phone = '998'.$phone2;
         $st->cashier_id = session('id');
         $st->save();
+        return $st->id;
+    }
+
+    public function addStudentTeacher($name, $phone, $phone2,$r_id,$d_id,$q_id){
+        $st = new Student;
+        $st->name = $name;
+        $st->region_id = $r_id;
+        $st->district_id = $d_id;
+        $st->quarter_id = $q_id;
+        $st->phone = '998'.$phone;
+        $st->parents_phone = '998'.$phone2;
+        $st->teacher_id = session('id');
+        $st->save();
+        return $st->id;
     }
 
     public function getStudentsByName($name){

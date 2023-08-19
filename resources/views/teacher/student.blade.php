@@ -1,4 +1,4 @@
-@extends('cashier.header')
+@extends('teacher.header')
 
 @push('css')
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
@@ -29,12 +29,6 @@
                             </a>
                             <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#payments" role="tab" aria-selected="false" tabindex="-1">
                                 To'lovlar
-                            </a>
-                            <a class="list-group-item list-group-item-action" data-bs-toggle="list" href="#sms" role="tab" aria-selected="false" tabindex="-1">
-                                SMS yuborish
-                            </a>
-                            <a class="list-group-item list-group-item-action text-danger" data-bs-toggle="list" href="#" role="tab" aria-selected="false" tabindex="-1">
-                                Delete account
                             </a>
                         </div>
                     </div>
@@ -103,27 +97,27 @@
                             <div class="card col-6">
                                 <div class="card-body">
                                     <table class="table table-striped" >
-                                <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Nomi</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($student->attachs as $id => $subject)
-                                    <tr>
-                                        <td>{{ $id+1 }}</td>
-                                        <td>{{ $subject->subject_name }}</td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
+                                        <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Nomi</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach($student->attachs as $id => $subject)
+                                            <tr>
+                                                <td>{{ $id+1 }}</td>
+                                                <td>{{ $subject->subject_name }}</td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
                                     <div class="text-end">
-                                        <a href="{{ route('cashier.add_to_subject') }}/{{ $student->id }}" class="btn btn-primary">Yangi guruhga biriktirish</a>
+                                        <a href="{{ route('teacher.add_to_subject') }}/{{ $student->id }}" class="btn btn-primary">Yangi guruhga biriktirish</a>
                                     </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
                         <div class="tab-pane fade" id="payments" role="tabpanel">
                             <div class="card col-8">
                                 <div class="card-header">
@@ -140,13 +134,13 @@
                                 <div class="card-body">
                                     <table class="table table-striped" >
                                         <thead>
-                                            <tr>
-                                                <th>Guruh</th>
-                                                <th>Oy</th>
-                                                <th>Summa</th>
-                                                <th>Sana</th>
-                                                <th>Print</th>
-                                            </tr>
+                                        <tr>
+                                            <th>Guruh</th>
+                                            <th>Oy</th>
+                                            <th>Summa</th>
+                                            <th>Sana</th>
+                                            <th>Print</th>
+                                        </tr>
                                         </thead>
                                         <tbody class="old-data">
                                         @foreach($student->monthlyPayments as $payment)
@@ -166,9 +160,9 @@
                                         </tbody>
                                     </table>
 
+                                </div>
                             </div>
                         </div>
-                    </div>
                         <div class="tab-pane fade" id="sms" role="tabpanel">
                             <div class="card col-8">
                                 <div class="card-header">
@@ -186,52 +180,52 @@
                                             <button type="submit" class="btn btn-success">Xabar yuborish</button>
                                         </div>
                                     </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     </div>
                 </div>
 
             </div>
 
             <div class="col-12 col-xl-4 d-none">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title">Faktura</h5>
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Faktura</h5>
+                    </div>
+                    <div class="card-body border m-1" id="printContent">
+                        <div class="row ps-5 pe-5">
+                            <img src="{{ asset('logo.png') }}" class="img-fluid">
                         </div>
-                        <div class="card-body border m-1" id="printContent">
-                            <div class="row ps-5 pe-5">
-                                <img src="{{ asset('logo.png') }}" class="img-fluid">
-                            </div>
-                            <h1 class="text-center "><b>To'landi</b></h1>
-                            <div class="row h4 justify-content-between border-bottom">
-                                <b class="col mb-0">Sana:</b>
-                                <p class="col mb-0 text-end" id="date"></p>
-                            </div>
-                            <div class="row h4 justify-content-between">
-                                <b class="col-3 mb-0">F.I.SH:</b>
-                                <p class="col mb-0 text-end" id="name">{{ $student->name }}</p>
-                            </div>
-                            <div class="row h4 justify-content-between">
-                                <b class="col-3 mb-0">Guruh:</b>
-                                <p class="col mb-0 text-end" id="subject"></p>
-                            </div>
-                            <div class="row h4 justify-content-between">
-                                <b class="col-3 mb-0">Oy:</b>
-                                <p class="col mb-0 text-end" id="month"></p>
-                            </div>
-                            <div class="row h2 text-center border-bottom border-top">
-                                <b class="col mb-0" id="amount"> so'm</b>
-                            </div>
-                            <div id="qrcode-2" class="text-center d-flex justify-content-center">
+                        <h1 class="text-center "><b>To'landi</b></h1>
+                        <div class="row h4 justify-content-between border-bottom">
+                            <b class="col mb-0">Sana:</b>
+                            <p class="col mb-0 text-end" id="date"></p>
+                        </div>
+                        <div class="row h4 justify-content-between">
+                            <b class="col-3 mb-0">F.I.SH:</b>
+                            <p class="col mb-0 text-end" id="name">{{ $student->name }}</p>
+                        </div>
+                        <div class="row h4 justify-content-between">
+                            <b class="col-3 mb-0">Guruh:</b>
+                            <p class="col mb-0 text-end" id="subject"></p>
+                        </div>
+                        <div class="row h4 justify-content-between">
+                            <b class="col-3 mb-0">Oy:</b>
+                            <p class="col mb-0 text-end" id="month"></p>
+                        </div>
+                        <div class="row h2 text-center border-bottom border-top">
+                            <b class="col mb-0" id="amount"> so'm</b>
+                        </div>
+                        <div id="qrcode-2" class="text-center d-flex justify-content-center">
 
-                            </div>
-                        </div>
-                        <div class="card-footer d-flex justify-content-between">
-                            <button type="button" id="download-button" class="btn btn-info"><i class="align-middle" data-feather="download"></i> Yuklab olish</button>
-                            <button type="button" id="printButton" onClick="printdiv('printContent');" class="btn btn-success"><i class="align-middle" data-feather="printer"></i> Chop etish</button>
                         </div>
                     </div>
+                    <div class="card-footer d-flex justify-content-between">
+                        <button type="button" id="download-button" class="btn btn-info"><i class="align-middle" data-feather="download"></i> Yuklab olish</button>
+                        <button type="button" id="printButton" onClick="printdiv('printContent');" class="btn btn-success"><i class="align-middle" data-feather="printer"></i> Chop etish</button>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
@@ -350,34 +344,6 @@
 
         notyf.success({
             message: 'Yangi o\'quvchi qo\'shildi!',
-            duration: 5000,
-            dismissible : true,
-            position: {
-                x : 'center',
-                y : 'top'
-            },
-        });
-        @endif
-
-        @if(session('sms_error') == 1)
-        const notyf = new Notyf();
-
-        notyf.error({
-            message: 'Xatolik. Xabar yuborilmadi',
-            duration: 5000,
-            dismissible : true,
-            position: {
-                x : 'center',
-                y : 'top'
-            },
-        });
-        @endif
-
-        @if(session('sms_send') == 1)
-        const notyf = new Notyf();
-
-        notyf.success({
-            message: 'Xabar yuborildi',
             duration: 5000,
             dismissible : true,
             position: {

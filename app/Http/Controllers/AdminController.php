@@ -268,4 +268,43 @@ class AdminController extends Controller
         if($res['status'] == 'success') return back()->with('success',1);
         else return back()->with('error',1);
     }
+
+    public function sms_to_parents(Request $request){
+        $request->validate([
+            'message' => 'required|string'
+        ]);
+        $students = $this->studentRepository->getStudentsAll();
+        $res = $this->smsService->sendSMSparents($students, $request->message);
+        if($res['status'] == 'success') return back()->with('success',1);
+        else return back()->with('error',1);
+    }
+
+    public function smsBySubject(Request $request){
+        $request->validate([
+            'message' => 'required|string',
+            'type' => 'required|string',
+            'subject_id' => 'required|numeric',
+        ]);
+        $students = $this->attachRepository->getAttachBySubjectId($request->subject_id);
+        if ($request->type == 'parents'){
+            $res = $this->smsService->sendSMSparents($students, $request->message);
+        }
+        else{
+            $res = $this->smsService->sendSMS($students, $request->message);
+        }
+        if($res['status'] == 'success') return back()->with('success',1);
+        else return back()->with('error',1);
+    }
+
+    public function outlays(){
+        $outlays = $this->outlayRepository->get_outlays100();
+        return view('admin.outlays', ['outlays' => $outlays]);
+    }
+
+    public function outlays_filtr($date){
+        $outlays = $this->outlayRepository->filtr($date);
+        return $outlays;
+    }
+
+
 }

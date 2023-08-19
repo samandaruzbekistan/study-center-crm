@@ -62,6 +62,10 @@ Route::prefix('admin')->group(function () {
         Route::get('/attendance/{subject_id?}',[AdminController::class,'attendance'])->name('admin.attendances');
         Route::get('attendance-detail/{subject_id?}/{month?}',[TeacherController::class, 'attendance_detail'])->name('admin.attendance.detail');
         Route::get('day-detail/{id?}',[TeacherController::class, 'attendance_detail_day'])->name('admin.attendance.day');
+
+
+        Route::get('outlays',[AdminController::class, 'outlays'])->name('admin.outlays');
+        Route::get('outlays-filtr/{date?}',[AdminController::class, 'outlays_filtr'])->name('admin.outlay.filtr');
     });
 });
 
@@ -73,6 +77,16 @@ Route::prefix('teacher')->group(function () {
         Route::get('profile', [TeacherController::class, 'profile'])->name('teacher.profile');
         Route::post('update',[TeacherController::class,'update'])->name('teacher.update');
         Route::post('update-avatar',[TeacherController::class,'update_avatar'])->name('teacher.avatar');
+
+        Route::get('student-profile/{id?}', [TeacherController::class, 'student'])->name('teacher.student');
+        Route::get('students', [TeacherController::class, 'students'])->name('teacher.students');
+        Route::get('student-add-to-subject/{student_id?}', [TeacherController::class, 'add_to_subject'])->name('teacher.add_to_subject');
+        Route::post('attach-to-group', [TeacherController::class, 'attach'])->name('teacher.attach');
+
+        Route::get('payments',[TeacherController::class,'payments'])->name('teacher.payments');
+        Route::get('payments-month',[TeacherController::class,'payments_by_month'])->name('teacher.payment.month');
+
+        Route::post('groups-add', [TeacherController::class, 'new_subject'])->name('teacher.new.subject');
 
         Route::get('group/{id?}', [TeacherController::class, 'subject_detail'])->name('teacher.subject.detail');        Route::get('payment-details',[CashierController::class, 'payment_details'])->name('cashier.payment.details');
         Route::get('payment-details',[TeacherController::class, 'payment_details'])->name('teacher.payment.details');
@@ -96,11 +110,8 @@ Route::prefix('cashier')->group(function () {
         Route::post('update-avatar',[CashierController::class,'update_avatar'])->name('cashier.avatar');
 
 //        Student control
-        Route::get('new', [CashierController::class, 'new'])->name('cashier.new');
         Route::get('student-profile/{id?}', [CashierController::class, 'student'])->name('cashier.student');
         Route::get('students', [CashierController::class, 'students'])->name('cashier.students');
-        Route::get('search', [CashierController::class, 'search'])->name('cashier.search');
-        Route::post('student-add', [CashierController::class, 'new_student'])->name('cashier.new.student');
         Route::post('student-deactivate', [CashierController::class, 'deActiveAttach'])->name('cashier.student.deActiveAttach');
         Route::get('student-check/{id?}/{date?}/{subject_id?}', [CashierController::class, 'check'])->name('cashier.student.check');
         Route::get('student-add-to-subject/{student_id?}', [CashierController::class, 'add_to_subject'])->name('cashier.add_to_subject');
@@ -109,7 +120,6 @@ Route::prefix('cashier')->group(function () {
 //        Subject control
         Route::get('subjects', [CashierController::class, 'subjects'])->name('cashier.subjects');
         Route::get('cashier-subject-students/{subject_id?}', [CashierController::class, 'subjectStudents'])->name('cashier.subject.students');
-        Route::get('subject/{subject_id?}', [CashierController::class, 'subject'])->name('cashier.subject');
         Route::post('groups-add', [CashierController::class, 'new_subject'])->name('cashier.new.subject');
         Route::get('teacher-groups/{teacher_id?}', [CashierController::class, 'getTeacherWithSubjects'])->name('cashier.teacher.subjects');
 
@@ -139,7 +149,6 @@ Route::prefix('cashier')->group(function () {
 //        Sms xizmati
         Route::get('sms', [CashierController::class, 'sms'])->name('cashier.sms');
         Route::post('student-sms', [CashierController::class, 'sendSmsStudent'])->name('cashier.sms.student');
-        Route::post('debt', [CashierController::class, 'debt'])->name('cashier.sms.debt');
         Route::post('subject', [CashierController::class, 'subject'])->name('cashier.sms.subject');
 
 //        Attendance control
@@ -148,11 +157,32 @@ Route::prefix('cashier')->group(function () {
         Route::get('attendance-detail/{subject_id?}/{month?}',[TeacherController::class, 'attendance_detail'])->name('cashier.attendance.detail');
         Route::get('day-detail/{id?}',[TeacherController::class, 'attendance_detail_day'])->name('cashier.attendance.day');
 
-//        Region control
-        Route::get('districts/{region_id?}', [CashierController::class,'districts'])->name('cashier.district.regionID');
-        Route::get('quarters/{district_id?}', [CashierController::class,'quarters'])->name('cashier.quarter.districtID');
+
     });
 });
+
+Route::middleware(['combined_auth'])->group(function () {
+//    Student control
+    Route::get('search', [CashierController::class, 'search'])->name('cashier.search');
+    Route::post('student-add', [CashierController::class, 'new_student'])->name('cashier.new.student');
+    Route::post('student-add-teacher', [TeacherController::class, 'new_student'])->name('teacher.new.student');
+
+
+    Route::post('sms-send-group', [TeacherController::class, 'sms_to_group'])->name('sms.subject');
+    Route::post('sms-send-parents', [AdminController::class, 'sms_to_parents'])->name('sms.parents');
+    Route::post('smsBySubject', [AdminController::class, 'smsBySubject'])->name('smsBySubject');
+    Route::post('debt', [TeacherController::class, 'debt'])->name('cashier.sms.debt');
+
+
+    Route::get('subject/{subject_id?}', [CashierController::class, 'subject'])->name('cashier.subject');
+
+
+//        Region control
+    Route::get('districts/{region_id?}', [CashierController::class,'districts'])->name('cashier.district.regionID');
+    Route::get('quarters/{district_id?}', [CashierController::class,'quarters'])->name('cashier.quarter.districtID');
+});
+
+
 
 
 

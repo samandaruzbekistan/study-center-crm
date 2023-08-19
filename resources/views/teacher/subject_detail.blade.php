@@ -61,7 +61,9 @@
                             <a class="btn btn-sm btn-light" data-bs-toggle="list" href="#payments_by_month" role="tab" aria-selected="true">
                                 Tushumlar
                             </a>
-
+                            <a class="btn btn-sm btn-light" data-bs-toggle="list" href="#sms" role="tab" aria-selected="true">
+                                SMS xizmati
+                            </a>
                         </div>
                     </div>
                     <div class="tab-content">
@@ -115,6 +117,39 @@
                                 <div class="text-end">
                                     <button class="btn btn-success" onclick="ExportToExcel('xlsx')">Excel yuklash</button>
                                     <button class="btn btn-primary" id="back">Orqaga</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class=" tab-pane fade  " id="sms">
+                            <div class="card">
+                                <div class="card-body row">
+                                    <div class="col-6">
+                                        <h6 class="card-title">Barchaga sms jo'natish</h6>
+                                        <form action="{{ route('sms.subject') }}" method="post">
+                                            @csrf
+                                            <input type="hidden" name="subject_id" value="{{ $attachs[0]->subject_id }}">
+                                            <textarea required name="message" class="form-control" rows="3" placeholder="Xabar matni"></textarea>
+                                            <input type="submit" class="btn btn-success mt-3" value="yuborish">
+                                        </form>
+                                    </div>
+                                    <div class="col-6">
+                                        <h6 class="card-title">Qarzdorlarga sms jo'natish</h6>
+                                        <form action="{{ route('cashier.sms.debt') }}" method="post">
+                                            <input type="hidden" name="subject_id" value="{{ $attachs[0]->subject_id }}">
+                                            <select class="form-select mb-3" name="month" id="monthInput">
+                                                <option selected="" value="all">Oyni tanlang</option>
+                                                @foreach($payments as $id => $payment)
+                                                    @if($payment->debt > 0)
+                                                        <option value="{{ $payment->month }}">{{ \Carbon\Carbon::parse($payment->month)->format('F Y') }}</option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                            @csrf
+                                            <textarea required name="message" class="form-control" rows="3" placeholder="Xabar matni"></textarea>
+                                            <button type="submit" style="display: none" id="realButton">s</button>
+                                            <button type="button" class="btn btn-success mt-3" id="fakeButton">Yuborish</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -316,7 +351,21 @@
         const notyf = new Notyf();
 
         notyf.success({
-            message: 'Yangi o\'quvchi qo\'shildi!',
+            message: 'SMS xabar yuborildi',
+            duration: 5000,
+            dismissible : true,
+            position: {
+                x : 'center',
+                y : 'top'
+            },
+        });
+        @endif
+
+        @if(session('error') == 1)
+        const notyf = new Notyf();
+
+        notyf.error({
+            message: 'Xatolik! Balansni tekshiring',
             duration: 5000,
             dismissible : true,
             position: {

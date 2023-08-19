@@ -20,13 +20,13 @@ class MonthlyPaymentRepository
             ->first();
     }
 
-    public function daleteNowAndNextPayments($monthToDelete,$attach_id){
+    public function deleteNowAndNextPayments($monthToDelete,$attach_id){
         MonthlyPayment::where('month', '>=', $monthToDelete)
             ->where('attach_id',$attach_id)
             ->delete();
     }
 
-    public function daleteNextPayments($monthToDelete,$attach_id){
+    public function deleteNextPayments($monthToDelete,$attach_id){
         MonthlyPayment::where('month', '>', $monthToDelete)
             ->where('attach_id',$attach_id)
             ->delete();
@@ -42,6 +42,30 @@ class MonthlyPaymentRepository
                 $query->select('id', 'name');
             }])->where('date','!=', null)->orderBy('date', 'desc')->paginate(100);
     }
+
+    public function getTeacherPayments100($teacher_id){
+        return MonthlyPayment::query()
+            ->with(['student' => function ($query) {
+                $query->select('id', 'name');
+            }, 'teacher' => function ($query) {
+                $query->select('id', 'name');
+            }, 'subject' => function ($query) {
+                $query->select('id', 'name');
+            }])->where('teacher_id',$teacher_id)->where('date','!=', null)->orderBy('date', 'desc')->paginate(100);
+    }
+
+    public function getTeacherPaymentsByMonth($month,$teacher_id){
+        return MonthlyPayment::query()
+            ->with(['student' => function ($query) {
+                $query->select('id', 'name');
+            }, 'teacher' => function ($query) {
+                $query->select('id', 'name');
+            }, 'subject' => function ($query) {
+                $query->select('id', 'name');
+            }])->where('teacher_id',$teacher_id)->whereMonth('date',$month)->where('date','!=', null)->orderBy('date', 'desc')->get();
+    }
+
+
 
     public function getPayments7(){
         return MonthlyPayment::query()

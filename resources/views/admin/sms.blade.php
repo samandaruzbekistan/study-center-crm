@@ -53,9 +53,8 @@
                         <div class="tab-pane fade" id="parents" role="tabpanel">
                             <div class="m-3 col-6">
                                 <h6 class="card-title"><span class="text-danger">Ota-onalarga</span> sms jo'natish</h6>
-                                <form>
+                                <form action="{{ route('sms.parents') }}" method="post">
                                     @csrf
-                                    <input type="hidden" name="subject_id" value="0">
                                     <textarea required name="message" class="form-control" rows="3" placeholder="Xabar matni"></textarea>
                                     <input type="submit" class="btn btn-success mt-3" value="Yuborish">
                                 </form>
@@ -64,7 +63,7 @@
                         <div class="tab-pane fade" id="group" role="tabpanel">
                             <div class="m-3 col-6">
                                 <h6 class="card-title"><span class="text-danger">Guruh</span> bo'yicha jo'natish</h6>
-                                <form>
+                                <form action="{{ route('sms.subject') }}" method="post">
                                     @csrf
                                     <select class="form-select mb-3" required name="subject_id" id="monthInput">
                                         <option selected disabled hidden value="">Guruhni tanlang</option>

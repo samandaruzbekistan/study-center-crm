@@ -44,4 +44,12 @@ class OutlayRepository
         return Outlay::with('types')->where('type_id', $type_id)->latest()->get();
     }
 
+    public function get_outlays100(){
+        return Outlay::with('types')->latest()->paginate(100);
+    }
+
+    public function filtr($date){
+        return Outlay::with('types')->where('date', $date)->get();
+    }
+
 }

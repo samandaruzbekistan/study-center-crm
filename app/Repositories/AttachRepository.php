@@ -25,6 +25,13 @@ class AttachRepository
         return $attach->getKey();
     }
 
+    public function getAttachBySubjectId($subject_id){
+        return Attach::query()
+            ->with(['student' => function ($query) {
+                $query->select('id', 'name','phone');
+            }])->where('subject_id',$subject_id)->get();
+    }
+
     public function getAttach($student, $subject){
         return Attach::where('student_id', $student)
             ->where('subject_id', $subject)->first();

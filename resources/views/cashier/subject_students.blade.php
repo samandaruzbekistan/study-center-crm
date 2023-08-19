@@ -156,7 +156,7 @@
                                 <div class="card-body row">
                                     <div class="col-6">
                                         <h6 class="card-title">Barchaga sms jo'natish</h6>
-                                        <form>
+                                        <form action="{{ route('sms.subject') }}" method="post">
                                             @csrf
                                             <input type="hidden" name="subject_id" value="{{ $attachs[0]->subject_id }}">
                                             <textarea required name="message" class="form-control" rows="3" placeholder="Xabar matni"></textarea>

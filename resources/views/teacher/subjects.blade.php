@@ -5,6 +5,41 @@
     active
 @endsection
 @section('section')
+    <main class="content forma" style="padding-bottom: 0; display: none">
+        <div class="container-fluid p-0">
+            <div class="col-md-8 col-xl-9">
+                <div class="">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Yangi guruh ochish</h5>
+                        </div>
+                        <div class="card-body h-100">
+                            <form action="{{ route('teacher.new.subject') }}" method="post">
+                                @csrf
+                                <div class="mb-3">
+                                    <label class="form-label">Nomi <span class="text-danger">*</span></label>
+                                    <input name="name" required type="text" class="form-control" placeholder="">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Narxi <span class="text-danger">*</span></label>
+                                    <input name="price" required type="number" class="form-control" placeholder="">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Darslar soni <span class="text-danger">*</span></label>
+                                    <input name="lessons_count" required type="number" value="12" class="form-control" placeholder="">
+                                </div>
+                                <div class=" text-end">
+                                    <button type="button" class="btn btn-danger cancel">Bekor qilish</button>
+                                    <button type="submit" class="btn btn-success">Qo'shish</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
 
     <main class="content teachers">
         <div class="container-fluid p-0">
@@ -14,6 +49,9 @@
                         <div class="row">
                             <div class="col-6">
                                 <h5 class="card-title mb-0">Guruhlar ro'yhati</h5>
+                            </div>
+                            <div class="col-6 text-end">
+                                <button class="btn btn-primary add ms-2">+ Yangi guruh</button>
                             </div>
                         </div>
                     </div>
@@ -59,43 +97,7 @@
             });
         });
 
-        $(document).on('change', '#teacher', function() {
-            let selectedId = $(this).val();
-            if(selectedId === 'all'){
-                window.location = "{{ route('cashier.subjects') }}";
-            }
-            $("#tbody").empty();
 
-            $.ajax({
-                url: '{{ route('cashier.teacher.subjects') }}/' + selectedId,
-                method: 'GET',
-                success: function(data) {
-                    const tableBody = $("#tbody");
-                    data.subjects.forEach(subject => {
-                        const newRow = `
-                            <tr>
-                                <td>${subject.name}</td>
-                                <td><b>${subject.price} so'm</b></td>
-                                <td>${data.name}</td>
-                                <td>${subject.lessons_count}</td>
-                                <td class="edit-btn" style="cursor: pointer">
-                                    <button class="btn btn-success new-student" id="${subject.id}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus align-middle">
-                                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                            <circle cx="8.5" cy="7" r="4"></circle>
-                                            <line x1="20" y1="8" x2="20" y2="14"></line>
-                                            <line x1="23" y1="11" x2="17" y2="11"></line>
-                                        </svg> Yangi o'quvchi
-                                    </button>
-                                </td>
-                            </tr>
-                        `;
-                        tableBody.append(newRow);
-                    });
-
-                }
-            });
-        });
 
         @if($errors->any())
         const notyf = new Notyf();
@@ -174,6 +176,5 @@
             $('.add-student').hide();
             $('.teachers').show();
         });
-
     </script>
 @endsection

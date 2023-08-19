@@ -128,8 +128,8 @@ class CashierController extends Controller
         ]);
         $student = $this->studentRepository->getStudentByName($request->name);
         if (!empty($student)) return back()->with('username_error',1);
-        $this->studentRepository->addStudentCashier($request->name, $request->phone,$request->phone2,$request->region_id, $request->district_id,$request->quarter_id);
-        return back()->with('success',1);
+        $student_id = $this->studentRepository->addStudentCashier($request->name, $request->phone,$request->phone2,$request->region_id, $request->district_id,$request->quarter_id);
+        return redirect()->route('cashier.student', ['id' => $student_id])->with('success',1);
     }
 
     public function check($id, $date,$subject_id){
@@ -160,12 +160,12 @@ class CashierController extends Controller
         $carbonDate = Carbon::parse($request->date);
         $payment = $this->monthlyPaymentRepository->getPaymentByMonth($request->student_id, $newDate,$request->subject_id);
         if (($payment->status == 0) and ($carbonDate->day < 6)){
-            $this->monthlyPaymentRepository->daleteNowAndNextPayments($newDate, $attach->id);
+            $this->monthlyPaymentRepository->deleteNowAndNextPayments($newDate, $attach->id);
             $this->attachRepository->deActiveAttach($attach->id);
             return back()->with('deActivated',1);
         }
         if ($payment->status == 1){
-            $this->monthlyPaymentRepository->daleteNextPayments($newDate, $attach->id);
+            $this->monthlyPaymentRepository->deleteNextPayments($newDate, $attach->id);
             $this->attachRepository->deActiveAttach($attach->id);
             return back()->with('deActivated',1);
         }
@@ -402,15 +402,7 @@ class CashierController extends Controller
 
 
 //    SMS control
-    public function debt(Request $request){
-        $request->validate([
-            'subject_id' => 'required|numeric',
-            'message' => 'required|string',
-            'month' => 'required|string',
-        ]);
-        $students = $this->monthlyPaymentRepository->getDebtStudents($request->month, $request->subject_id);
-        return $students;
-    }
+
 
     public function sms(){
         $subjects = $this->subjectRepository->getAllSubjects();
