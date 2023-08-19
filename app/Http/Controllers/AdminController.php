@@ -13,6 +13,7 @@ use App\Repositories\OutlayRepository;
 use App\Repositories\StudentRepository;
 use App\Repositories\SubjectRepository;
 use App\Repositories\TeacherRepository;
+use App\Services\SmsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -29,6 +30,7 @@ class AdminController extends Controller
         protected AttachRepository $attachRepository,
         protected AttendanceRepository $attendanceRepository,
         protected NotComeDaysRepository $notComeDaysRepository,
+        protected SmsService $smsService,
     )
     {
     }
@@ -245,5 +247,25 @@ class AdminController extends Controller
     public function sms(){
         $subjects = $this->subjectRepository->getAllSubjects();
         return view('admin.sms',['subjects' => $subjects]);
+    }
+
+    public function sms_to_teachers(Request $request){
+        $request->validate([
+            'message' => 'required|string'
+        ]);
+        $teachers = $this->teacherRepository->getTeachers();
+        $res = $this->smsService->sendSMS($teachers, $request->message);
+        if($res['status'] == 'success') return back()->with('success',1);
+        else return back()->with('error',1);
+    }
+
+    public function sms_to_students(Request $request){
+        $request->validate([
+            'message' => 'required|string'
+        ]);
+        $students = $this->studentRepository->getStudentsAll();
+        $res = $this->smsService->sendSMS($students, $request->message);
+        if($res['status'] == 'success') return back()->with('success',1);
+        else return back()->with('error',1);
     }
 }

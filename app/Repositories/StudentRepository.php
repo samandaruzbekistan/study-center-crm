@@ -10,6 +10,9 @@ class StudentRepository
         return Student::orderBy('name', 'asc')->paginate(100);
     }
 
+    public function getStudentsAll(){
+        return Student::all();
+    }
     public function getStudentById($id){
         return Student::find($id);
     }

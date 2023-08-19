@@ -6,6 +6,7 @@ use App\Models\SmsConfig;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Http;
 
 class SmsService
 {
@@ -75,7 +76,7 @@ class SmsService
         // $dt = $respon['data'];
         $dt = json_decode($respon, true);
         if ($dt['message'] == "token_generated"){
-            Sms::where('id', 1)
+            SmsConfig::where('id', 1)
                 ->update([
                     'token' => $dt['data']['token']
                 ]);
@@ -85,4 +86,42 @@ class SmsService
             return ['message' => "error"];
         }
     }
+
+    public function sendSMS($users, $message){
+        $token = SmsConfig::find(1);
+        $current_date = Carbon::now();
+        $token_expiry_date = Carbon::parse($token->updated_at)->addMonth();
+        if($current_date->greaterThan($token_expiry_date)){
+            $re = $this->getToken();
+            if ($re['message'] == 'error') return response()->json(['message'=> 'error'], 200);
+        }
+        $token = $token->token;
+        $messages = [];
+        foreach ($users as $index => $number) {
+            $messages[] = [
+                "user_sms_id" => "sms" . ($index + 1),
+                "to" => $number->phone,
+                "text" => $message,
+            ];
+        }
+
+        $data = [
+            "messages" => $messages,
+            "from" => "4546",
+            "dispatch_id" => 123
+        ];
+//        dd(json_encode($data));
+        $response = Http::withToken($token)
+            ->withHeaders(['Content-Type' => 'application/json'])
+            ->post('https://notify.eskiz.uz/api/message/sms/send-batch', $data);
+        // Check if the request was successful
+        if ($response->successful()) {
+            // Return the response JSON or extract specific data as needed
+            return $response->json();
+        } else {
+            // Return an error message or handle the failed request
+            return json_decode($response->body(), true);
+        }
+    }
+
 }

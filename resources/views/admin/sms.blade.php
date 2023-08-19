@@ -33,9 +33,8 @@
                         <div class="tab-pane fade active show " id="teachers" role="tabpanel">
                             <div class="m-3 col-6">
                                 <h6 class="card-title"><span class="text-danger">Ustozlarga</span> sms jo'natish</h6>
-                                <form>
+                                <form action="{{ route('admin.sms.teachers') }}" method="post">
                                     @csrf
-                                    <input type="hidden" name="subject_id" value="0">
                                     <textarea required name="message" class="form-control" rows="3" placeholder="Xabar matni"></textarea>
                                     <input type="submit" class="btn btn-success mt-3" value="Yuborish">
                                 </form>
@@ -44,9 +43,8 @@
                         <div class="tab-pane fade" id="students" role="tabpanel">
                             <div class="m-3 col-6">
                                 <h6 class="card-title"><span class="text-danger">O'quvchilarga</span> sms jo'natish</h6>
-                                <form>
+                                <form action="{{ route('admin.sms.students') }}" method="post">
                                     @csrf
-                                    <input type="hidden" name="subject_id" value="0">
                                     <textarea required name="message" class="form-control" rows="3" placeholder="Xabar matni"></textarea>
                                     <input type="submit" class="btn btn-success mt-3" value="Yuborish">
                                 </form>
@@ -91,4 +89,36 @@
     </main>
 @endsection
 
+
+@section('js')
+    <script>
+        @if(session('success') == 1)
+        const notyf = new Notyf();
+
+        notyf.success({
+            message: 'SMS xabar yuborildi',
+            duration: 5000,
+            dismissible : true,
+            position: {
+                x : 'center',
+                y : 'top'
+            },
+        });
+        @endif
+
+        @if(session('error') == 1)
+        const notyf = new Notyf();
+
+        notyf.error({
+            message: 'Xatolik! Balansni tekshiring',
+            duration: 5000,
+            dismissible : true,
+            position: {
+                x : 'center',
+                y : 'top'
+            },
+        });
+        @endif
+    </script>
+@endsection
 

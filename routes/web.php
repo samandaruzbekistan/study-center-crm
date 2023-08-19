@@ -18,7 +18,7 @@ use App\Http\Controllers\CashierController;
 Route::view('/admin', 'admin.login')->name('admin.login');
 Route::view('/teacher', 'teacher.login')->name('teacher.login');
 Route::view('/cashier', 'cashier.login')->name('cashier.login');
-Route::redirect('/','teacher/login');
+Route::redirect('/','teacher');
 
 Route::prefix('admin')->group(function () {
     Route::post('/auth', [AdminController::class, 'auth'])->name('admin.auth');
@@ -50,6 +50,8 @@ Route::prefix('admin')->group(function () {
 
 //        Sms control
         Route::get('sms', [AdminController::class, 'sms'])->name('admin.sms');
+        Route::post('teachers-sms',[AdminController::class,'sms_to_teachers'])->name('admin.sms.teachers');
+        Route::post('students-sms',[AdminController::class,'sms_to_students'])->name('admin.sms.students');
 
 //        Subject control
         Route::get('subjects',[AdminController::class,'subjects'])->name('admin.subjects');
