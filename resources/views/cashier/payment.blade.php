@@ -437,7 +437,19 @@
 
         button.addEventListener('click', generatePDF);
 
+        @if(session('success') == 1)
+        const notyf = new Notyf();
 
+        notyf.success({
+            message: 'To\'lov qabul qilindi!',
+            duration: 5000,
+            dismissible : true,
+            position: {
+                x : 'center',
+                y : 'top'
+            },
+        });
+        @endif
 
     </script>
 @endsection

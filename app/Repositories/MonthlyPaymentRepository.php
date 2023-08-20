@@ -86,6 +86,27 @@ class MonthlyPaymentRepository
         return MonthlyPayment::with('student','attach')->where('date', $date)->latest()->get();
     }
 
+    public function addPayment($attach_id,$student_id, $subject_id, $teacher_id, $amount,$month, $amount_paid){
+        $payment = new MonthlyPayment;
+        $payment->attach_id = $attach_id;
+        $payment->student_id = $student_id;
+        $payment->subject_id = $subject_id;
+        $payment->teacher_id = $teacher_id;
+        $payment->amount = $amount;
+        $payment->month = $month;
+        $payment->status = 1;
+        $payment->date = date('Y-m-d');
+        $payment->amount_paid = $amount_paid;
+        $payment->save();
+    }
+
+    public function updatePayment($id, $amount){
+        $payment = MonthlyPayment::find($id);
+        $payment->amount = $amount;
+        $payment->paid_cashier_id = session('id');
+        $payment->save();
+    }
+
     public function payment($id,$amount,$amount_paid,$type,$status){
         $currentDateTime = Carbon::now('Asia/Tashkent');
         MonthlyPayment::where('id', $id)

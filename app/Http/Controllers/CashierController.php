@@ -342,7 +342,6 @@ class CashierController extends Controller
         $subject = $this->subjectRepository->getSubject($payment->subject_id);
         if ($request->amount > $payment->amount) return back()->with('amount_error',1);
         if (!$payment) return back()->with('payment_error',1);
-        $status = 0;
         if ($request->has('status')){
             $amount = $request->amount + $payment->amount_paid;
             $this->monthlyPaymentRepository->payment($payment->id, 0, $amount,$request->type, 1);
@@ -352,11 +351,14 @@ class CashierController extends Controller
             $this->monthlyPaymentRepository->payment($payment->id, 0, $amount,$request->type, 1);
         }
         else{
-            $amount_paid = $request->amount + $payment->amount_paid;
+            $this->monthlyPaymentRepository->addPayment($payment->attach_id, $payment->student_id,$payment->subject_id, $payment->teacher_id,0,$payment->month, $request->amount);
             $amount = $payment->amount - $request->amount;
-            $this->monthlyPaymentRepository->payment($payment->id, $amount, $amount_paid,$request->type, 0);
+            $this->monthlyPaymentRepository->updatePayment($payment->id, $amount);
+//            $amount_paid = $request->amount + $payment->amount_paid;
+//            $amount = $payment->amount - $request->amount;
+//            $this->monthlyPaymentRepository->payment($payment->id, $amount, $amount_paid,$request->type, 0);
         }
-        return redirect()->route('cashier.home');
+        return redirect()->route('cashier.home')->with('success',1);;
     }
 
     public function month_payment($subject_id){
