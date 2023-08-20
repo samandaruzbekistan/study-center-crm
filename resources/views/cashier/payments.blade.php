@@ -72,7 +72,7 @@
                         @foreach($payments as $payment)
                             <tr>
                                 <td>
-                                    <a href="{{ route('cashier.subject.students', ['subject_id' => $payment->id]) }}">{{ $payment->student->name }}</a>
+                                    <a href="{{ route('cashier.student') }}/{{ $payment->student->id }}">{{ $payment->student->name }}</a>
                                 </td>
                                 <td><b>{{ number_format($payment->amount_paid, 0, '.', ' ') }}</b> so'm</td>
                                 <td>{{ $payment->subject->name }}</td>
