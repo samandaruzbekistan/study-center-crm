@@ -196,18 +196,18 @@ class CashierController extends Controller
         $currentMonth = $carbonDate->month;
         $price = $request->amount;
         $daysInMonth = $carbonDate->daysInMonth;
-        $firstMonthPrice = ceil(($price - (($price / $daysInMonth) * ($carbonDate->day - 1))) / 1000) * 1000;
+//        $firstMonthPrice = ceil(($price - (($price / $daysInMonth) * ($carbonDate->day - 1))) / 1000) * 1000;
         $rowsToInsert = [];
         if ($currentMonth > 8){
-            $countdown = 0;
+//            $countdown = 0;
             for ($month = $currentMonth; $month <= 12; $month++){
-                $countdown++;
+//                $countdown++;
                 $row = [
                     'attach_id' => $attachedSubjectId,
                     'student_id' => $student->id,
                     'subject_id' => $subject->id,
                     'teacher_id' => $subject->teacher_id,
-                    'amount' => ($countdown == 1) ? $firstMonthPrice : $price,
+                    'amount' => $price,
                     'month' => Carbon::create($currentYear, $month, 1)->format('Y-m-d'),
                 ];
 
@@ -229,13 +229,13 @@ class CashierController extends Controller
         elseif ($currentMonth <= 8){
             $countdown = 0;
             for ($month = $currentMonth; $month <= 8; $month++){
-                $countdown++;
+//                $countdown++;
                 $row = [
                     'attach_id' => $attachedSubjectId,
                     'student_id' => $student->id,
                     'subject_id' => $subject->id,
                     'teacher_id' => $subject->teacher_id,
-                    'amount' => ($countdown == 1) ? $firstMonthPrice : $price,
+                    'amount' => $price,
                     'month' => Carbon::create($currentYear, $month, 1)->format('Y-m-d'),
                 ];
                 $rowsToInsert[] = $row;
