@@ -148,7 +148,7 @@ class TeacherController extends Controller
                     'student_id' => $student->id,
                     'subject_id' => $subject->id,
                     'teacher_id' => $subject->teacher_id,
-                    'amount' => ($countdown == 1) ? $firstMonthPrice : $price,
+                    'amount' => $price,
                     'month' => Carbon::create($currentYear, $month, 1)->format('Y-m-d'),
                 ];
 
@@ -176,7 +176,7 @@ class TeacherController extends Controller
                     'student_id' => $student->id,
                     'subject_id' => $subject->id,
                     'teacher_id' => $subject->teacher_id,
-                    'amount' => ($countdown == 1) ? $firstMonthPrice : $price,
+                    'amount' => $price,
                     'month' => Carbon::create($currentYear, $month, 1)->format('Y-m-d'),
                 ];
                 $rowsToInsert[] = $row;
