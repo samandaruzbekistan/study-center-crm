@@ -38,6 +38,7 @@ class TeacherController extends Controller
             return back()->with('login_error', 1);
         }
         if (Hash::check($request->input('password'), $teacher->password)) {
+            session()->flush();
             session()->put('teacher',1);
             session()->put('name',$teacher->name);
             session()->put('id',$teacher->id);
@@ -93,7 +94,7 @@ class TeacherController extends Controller
 
 
     public function students(){
-        return view('teacher.students', ['students' => $this->studentRepository->getStudents()]);
+        return view('teacher.students', ['students' => $this->studentRepository->getTeacherStudents()]);
     }
 
     public function new_student(Request $request){
@@ -131,7 +132,7 @@ class TeacherController extends Controller
         $subject = $this->subjectRepository->getSubject($request->subject_id);
         $attach = $this->attachRepository->getAttach($request->student_id, $request->subject_id);
         if ($attach) return back()->with('attach_error', 1);
-        $attachedSubjectId = $this->attachRepository->addAttach($student->id, $subject->id, $subject->name);
+        $attachedSubjectId = $this->attachRepository->addAttach($student->id, $subject->id, $subject->name, $request->date);
         $carbonDate = Carbon::parse($request->date);
         $currentYear = $carbonDate->year;
         $currentMonth = $carbonDate->month;

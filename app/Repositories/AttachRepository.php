@@ -15,11 +15,12 @@ class AttachRepository
             }])->where('subject_id', $subject_id)->where('status', 1)->get();
     }
 
-    public function addAttach($student, $subject,$name){
+    public function addAttach($student, $subject,$name,$date){
         $attach = new Attach;
         $attach->student_id = $student;
         $attach->subject_id = $subject;
         $attach->subject_name = $name;
+        $attach->date = date('d-m-Y', strtotime($date));
         $attach->save();
 
         return $attach->getKey();

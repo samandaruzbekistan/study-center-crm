@@ -152,7 +152,6 @@
                     </table>
                 </div>
             </div>
-            {{ $students->links() }}
         </div>
     </main>
 @endsection

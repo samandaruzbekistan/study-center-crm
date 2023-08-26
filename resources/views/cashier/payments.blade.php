@@ -1,6 +1,7 @@
 @extends('cashier.header')
 @push('css')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
     <style>
         .pagination{height:36px;margin:0;padding: 0;}
         .pager,.pagination ul{margin-left:0;*zoom:1}
@@ -48,20 +49,22 @@
                     <div class="card-header">
                         <div class="row">
                             <div class="col-6">
-                                <h5 class="card-title mb-0">To'lovlar ro'yhati</h5>
+                                <h5 class="card-title mb-0">To'lovlar ro'yhati <span id="summ" class="text-danger"></span></h5>
+
                             </div>
                             <div class="col-6 text-end">
                                 <input class="form-control w-25 d-inline" id="filtr" type="date" name="date">
                                 <button class="btn btn-primary add ms-2" id="butt"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-filter align-middle"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg> Filrlash</button>
                                 <button class="btn btn-danger add ms-2" id="back" style="display: none">Orqaga</button>
+                                <button class="btn btn-success ms-2" onclick="ExportToExcel('xlsx')">Excel</button>
                             </div>
                         </div>
                     </div>
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover" id="tbl_exporttable_to_xls">
                         <thead>
                         <tr>
                             <th>O'quvchi</th>
-                            <th>Narxi</th>
+                            <th>Summa</th>
                             <th>Guruh</th>
                             <th>Sana</th>
                             <th>O'quv oyi</th>
@@ -74,7 +77,7 @@
                                 <td>
                                     <a href="{{ route('cashier.student') }}/{{ $payment->student->id }}">{{ $payment->student->name }}</a>
                                 </td>
-                                <td><b>{{ number_format($payment->amount_paid, 0, '.', ' ') }}</b> so'm</td>
+                                <td><b>{{ $payment->amount_paid }}</b></td>
                                 <td>{{ $payment->subject->name }}</td>
                                 <td>{{ $payment->date }}</td>
                                 <td>{{ \Carbon\Carbon::parse($payment->month)->format('F Y') }}</td>
@@ -166,7 +169,8 @@
                 url: "{{ route('cashier.payment.filtr') }}/"+date,
                 method: 'GET',
                 success: function(response) {
-                    response.forEach(payment => {
+                    tableBody.empty();
+                    response[0].forEach(payment => {
                         let formattedMonth = moment(payment.month).locale('uz').format('MMMM YYYY');
                         const formattedAmount = payment.amount_paid.toLocaleString('en-US', {
                             minimumFractionDigits: 0,
@@ -186,7 +190,7 @@
                         const newRow = `
                             <tr>
                                 <td>${payment.student.name}</td>
-                                <td><b>${formattedAmount}</b> so'm</td>
+                                <td><b>${payment.amount_paid}</b></td>
                                 <td>${payment.subject.name}</td>
                                 <td>${payment.date}</td>
                                 <td>${formattedMonth}</td>
@@ -195,11 +199,20 @@
                         `;
                         tableBody.append(newRow);
                     });
+                    $('#summ').text(response[1][0].total);
                     $('#old-data').hide();
                     $('#back').show();
                     $('#new-data').show();
                 },
             });
         });
+
+        function ExportToExcel(type, fn, dl) {
+            var elt = document.getElementById('tbl_exporttable_to_xls');
+            var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+            return dl ?
+                XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }):
+                XLSX.writeFile(wb, fn || ('xisobot.' + (type || 'xlsx')));
+        }
     </script>
 @endsection

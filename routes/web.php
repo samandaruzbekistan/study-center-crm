@@ -1,5 +1,9 @@
 <?php
 
+use App\Exports\DebtExport;
+use App\Exports\DebtExportTeacher;
+use App\Exports\PaymentsExport;
+use App\Exports\PaymentsExportTeacher;
 use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
@@ -157,7 +161,6 @@ Route::prefix('cashier')->group(function () {
         Route::get('attendance-detail/{subject_id?}/{month?}',[TeacherController::class, 'attendance_detail'])->name('cashier.attendance.detail');
         Route::get('day-detail/{id?}',[TeacherController::class, 'attendance_detail_day'])->name('cashier.attendance.day');
 
-
     });
 });
 
@@ -172,6 +175,23 @@ Route::middleware(['combined_auth'])->group(function () {
     Route::post('sms-send-parents', [AdminController::class, 'sms_to_parents'])->name('sms.parents');
     Route::post('smsBySubject', [AdminController::class, 'smsBySubject'])->name('smsBySubject');
     Route::post('debt', [TeacherController::class, 'debt'])->name('cashier.sms.debt');
+
+    Route::get('/export/payments', function () {
+        return \Maatwebsite\Excel\Facades\Excel::download(new PaymentsExport, 'payments.xlsx');
+    })->name('export.payments');
+    Route::get('/export/payments/debt', function () {
+        return \Maatwebsite\Excel\Facades\Excel::download(new DebtExport, 'debt.xlsx');
+    })->name('export.payments.debt');
+
+
+    Route::get('/export/payments/teacher', function () {
+        return \Maatwebsite\Excel\Facades\Excel::download(new PaymentsExportTeacher, 'payments.xlsx');
+    })->name('export.payments.teacher');
+    Route::get('/export/teacher/debt', function () {
+        return \Maatwebsite\Excel\Facades\Excel::download(new DebtExportTeacher, 'debt.xlsx');
+    })->name('export.teacher.debt');
+
+    Route::get('statistics-debt', [CashierController::class, 'statistics_debt'])->name('cashier.statistics.debt');
 
 
     Route::get('subject/{subject_id?}', [CashierController::class, 'subject'])->name('cashier.subject');

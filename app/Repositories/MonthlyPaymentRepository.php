@@ -179,4 +179,14 @@ class MonthlyPaymentRepository
             $query->select('id', 'name');
             }])->where('date', $date)->get();
     }
+
+    public function filtr_summa($date){
+        return MonthlyPayment::where('date', $date)
+            ->where('amount_paid','>',0)
+            ->select(
+                DB::raw('SUM(amount_paid) as total')
+            )
+            ->orderBy(DB::raw('DATE_FORMAT(date, "%Y-%m")'), 'desc')
+            ->get();
+    }
 }

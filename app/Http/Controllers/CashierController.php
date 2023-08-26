@@ -43,6 +43,7 @@ class CashierController extends Controller
             return back()->with('login_error', 1);
         }
         if (Hash::check($request->input('password'), $cashier->password)) {
+            session()->flush();
             session()->put('cashier',1);
             session()->put('name',$cashier->name);
             session()->put('id',$cashier->id);
@@ -190,7 +191,7 @@ class CashierController extends Controller
         $subject = $this->subjectRepository->getSubject($request->subject_id);
         $attach = $this->attachRepository->getAttach($request->student_id, $request->subject_id);
         if ($attach) return back()->with('attach_error', 1);
-        $attachedSubjectId = $this->attachRepository->addAttach($student->id, $subject->id, $subject->name);
+        $attachedSubjectId = $this->attachRepository->addAttach($student->id, $subject->id, $subject->name, $request->date);
         $carbonDate = Carbon::parse($request->date);
         $currentYear = $carbonDate->year;
         $currentMonth = $carbonDate->month;
@@ -324,7 +325,8 @@ class CashierController extends Controller
 
     public function payment_filtr($date){
         if (!$date) return 'date not detected';
-        return $this->monthlyPaymentRepository->filtr($date);
+        $summa = $this->monthlyPaymentRepository->filtr_summa($date);
+        return [$this->monthlyPaymentRepository->filtr($date), $summa];
     }
 
     public function getPayment($payment_id){
@@ -366,6 +368,10 @@ class CashierController extends Controller
         return $payments;
     }
 
+    public function statistics_debt(){
+        $teachers = $this->teacherRepository->getTeachers();
+        return view('cashier.debt', ['teachers' => $teachers]);
+    }
 
 
 

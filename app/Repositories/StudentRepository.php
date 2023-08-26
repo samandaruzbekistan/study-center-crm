@@ -54,6 +54,10 @@ class StudentRepository
         return $users;
     }
 
+    public function getTeacherStudents(){
+        return Student::orderBy('name', 'asc')->where('teacher_id', session('id'))->get();
+    }
+
 
     public function getStudentWithSubjectsPayments($studentId){
         return Student::with('attachs', 'monthlyPayments')->find($studentId);
