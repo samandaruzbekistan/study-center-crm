@@ -7,6 +7,7 @@ use App\Repositories\AttachRepository;
 use App\Repositories\AttendanceRepository;
 use App\Repositories\MonthlyPaymentRepository;
 use App\Repositories\NotComeDaysRepository;
+use App\Repositories\SalariesRepository;
 use App\Repositories\StudentRepository;
 use App\Repositories\SubjectRepository;
 use App\Repositories\TeacherRepository;
@@ -26,6 +27,7 @@ class TeacherController extends Controller
         protected NotComeDaysRepository $notComeDaysRepository,
         protected StudentRepository $studentRepository,
         protected SmsService $smsService,
+        protected SalariesRepository $salariesRepository,
     )
     {
     }
@@ -252,6 +254,15 @@ class TeacherController extends Controller
         $this->notComeDaysRepository->add($inserted_row);
         return back()->with('success',1);
     }
+
+
+
+
+    public function salaries(){
+        return view('teacher.salary',['salaries' => $this->salariesRepository->teacherSalaries(session('id'))]);
+    }
+
+
 
 
 

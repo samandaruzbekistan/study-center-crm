@@ -14,6 +14,11 @@ class Teacher extends Model
         return $this->hasMany(Subject::class);
     }
 
+    public function salaries()
+    {
+        return $this->hasMany(Salary::class);
+    }
+
     // Define a one-to-many relationship with monthly_payments
     public function monthlyPayments()
     {

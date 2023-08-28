@@ -70,6 +70,9 @@ Route::prefix('admin')->group(function () {
 
         Route::get('outlays',[AdminController::class, 'outlays'])->name('admin.outlays');
         Route::get('outlays-filtr/{date?}',[AdminController::class, 'outlays_filtr'])->name('admin.outlay.filtr');
+
+        Route::get('salaries',[AdminController::class, 'salaries'])->name('admin.salaries');
+//        Route::post('new-salary',[AdminController::class, 'add_salary'])->name('admin.salary.new');
     });
 });
 
@@ -100,6 +103,7 @@ Route::prefix('teacher')->group(function () {
         Route::get('day-detail/{id?}',[TeacherController::class, 'attendance_detail_day'])->name('teacher.attendance.day');
         Route::post('attendances-check',[TeacherController::class, 'attendance_check'])->name('teacher.attendances.check');
 
+        Route::get('salaries',[TeacherController::class, 'salaries'])->name('teacher.salaries');
     });
 });
 
@@ -108,6 +112,7 @@ Route::prefix('cashier')->group(function () {
     Route::post('/auth', [CashierController::class, 'auth'])->name('cashier.auth');
     Route::middleware(['cashier_auth'])->group(function () {
         Route::get('home', [CashierController::class, 'home'])->name('cashier.home');
+        Route::get('payment_home', [CashierController::class, 'payment_home'])->name('cashier.payment_home');
         Route::get('logout', [CashierController::class, 'logout'])->name('cashier.logout');
         Route::get('profile', [CashierController::class, 'profile'])->name('cashier.profile');
         Route::post('update',[CashierController::class,'update'])->name('cashier.update');
@@ -149,6 +154,8 @@ Route::prefix('cashier')->group(function () {
         Route::post('new-outlay',[CashierController::class, 'add_outlay'])->name('cashier.outlay.new');
         Route::get('get-outlays/{type_id?}',[CashierController::class, 'get_outlays'])->name('cashier.outlays.get');
 
+        Route::get('salaries',[CashierController::class, 'salaries'])->name('cashier.salaries');
+        Route::post('new-salary',[CashierController::class, 'add_salary'])->name('cashier.salary.new');
 
 //        Sms xizmati
         Route::get('sms', [CashierController::class, 'sms'])->name('cashier.sms');

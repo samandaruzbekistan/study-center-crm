@@ -10,6 +10,7 @@ use App\Repositories\DistrictRepository;
 use App\Repositories\MonthlyPaymentRepository;
 use App\Repositories\NotComeDaysRepository;
 use App\Repositories\OutlayRepository;
+use App\Repositories\SalariesRepository;
 use App\Repositories\StudentRepository;
 use App\Repositories\SubjectRepository;
 use App\Repositories\TeacherRepository;
@@ -32,6 +33,7 @@ class CashierController extends Controller
         protected NotComeDaysRepository $notComeDaysRepository,
         protected AttendanceRepository $attendanceRepository,
         protected DistrictRepository $districtRepository,
+        protected SalariesRepository $salariesRepository,
     )
     {
     }
@@ -92,9 +94,24 @@ class CashierController extends Controller
         return back()->with('success_photo',1);
     }
 
-
-
     public function home(){
+        $payments_arr = $this->monthlyPaymentRepository->monthPaymentsByDateOrderType(date('Y-m-d'));
+        $outlay = $this->outlayRepository->getOutlayByDate(date('Y-m-d'));
+        $payments = $this->monthlyPaymentRepository->getPayments7();
+        $cash = 0;
+        $transfer = 0;
+        $credit_card = 0;
+        if (count($payments_arr) > 0){
+            foreach ($payments_arr as $item){
+                if ($item->type == 'cash') $cash = $item->total;
+                else if ($item->type == 'transfer') $transfer = $item->total;
+                else $credit_card = $item->total;
+            }
+        }
+        return view('cashier.home', ['payments' => $payments,'outlay' => $outlay,'cash' => $cash, 'credit_card' => $credit_card, 'transfer' => $transfer]);
+    }
+
+    public function payment_home(){
         $payments = $this->monthlyPaymentRepository->getPaymentsByDate(date('Y-m-d'));
         return view('cashier.payment', ['payments' => $payments]);
     }
@@ -271,6 +288,17 @@ class CashierController extends Controller
     public function payments(){
         $payments = $this->monthlyPaymentRepository->getPayments();
         return view('cashier.payments',['payments' => $payments]);
+    }
+
+
+
+    public function salaries(){
+        return view('cashier.salary',['salaries' => $this->salariesRepository->getSalaries(), 'teachers' => $this->teacherRepository->getTeachers()]);
+    }
+
+    public function add_salary(Request $request){
+        $this->salariesRepository->add($request->teacher_id, $request->month, $request->amount, $request->date, $request->description, session('id'));
+        return back()->with('success',1);
     }
 
 

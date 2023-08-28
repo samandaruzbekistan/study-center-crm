@@ -10,6 +10,7 @@ use App\Repositories\CashierRepository;
 use App\Repositories\MonthlyPaymentRepository;
 use App\Repositories\NotComeDaysRepository;
 use App\Repositories\OutlayRepository;
+use App\Repositories\SalariesRepository;
 use App\Repositories\StudentRepository;
 use App\Repositories\SubjectRepository;
 use App\Repositories\TeacherRepository;
@@ -31,6 +32,7 @@ class AdminController extends Controller
         protected AttendanceRepository $attendanceRepository,
         protected NotComeDaysRepository $notComeDaysRepository,
         protected SmsService $smsService,
+        protected SalariesRepository $salariesRepository,
     )
     {
     }
@@ -307,5 +309,15 @@ class AdminController extends Controller
         return $outlays;
     }
 
+
+
+    public function salaries(){
+        return view('admin.salary',['salaries' => $this->salariesRepository->getSalaries(), 'teachers' => $this->teacherRepository->getTeachers()]);
+    }
+
+//    public function add_salary(Request $request){
+//        $this->salariesRepository->add($request->teacher_id, $request->month, $request->amount, $request->date, $request->description, );
+//        return back()->with('success',1);
+//    }
 
 }

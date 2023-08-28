@@ -21,7 +21,7 @@
     </style>
 @endpush
 
-@section('home')
+@section('payment_home')
     active
 @endsection
 @section('section')

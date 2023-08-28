@@ -40,7 +40,7 @@
                                 </div>
                                 <div class="mb-3 col-md-3">
                                     <label class="form-label" for="inputCity">Kelgan sanasi</label>
-                                    <input type="date" name="date" value="{{ date('Y-m-d') }}" max="{{ date('Y-m-d') }}" class="form-control" id="inputCity">
+                                    <input type="date" name="date" value="{{ date('Y-m-d') }}" class="form-control" id="inputCity">
                                 </div>
                             </div>
                             <input type="hidden" name="student_id" value="{{ $student->id }}">
