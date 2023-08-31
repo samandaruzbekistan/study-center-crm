@@ -243,7 +243,10 @@ class TeacherController extends Controller
         if ($att) return back()->with('error',1);
         $attendance_id = $this->attendanceRepository->add($request->subject_id,session('id'), $d,$c);
         $inserted_row = [];
+        $students = [];
+        $subject = $this->subjectRepository->getSubject($request->subject_id);
         foreach ($selectedStudentIds as $id){
+            $students[] = $this->studentRepository->getStudentById($id);
             $inserted_row[] = [
                 'student_id' => $id,
                 'subject_id' => $request->subject_id,
@@ -251,6 +254,7 @@ class TeacherController extends Controller
                 'attendance_id' => $attendance_id
             ];
         }
+        $this->smsService->NotifyNotComeStudentParents($students, $subject);
         $this->notComeDaysRepository->add($inserted_row);
         return back()->with('success',1);
     }
