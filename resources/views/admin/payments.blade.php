@@ -166,6 +166,7 @@
                 url: "{{ route('cashier.payment.filtr') }}/"+date,
                 method: 'GET',
                 success: function(response) {
+                    tableBody.empty();
                     response.forEach(payment => {
                         let formattedMonth = moment(payment.month).locale('uz').format('MMMM YYYY');
                         const formattedAmount = payment.amount_paid.toLocaleString('en-US', {

@@ -381,7 +381,7 @@ class CashierController extends Controller
             $this->monthlyPaymentRepository->payment($payment->id, 0, $amount,$request->type, 1);
         }
         else{
-            $this->monthlyPaymentRepository->addPayment($payment->attach_id, $payment->student_id,$payment->subject_id, $payment->teacher_id,0,$payment->month, $request->amount);
+            $this->monthlyPaymentRepository->addPayment($payment->attach_id, $payment->student_id,$payment->subject_id, $payment->teacher_id,0,$payment->month, $request->amount, $request->type);
             $amount = $payment->amount - $request->amount;
             $this->monthlyPaymentRepository->updatePayment($payment->id, $amount);
 //            $amount_paid = $request->amount + $payment->amount_paid;

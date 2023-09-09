@@ -86,7 +86,7 @@ class MonthlyPaymentRepository
         return MonthlyPayment::with('student','attach')->where('date', $date)->latest()->get();
     }
 
-    public function addPayment($attach_id,$student_id, $subject_id, $teacher_id, $amount,$month, $amount_paid){
+    public function addPayment($attach_id,$student_id, $subject_id, $teacher_id, $amount,$month, $amount_paid, $type){
         $payment = new MonthlyPayment;
         $payment->attach_id = $attach_id;
         $payment->student_id = $student_id;
@@ -97,6 +97,7 @@ class MonthlyPaymentRepository
         $payment->status = 1;
         $payment->date = date('Y-m-d');
         $payment->amount_paid = $amount_paid;
+        $payment->type = $type;
         $payment->save();
     }
 
