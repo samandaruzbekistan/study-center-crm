@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\OutlayExport;
+use App\Exports\PaymentFilter;
+use App\Exports\SalaryExport;
+use App\Exports\TeacherPaymentExport;
 use App\Http\Requests\LoginRequest;
 use App\Repositories\AdminRepository;
 use App\Repositories\AttachRepository;
@@ -17,6 +21,7 @@ use App\Repositories\TeacherRepository;
 use App\Services\SmsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminController extends Controller
 {
@@ -67,16 +72,18 @@ class AdminController extends Controller
         $outlay = $this->outlayRepository->getOutlayByDate(date('Y-m-d'));
         $payments = $this->monthlyPaymentRepository->getPayments7();
         $cash = 0;
+        $click = 0;
         $transfer = 0;
         $credit_card = 0;
         if (count($payments_arr) > 0){
             foreach ($payments_arr as $item){
                 if ($item->type == 'cash') $cash = $item->total;
                 else if ($item->type == 'transfer') $transfer = $item->total;
+                else if ($item->type == 'click') $click = $item->total;
                 else $credit_card = $item->total;
             }
         }
-        return view('admin.home', ['payments' => $payments,'outlay' => $outlay,'cash' => $cash, 'credit_card' => $credit_card, 'transfer' => $transfer]);
+        return view('admin.home', ['payments' => $payments,'outlay' => $outlay,'click' => $click,'cash' => $cash, 'credit_card' => $credit_card, 'transfer' => $transfer]);
     }
 
     public function profile(){
@@ -309,12 +316,83 @@ class AdminController extends Controller
         return $outlays;
     }
 
+    public function payment_filter(Request $request){
+        $startDate = $request->input('start');
+        $endDate = $request->input('end');
+        return Excel::download(new PaymentFilter($startDate,$endDate), 'tolovlar.xlsx');
+    }
+
+    public function payment_filter_teacher(Request $request){
+        $startDate = $request->input('start');
+        $endDate = $request->input('end');
+        return Excel::download(new TeacherPaymentExport($startDate,$endDate), 'tolovlar.xlsx');
+    }
+
+    public function outlay_filter(Request $request){
+        $startDate = $request->input('start');
+        $endDate = $request->input('end');
+        return Excel::download(new OutlayExport($startDate,$endDate), 'xarajatlar.xlsx');
+    }
+
+    public function salary_filter(Request $request){
+        $startDate = $request->input('start');
+        $endDate = $request->input('end');
+        return Excel::download(new SalaryExport($startDate,$endDate), 'oyliklar.xlsx');
+    }
+
+    public function filter(Request $request){
+        $request->validate([
+            'start' => 'required',
+            'end' => 'required',
+        ]);
+        $payments_cash = $this->monthlyPaymentRepository->filterByTwoDateSumCash($request->start, $request->end);
+        $payments_card = $this->monthlyPaymentRepository->filterByTwoDateSumCard($request->start, $request->end);
+        $payments_bank = $this->monthlyPaymentRepository->filterByTwoDateSumBank($request->start, $request->end);
+        $payments_click = $this->monthlyPaymentRepository->filterByTwoDateSumClick($request->start, $request->end);
+        $outlay = $this->outlayRepository->filterByTwoDateSum($request->start, $request->end);
+        $salary = $this->salariesRepository->filterByTwoDateSum($request->start, $request->end);
+
+        return view('admin.filter', ['end'=> $request->end,'start'=> $request->start,'payments_click' => $payments_click, 'payments_bank' => $payments_bank,'payments_cash' => $payments_cash,'payments_card' => $payments_card, 'outlay' => $outlay, 'salary' => $salary]);
+    }
+
+    public function filter_cashier(Request $request){
+        $request->validate([
+            'start' => 'required',
+            'end' => 'required',
+        ]);
+        $payments_cash = $this->monthlyPaymentRepository->filterByTwoDateSumCash($request->start, $request->end);
+        $payments_card = $this->monthlyPaymentRepository->filterByTwoDateSumCard($request->start, $request->end);
+        $payments_bank = $this->monthlyPaymentRepository->filterByTwoDateSumBank($request->start, $request->end);
+        $payments_click = $this->monthlyPaymentRepository->filterByTwoDateSumClick($request->start, $request->end);
+        $outlay = $this->outlayRepository->filterByTwoDateSum($request->start, $request->end);
+        $salary = $this->salariesRepository->filterByTwoDateSum($request->start, $request->end);
+
+        return view('cashier.filter', ['end'=> $request->end,'start'=> $request->start,'payments_click' => $payments_click, 'payments_bank' => $payments_bank,'payments_cash' => $payments_cash,'payments_card' => $payments_card, 'outlay' => $outlay, 'salary' => $salary]);
+    }
+
+    public function filter_teacher(Request $request){
+        $request->validate([
+            'start' => 'required',
+            'end' => 'required',
+        ]);
+        $payments_cash = $this->monthlyPaymentRepository->filterByTwoDateSumCashTeacher($request->start, $request->end);
+        $payments_card = $this->monthlyPaymentRepository->filterByTwoDateSumCardTeacher($request->start, $request->end);
+        $payments_bank = $this->monthlyPaymentRepository->filterByTwoDateSumBankTeacher($request->start, $request->end);
+        $payments_click = $this->monthlyPaymentRepository->filterByTwoDateSumClickTeacher($request->start, $request->end);
+
+        return view('teacher.filter', ['end'=> $request->end,'start'=> $request->start,'payments_click' => $payments_click, 'payments_bank' => $payments_bank,'payments_cash' => $payments_cash,'payments_card' => $payments_card]);
+    }
+
 
 
     public function salaries(){
         return view('admin.salary',['salaries' => $this->salariesRepository->getSalaries(), 'teachers' => $this->teacherRepository->getTeachers()]);
     }
 
+
+    public function admin_outlay(){
+
+    }
 //    public function add_salary(Request $request){
 //        $this->salariesRepository->add($request->teacher_id, $request->month, $request->amount, $request->date, $request->description, );
 //        return back()->with('success',1);

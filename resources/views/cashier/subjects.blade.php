@@ -49,6 +49,34 @@
         </div>
     </main>
 
+    <main class="content forma2" style="padding-bottom: 0; display: none">
+        <div class="container-fluid p-0">
+            <div class="col-md-8 col-xl-9">
+                <div class="">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Guruhni taxrirlash</h5>
+                        </div>
+                        <div class="card-body h-100">
+                            <form action="{{ route('cashier.edit.subject') }}" method="post">
+                                @csrf
+                                <div class="mb-3">
+                                    <label class="form-label">Nomi <span class="text-danger">*</span></label>
+                                    <input name="name" id="nomi" required type="text" class="form-control" placeholder="">
+                                </div>
+                                <input type="hidden" name="subject_id" id="sb_id">
+                                <div class=" text-end">
+                                    <button type="button" class="btn btn-danger cancel3">Bekor qilish</button>
+                                    <button type="submit" class="btn btn-success">Taxrirlash</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
     <main class="content teachers">
         <div class="container-fluid p-0">
             <div class="col-12 col-xl-12">
@@ -76,7 +104,8 @@
                             <th>Nomi</th>
                             <th>Narxi</th>
                             <th>O'qituvchi</th>
-                            <th>Darslar soni</th>
+                            <th>Taxrirlash</th>
+                            <th>O'chirish</th>
                         </tr>
                         </thead>
                         <tbody id="tbody">
@@ -87,7 +116,8 @@
                                 </td>
                                 <td><b>{{ number_format($subject->price, 0, '.', ' ') }}</b> so'm</td>
                                 <td>{{ $subject->teacher->name }}</td>
-                                <td>{{ $subject->lessons_count }}</td>
+                                <td><button id="{{ $subject->id }}" nomi="{{ $subject->name }}" price="{{ $subject->price }}" class="btn btn-warning text-dark edit-button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 align-middle"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button></td>
+                                <td><a href="{{ route('group.delete', ['id' => $subject->id]) }}" class="btn btn-danger"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2 align-middle"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></a></td>
                             </tr>
                         @endforeach
                         </tbody>
@@ -102,6 +132,16 @@
 
 @section('js')
     <script>
+        $(document).on('click', '.edit-button', function () {
+            let sb_id = $(this).attr('id');
+            let nomi = $(this).attr('nomi');
+            let price = $(this).attr('price');
+            $('#nomi').val(nomi);
+            $('#sb_id').val(sb_id);
+            $('.forma2').show();
+            $('.teachers').hide();
+        });
+
         $(document).on('click', '.new-student', function () {
             let sb_id = $(this).attr('id');
             $.ajax({
@@ -186,6 +226,20 @@
         });
         @endif
 
+        @if(session('edit') == 1)
+        const notyf = new Notyf();
+
+        notyf.success({
+            message: 'Guruh ma\'lumotlari taxrirlandi!',
+            duration: 5000,
+            dismissible : true,
+            position: {
+                x : 'center',
+                y : 'top'
+            },
+        });
+        @endif
+
 
         @if(session('attach_error') == 1)
         const notyf = new Notyf();
@@ -226,11 +280,44 @@
             $('.teachers').show();
         });
 
+        $(".cancel3").on("click", function() {
+            event.stopPropagation();
+            $('.forma2').hide();
+            $('.teachers').show();
+        });
+
         $(".cancel1").on("click", function() {
             event.stopPropagation();
             $('.add-student').hide();
             $('.teachers').show();
         });
 
+        @if(session('delete') == 1)
+        const notyf = new Notyf();
+
+        notyf.success({
+            message: 'Guruh tizimdan o\'chirildi',
+            duration: 5000,
+            dismissible : true,
+            position: {
+                x : 'center',
+                y : 'top'
+            },
+        });
+        @endif
+
+        @if(session('not_delete') == 1)
+        const notyf = new Notyf();
+
+        notyf.error({
+            message: 'Guruh o\'chirilmadi. To\'lovlari mavjud',
+            duration: 5000,
+            dismissible : true,
+            position: {
+                x : 'center',
+                y : 'top'
+            },
+        });
+        @endif
     </script>
 @endsection

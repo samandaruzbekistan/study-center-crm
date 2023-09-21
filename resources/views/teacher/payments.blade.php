@@ -98,6 +98,8 @@
                                     <td class=""><a href="#" class="badge bg-success me-1 my-1">Naqd</a></td>
                                 @elseif($payment->type == 'credit_card')
                                     <td class=""><a href="#" class="badge bg-warning text-dark me-1 my-1">Karta</a></td>
+                                @elseif($payment->type == 'click')
+                                    <td class=""><a href="#" class="badge bg-info me-1 my-1">Click</a></td>
                                 @else
                                     <td class=""><a href="#" class="badge bg-danger me-1 my-1">Bank</a></td>
                                 @endif
@@ -141,6 +143,9 @@
                         }
                         else if(payment.type === 'credit_card'){
                             typeMoney = `<td class=""><a href="#" class="badge bg-warning text-dark me-1 my-1">Karta</a></td>`;
+                        }
+                        else if(payment.type === 'click'){
+                            typeMoney = `<td class=""><a href="#" class="badge bg-info me-1 my-1">Click</a></td>`;
                         }
                         else{
                             typeMoney = `<td class=""><a href="#" class="badge bg-danger me-1 my-1">Bank</a></td>`;

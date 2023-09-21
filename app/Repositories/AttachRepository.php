@@ -53,4 +53,22 @@ class AttachRepository
         $attach = Attach::with('monthlyPayments')->find($attachId);
         return $attach;
     }
+
+    public function deleteAttachBySubjectId($subject_id){
+        Attach::where('subject_id', $subject_id)
+            ->delete();
+    }
+
+    public function deleteAttachBySubjectAndStudentId($student_id,$subject_id){
+        Attach::where('subject_id', $subject_id)
+            ->where('student_id', $student_id)
+            ->delete();
+    }
+
+    public function update_subject_name($id, $name){
+        Attach::where('subject_id', $id)
+            ->update([
+                'subject_name' => $name
+            ]);
+    }
 }

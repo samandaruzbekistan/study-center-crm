@@ -46,11 +46,29 @@ class TeacherController extends Controller
             session()->put('id',$teacher->id);
             session()->put('photo',$teacher->photo);
             session()->put('username',$teacher->username);
-            return redirect()->route('teacher.home');
+            return redirect()->route('teacher.dashboard');
         }
         else{
             return back()->with('login_error', 1);
         }
+    }
+
+    public function dashboard(){
+        $payments_arr = $this->monthlyPaymentRepository->monthPaymentsByDateTeacher(date('Y-m-d'), session('id'));
+        $payments = $this->monthlyPaymentRepository->getPayments7Teacher(session('id'));
+        $cash = 0;
+        $click = 0;
+        $transfer = 0;
+        $credit_card = 0;
+        if (count($payments_arr) > 0){
+            foreach ($payments_arr as $item){
+                if ($item->type == 'cash') $cash = $item->total;
+                else if ($item->type == 'transfer') $transfer = $item->total;
+                else if ($item->type == 'click') $click = $item->total;
+                else $credit_card = $item->total;
+            }
+        }
+        return view('teacher.dashboard', ['payments' => $payments,'click' => $click,'cash' => $cash, 'credit_card' => $credit_card, 'transfer' => $transfer]);
     }
 
     public function home(){
@@ -223,6 +241,11 @@ class TeacherController extends Controller
         $subjects = $this->subjectRepository->getTeacherSubjects(session('id'));
         return view('teacher.attendance', ['subjects' => $subjects]);
     }
+
+    public function filter(){
+
+    }
+
 
     public function attendance_detail($subject_id, $month){
         $attendances = $this->attendanceRepository->getAttendanceBySubjectId($subject_id, $month);

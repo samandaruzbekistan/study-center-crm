@@ -98,24 +98,18 @@
                                 </div>
                                 <div class="row">
                                     <div class="mb-3 col">
-                                        <label class="form-label">To'langan summa</label>
-                                        <input type="number" class="form-control" disabled id="paid" value="0">
-                                    </div>
-                                    <div class="mb-3 col">
                                         <label class="form-label">Summa</label>
                                         <input type="number" class="form-control" name="amount" id="summa" max="300000" min="0">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="mb-3 col">
-                                        <label class="form-label">Kelmagan kunlar</label>
-                                        <input type="number" class="form-control" disabled id="days" value="0">
                                     </div>
                                     <div class="mb-3 col">
                                         <label class="form-label d-block">To'lov turi</label>
                                         <label class="d-inline-block form-check me-4">
                                             <input name="type" type="radio" value="cash" class="form-check-input" checked>
                                             <span class="form-check-label">Naqd</span>
+                                        </label>
+                                        <label class="d-inline-block form-check me-4">
+                                            <input name="type" type="radio" value="click" class="form-check-input">
+                                            <span class="form-check-label">Click</span>
                                         </label>
                                         <label class="d-inline-block form-check me-4">
                                             <input name="type" type="radio" value="credit_card" class="form-check-input">
@@ -166,6 +160,8 @@
                                             <td class=""><a href="#" class="badge bg-success me-1 my-1">Naqd</a></td>
                                         @elseif($payment->type == 'credit_card')
                                             <td class=""><a href="#" class="badge bg-warning text-dark me-1 my-1">Karta</a></td>
+                                        @elseif($payment->type == 'click')
+                                            <td class=""><a href="#" class="badge bg-info me-1 my-1">Click</a></td>
                                         @else
                                             <td class=""><a href="#" class="badge bg-danger me-1 my-1">Bank</a></td>
                                         @endif

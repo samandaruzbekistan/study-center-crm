@@ -15,8 +15,8 @@ class SmsService
 
     public function __construct()
     {
-        $this->email = Config::get('app.eskiz_email', 'your@mail.com');
-        $this->password = Config::get('app.eskiz_password', 'password');
+        $this->email = env('ESKIZ_EMAIL');
+        $this->password = env('ESKIZ_PASSWORD');
     }
 
     public function sendStudent($number, $message){
@@ -122,6 +122,45 @@ class SmsService
             // Return an error message or handle the failed request
             return json_decode($response->body(), true);
         }
+    }
+
+    public function sendReceip($number,$name, $summa, $date, $group, $month){
+        $number = preg_replace('/\D/', '', $number);
+        $token = SmsConfig::find(1);
+        $current_date = Carbon::now();
+        $token_expiry_date = Carbon::parse($token->updated_at)->addMonth();
+        if($current_date->greaterThan($token_expiry_date)){
+            $re = $this->getToken();
+            if ($re['message'] == 'error') return response()->json(['message'=> 'error'], 200);
+        }
+        $token = $token->token;
+        $user = new Client();
+        $message = "{$name}ning {$group} guruhiga {$month} o'quv oyi uchun {$summa} so'm to'lov qabul qilindi. Sana {$date}";
+        $headers = [
+            'Authorization' => "Bearer {$token}"
+        ];
+        $options1 = [
+            'multipart' => [
+                [
+                    'name' => 'mobile_phone',
+                    'contents' => "{$number}"
+                ],
+                [
+                    'name' => 'message',
+                    'contents' => "{$message}"
+                ],
+                [
+                    'name' => 'from',
+                    'contents' => '4546'
+                ],
+                [
+                    'name' => 'callback_url',
+                    'contents' => 'http://0000.uz/test.php'
+                ]
+            ]];
+        $request = new \GuzzleHttp\Psr7\Request('POST', 'notify.eskiz.uz/api/message/sms/send', $headers);
+        $res = $user->sendAsync($request,$options1)->wait()->getBody()->getContents();;
+        return $res;
     }
 
     public function sendSMSparents($users, $message){

@@ -70,6 +70,7 @@ Route::prefix('admin')->group(function () {
 
         Route::get('outlays',[AdminController::class, 'outlays'])->name('admin.outlays');
         Route::get('outlays-filtr/{date?}',[AdminController::class, 'outlays_filtr'])->name('admin.outlay.filtr');
+        Route::get('admin_outlay',[AdminController::class, 'admin_outlay'])->name('admin.outlay');
 
         Route::get('salaries',[AdminController::class, 'salaries'])->name('admin.salaries');
 //        Route::post('new-salary',[AdminController::class, 'add_salary'])->name('admin.salary.new');
@@ -80,6 +81,7 @@ Route::prefix('teacher')->group(function () {
     Route::post('/auth', [TeacherController::class, 'auth'])->name('teacher.auth');
     Route::middleware(['teacher_auth'])->group(function () {
         Route::get('home', [TeacherController::class, 'home'])->name('teacher.home');
+        Route::get('dashboard', [TeacherController::class, 'dashboard'])->name('teacher.dashboard');
         Route::get('logout', [TeacherController::class, 'logout'])->name('teacher.logout');
         Route::get('profile', [TeacherController::class, 'profile'])->name('teacher.profile');
         Route::post('update',[TeacherController::class,'update'])->name('teacher.update');
@@ -124,13 +126,16 @@ Route::prefix('cashier')->group(function () {
         Route::post('student-deactivate', [CashierController::class, 'deActiveAttach'])->name('cashier.student.deActiveAttach');
         Route::get('student-check/{id?}/{date?}/{subject_id?}', [CashierController::class, 'check'])->name('cashier.student.check');
         Route::get('student-add-to-subject/{student_id?}', [CashierController::class, 'add_to_subject'])->name('cashier.add_to_subject');
+        Route::get('student-delete-in-subject', [CashierController::class, 'delete_student_group'])->name('student.delete.group');
 
 
 //        Subject control
         Route::get('subjects', [CashierController::class, 'subjects'])->name('cashier.subjects');
         Route::get('cashier-subject-students/{subject_id?}', [CashierController::class, 'subjectStudents'])->name('cashier.subject.students');
         Route::post('groups-add', [CashierController::class, 'new_subject'])->name('cashier.new.subject');
+        Route::post('groups-edit', [CashierController::class, 'edit_subject'])->name('cashier.edit.subject');
         Route::get('teacher-groups/{teacher_id?}', [CashierController::class, 'getTeacherWithSubjects'])->name('cashier.teacher.subjects');
+        Route::get('group-delete/{id?}', [CashierController::class, 'delete_group'])->name('group.delete');
 
 
 //        Monthly payments control
@@ -189,7 +194,16 @@ Route::middleware(['combined_auth'])->group(function () {
     Route::get('/export/payments/debt', function () {
         return \Maatwebsite\Excel\Facades\Excel::download(new DebtExport, 'debt.xlsx');
     })->name('export.payments.debt');
-
+    Route::view('/export/payment-filter', 'admin.filter')->name('export.filter');
+    Route::view('/export-cashier/payment-filter', 'cashier.filter')->name('export.filter.cashier');
+    Route::view('/export-teacher/teacher-filter', 'teacher.filter')->name('export.filter.teacher');
+    Route::get('/payment-filter-view', [AdminController::class, 'filter'])->name('filter.view');
+    Route::get('/payment-filter-teacher', [AdminController::class, 'filter_teacher'])->name('filter.view.teacher');
+    Route::get('/payment-filter-cashier', [AdminController::class, 'filter_cashier'])->name('filter.view.cashier');
+    Route::post('/payment-excel', [AdminController::class, 'payment_filter'])->name('filter.excel');
+    Route::post('/payment-excel-teacher', [AdminController::class, 'payment_filter_teacher'])->name('filter.excel.teacher');
+    Route::post('/payment-outlay', [AdminController::class, 'outlay_filter'])->name('filter.outlay');
+    Route::post('/payment-salary', [AdminController::class, 'salary_filter'])->name('filter.salary');
 
     Route::get('/export/payments/teacher', function () {
         return \Maatwebsite\Excel\Facades\Excel::download(new PaymentsExportTeacher, 'payments.xlsx');

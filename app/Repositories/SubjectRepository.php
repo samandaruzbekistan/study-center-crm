@@ -19,6 +19,11 @@ class SubjectRepository
         return Subject::find($id);
     }
 
+    public function deleteSubject($id){
+        Subject::where('id', $id)
+            ->delete();
+    }
+
     public function getSubjectWithTeacher($id){
         return Subject::with('teacher')->find($id);
     }
@@ -32,6 +37,12 @@ class SubjectRepository
         $subject->save();
     }
 
+    public function update_name($id, $name){
+        Subject::where('id', $id)
+            ->update([
+                'name' => $name
+            ]);
+    }
 
 
 }

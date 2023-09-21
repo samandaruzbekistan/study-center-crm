@@ -18,6 +18,13 @@ class SalariesRepository
         return Salary::with('teacher')->where('teacher_id', $teacher_id)->get();
     }
 
+    public function filterByTwoDateSum($start, $end){
+        $receiptsData = Salary::whereBetween('date', [$start, $end])->get();
+
+        // Calculate the sum of 'amount' column
+        return $receiptsData->sum('amount');
+    }
+
     public function add($tch_id, $month, $amount, $date, $desc,$id){
         $s = new Salary;
         $s->teacher_id = $tch_id;

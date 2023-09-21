@@ -34,4 +34,15 @@ class NotComeDaysRepository
             ->where('attendance_id', $id)
             ->get();
     }
+
+    public function deleteDaysSubject($id){
+        NotComeDay::where('subject_id', $id)
+            ->delete();
+    }
+
+    public function deleteDaysSubjectStudent($id, $sb_id){
+        NotComeDay::where('subject_id', $sb_id)
+            ->where('student_id', $id)
+            ->delete();
+    }
 }

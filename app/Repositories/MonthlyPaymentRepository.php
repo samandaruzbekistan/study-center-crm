@@ -67,6 +67,17 @@ class MonthlyPaymentRepository
 
 
 
+    public function getPayments7Teacher($t_id){
+        return MonthlyPayment::query()
+            ->with(['student' => function ($query) {
+                $query->select('id', 'name');
+            }, 'teacher' => function ($query) {
+                $query->select('id', 'name');
+            }, 'subject' => function ($query) {
+                $query->select('id', 'name');
+            }])->where('date','!=', null)->where('teacher_id',$t_id)->orderBy('date', 'desc')->paginate(7);
+    }
+
     public function getPayments7(){
         return MonthlyPayment::query()
             ->with(['student' => function ($query) {
@@ -140,6 +151,16 @@ class MonthlyPaymentRepository
         return $payments;
     }
 
+    public function monthPaymentsByDateTeacher($date, $t_id){
+        $payments = MonthlyPayment::where('date', $date)
+            ->where('teacher_id', $t_id)
+            ->select('type', DB::raw('SUM(amount_paid) as total'))
+            ->groupBy('type')
+            ->get();
+
+        return $payments;
+    }
+
     public function getPaidPaymentsByMonth($subject_id){
         $payments_success = MonthlyPayment::where('subject_id', $subject_id)
             ->where('amount_paid','>',0)
@@ -189,5 +210,85 @@ class MonthlyPaymentRepository
             )
             ->orderBy(DB::raw('DATE_FORMAT(date, "%Y-%m")'), 'desc')
             ->get();
+    }
+
+    public function filterByTwoDateSumCash($start, $end){
+        $receiptsData = MonthlyPayment::whereBetween('date', [$start, $end])->where('type', 'cash')->get();
+
+        // Calculate the sum of 'amount' column
+        return $receiptsData->sum('amount_paid');
+    }
+
+    public function filterByTwoDateSumBank($start, $end){
+        $receiptsData = MonthlyPayment::whereBetween('date', [$start, $end])->where('type', 'transfer')->get();
+
+        // Calculate the sum of 'amount' column
+        return $receiptsData->sum('amount_paid');
+    }
+
+    public function filterByTwoDateSumClick($start, $end){
+        $receiptsData = MonthlyPayment::whereBetween('date', [$start, $end])->where('type', 'click')->get();
+
+        // Calculate the sum of 'amount' column
+        return $receiptsData->sum('amount_paid');
+    }
+
+    public function filterByTwoDateSumCard($start, $end){
+        $receiptsData = MonthlyPayment::whereBetween('date', [$start, $end])->where('type', 'credit_card')->get();
+
+        // Calculate the sum of 'amount' column
+        return $receiptsData->sum('amount_paid');
+    }
+
+    public function filterByTwoDateSumCashTeacher($start, $end){
+        $receiptsData = MonthlyPayment::whereBetween('date', [$start, $end])->where('teacher_id', session('id'))->where('type', 'cash')->get();
+
+        // Calculate the sum of 'amount' column
+        return $receiptsData->sum('amount_paid');
+    }
+
+    public function filterByTwoDateSumBankTeacher($start, $end){
+        $receiptsData = MonthlyPayment::whereBetween('date', [$start, $end])->where('teacher_id', session('id'))->where('type', 'transfer')->get();
+
+        // Calculate the sum of 'amount' column
+        return $receiptsData->sum('amount_paid');
+    }
+
+    public function filterByTwoDateSumClickTeacher($start, $end){
+        $receiptsData = MonthlyPayment::whereBetween('date', [$start, $end])->where('teacher_id', session('id'))->where('type', 'click')->get();
+
+        // Calculate the sum of 'amount' column
+        return $receiptsData->sum('amount_paid');
+    }
+
+    public function filterByTwoDateSumCardTeacher($start, $end){
+        $receiptsData = MonthlyPayment::whereBetween('date', [$start, $end])->where('teacher_id', session('id'))->where('type', 'credit_card')->get();
+
+        // Calculate the sum of 'amount' column
+        return $receiptsData->sum('amount_paid');
+    }
+
+    public function getSuccessPaymentsByGroup($id){
+        return MonthlyPayment::where('status', 1)
+            ->where('subject_id', $id)
+            ->get();
+    }
+
+    public function deleteSubjectPayments($id){
+        MonthlyPayment::where('subject_id', $id)
+            ->delete();
+    }
+
+    public function getSuccessPaymentsByStudent($id, $sb_id){
+        return MonthlyPayment::where('status', 1)
+            ->where('student_id', $id)
+            ->where('subject_id', $sb_id)
+            ->get();
+    }
+
+    public function deleteStudentPayments($id, $sb_id){
+        MonthlyPayment::where('student_id', $id)
+            ->where('subject_id', $sb_id)
+            ->delete();
     }
 }

@@ -61,6 +61,28 @@
                             </div>
                             <div class="col-xl-3 col-md-6">
                                 <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col mt-0">
+                                                <h5 class="card-title">Click</h5>
+                                            </div>
+
+                                            <div class="col-auto">
+                                                <div class="stat text-primary">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download-cloud align-middle"><polyline points="8 17 12 21 16 17"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path></svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <h1 class="mt-1 mb-3">{{ number_format($click, 0, '.', ' ') }}</h1>
+                                        <div class="mb-0">
+                                            <span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i>Click</span>
+                                            <span class="text-muted"> o'tkazma</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card">
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col mt-0">
@@ -103,6 +125,28 @@
                                 </div>
                             </div>
                             </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col mt-0">
+                                                <h5 class="card-title">Oldindan oylik</h5>
+                                            </div>
+
+                                            <div class="col-auto">
+                                                <div class="stat text-primary">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit align-middle "><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <h1 class="mt-1 mb-3">{{ number_format($salary, 0, '.', ' ') }}</h1>
+                                        <div class="mb-0">
+                                            <span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i>Oyliklar</span>
+                                            <span class="text-muted"> summasi</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -138,6 +182,10 @@
                                         <td>Bank</td>
                                         <td class="text-end">{{ $transfer }}</td>
                                     </tr>
+                                    <tr>
+                                        <td>Click</td>
+                                        <td class="text-end">{{ $click }}</td>
+                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -170,6 +218,8 @@
                                             <td class=""><a href="#" class="badge bg-success me-1 my-1">Naqd</a></td>
                                         @elseif($payment->type == 'credit_card')
                                             <td class=""><a href="#" class="badge bg-warning text-dark me-1 my-1">Karta</a></td>
+                                        @elseif($payment->type == 'click')
+                                            <td class=""><a href="#" class="badge bg-info me-1 my-1">Click</a></td>
                                         @else
                                             <td class=""><a href="#" class="badge bg-danger me-1 my-1">Bank</a></td>
                                         @endif
@@ -196,11 +246,12 @@
                 data: {
                     labels: ["Naqd", "Karta", "Bank"],
                     datasets: [{
-                        data: [{{ $cash }}, {{ $credit_card }}, {{ $transfer }}],
+                        data: [{{ $cash }}, {{ $credit_card }}, {{ $transfer }}, {{ $click }}],
                         backgroundColor: [
                             window.theme.primary,
                             window.theme.warning,
-                            window.theme.danger
+                            window.theme.danger,
+                            window.theme.info,
                         ],
                         borderWidth: 5
                     }]

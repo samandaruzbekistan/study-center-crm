@@ -150,6 +150,34 @@
                                             <button type="button" class="btn btn-success mt-3" id="fakeButton">Yuborish</button>
                                         </form>
                                     </div>
+{{--                                    <div class="col mt-3 border-top bg-light">--}}
+{{--                                        <table class="table table-hover">--}}
+{{--                                            <thead>--}}
+{{--                                            <tr>--}}
+{{--                                                <th>Kelamagan</th>--}}
+{{--                                                <th>Telefon</th>--}}
+{{--                                            </tr>--}}
+{{--                                            </thead>--}}
+{{--                                            <form action="{{ route('teacher.attendances.check') }}" method="post">--}}
+{{--                                                @csrf--}}
+{{--                                            <tbody id="tbody">--}}
+{{--                                            @foreach($attachs as $attach)--}}
+{{--                                                <tr>--}}
+{{--                                                    <td>--}}
+{{--                                                        <label class="form-check">--}}
+{{--                                                            <input class="form-check-input" name="student_ids[]" type="checkbox" value="{{ $attach->student->id }}">--}}
+{{--                                                            <span class="form-check-label">--}}
+{{--                                                              {{ $attach->student->name }}--}}
+{{--                                                            </span>--}}
+{{--                                                        </label>--}}
+{{--                                                    </td>--}}
+{{--                                                    <td>{{ $attach->student->phone }}</td>--}}
+{{--                                                </tr>--}}
+{{--                                            @endforeach--}}
+{{--                                            </tbody>--}}
+{{--                                            </form>--}}
+{{--                                        </table>--}}
+{{--                                    </div>--}}
                                 </div>
                             </div>
                         </div>

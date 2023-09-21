@@ -23,4 +23,9 @@ class Student extends Model
     {
         return $this->hasMany(NotComeDay::class, 'student_id');
     }
+
+    public function region()
+    {
+        return $this->belongsTo(Region::class, 'region_id');
+    }
 }

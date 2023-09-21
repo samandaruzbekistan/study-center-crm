@@ -19,6 +19,11 @@ class AttendanceRepository
             ->first();
     }
 
+    public function deleteSubjectAttendace($id){
+        Attendance::where('subject_id', $id)
+            ->delete();
+    }
+
     public function add($sb_id,$tch_id,$d,$c){
         $attendance = new Attendance;
         $attendance->subject_id = $sb_id;

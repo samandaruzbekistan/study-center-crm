@@ -20,6 +20,13 @@ class OutlayRepository
         return OutlayType::where('name', $name)->first();
     }
 
+    public function filterByTwoDateSum($start, $end){
+        $receiptsData = Outlay::whereBetween('date', [$start, $end])->get();
+
+        // Calculate the sum of 'amount' column
+        return $receiptsData->sum('amount');
+    }
+
     public function addType($name){
         $outlay = new OutlayType;
         $outlay->name = $name;

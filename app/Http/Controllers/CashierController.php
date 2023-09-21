@@ -97,18 +97,21 @@ class CashierController extends Controller
     public function home(){
         $payments_arr = $this->monthlyPaymentRepository->monthPaymentsByDateOrderType(date('Y-m-d'));
         $outlay = $this->outlayRepository->getOutlayByDate(date('Y-m-d'));
+        $salary = $this->salariesRepository->filterByTwoDateSum(date('Y-m-d'),date('Y-m-d'));
         $payments = $this->monthlyPaymentRepository->getPayments7();
         $cash = 0;
         $transfer = 0;
         $credit_card = 0;
+        $click = 0;
         if (count($payments_arr) > 0){
             foreach ($payments_arr as $item){
                 if ($item->type == 'cash') $cash = $item->total;
                 else if ($item->type == 'transfer') $transfer = $item->total;
+                else if ($item->type == 'click') $click = $item->total;
                 else $credit_card = $item->total;
             }
         }
-        return view('cashier.home', ['payments' => $payments,'outlay' => $outlay,'cash' => $cash, 'credit_card' => $credit_card, 'transfer' => $transfer]);
+        return view('cashier.home', ['payments' => $payments,'salary' => $salary,'outlay' => $outlay,'click' => $click, 'cash' => $cash,'credit_card' => $credit_card, 'transfer' => $transfer]);
     }
 
     public function payment_home(){
@@ -148,6 +151,21 @@ class CashierController extends Controller
         if (!empty($student)) return back()->with('username_error',1);
         $student_id = $this->studentRepository->addStudentCashier($request->name, $request->phone,$request->phone2,$request->region_id, $request->district_id,$request->quarter_id);
         return redirect()->route('cashier.student', ['id' => $student_id])->with('success',1);
+    }
+
+    public function delete_student_group(Request $request){
+        $request->validate([
+            'student_id' => 'required|numeric',
+            'subject_id' => 'required|numeric',
+        ]);
+        $payments = $this->monthlyPaymentRepository->getSuccessPaymentsByStudent($request->student_id, $request->subject_id);
+        if (count($payments) == 0){
+            $this->monthlyPaymentRepository->deleteStudentPayments($request->student_id, $request->subject_id);
+            $this->attachRepository->deleteAttachBySubjectAndStudentId($request->student_id, $request->subject_id);
+            $this->notComeDaysRepository->deleteDaysSubjectStudent($request->student_id, $request->subject_id);
+            return back()->with('delete', 1);
+        }
+        return back()->with('not_delete', 1);
     }
 
     public function check($id, $date,$subject_id){
@@ -316,6 +334,16 @@ class CashierController extends Controller
        return $this->subjectRepository->getSubjectWithTeacher($subject_id);
     }
 
+    public function edit_subject(Request $request){
+        $request->validate([
+            'name' => 'required|string',
+            'subject_id' => 'required|numeric',
+        ]);
+        $this->subjectRepository->update_name($request->subject_id, $request->name);
+        $this->attachRepository->update_subject_name($request->subject_id, $request->name);
+        return back()->with('edit',1);;
+    }
+
     public function subjectStudents($subject_id){
         $attach = $this->attachRepository->getAttachWithStudentsAndTeacher($subject_id);
         if (count($attach) < 1) return back()->with('attach_error',1);
@@ -333,6 +361,19 @@ class CashierController extends Controller
         ]);
         $this->subjectRepository->addSubject($request->name,$request->price,$request->lessons_count,$request->teacher_id);
         return back()->with('add',1);
+    }
+
+    public function delete_group($id){
+        $payments = $this->monthlyPaymentRepository->getSuccessPaymentsByGroup($id);
+        if (count($payments) == 0){
+            $this->monthlyPaymentRepository->deleteSubjectPayments($id);
+            $this->attachRepository->deleteAttachBySubjectId($id);
+            $this->notComeDaysRepository->deleteDaysSubject($id);
+            $this->attendanceRepository->deleteSubjectAttendace($id);
+            $this->subjectRepository->deleteSubject($id);
+            return back()->with('delete', 1);
+        }
+        return back()->with('not_delete', 1);
     }
 
     public function getTeacherWithSubjects($teacher_id){
@@ -388,6 +429,7 @@ class CashierController extends Controller
 //            $amount = $payment->amount - $request->amount;
 //            $this->monthlyPaymentRepository->payment($payment->id, $amount, $amount_paid,$request->type, 0);
         }
+        $this->smsService->sendReceip($student->parents_phone,$student->name, $request->amount, date('m.d.Y'), $subject->name, Carbon::parse($payment->month)->format('F Y'));
         return redirect()->route('cashier.home')->with('success',1);;
     }
 
