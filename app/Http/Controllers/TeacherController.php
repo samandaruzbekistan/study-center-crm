@@ -217,12 +217,13 @@ class TeacherController extends Controller
 
     public function subject_detail($id){
         $subject = $this->subjectRepository->getSubject($id);
+        $subjects = $this->subjectRepository->getTeacherSubjects(session('id'));
         if ($subject->teacher_id != session('id')) return redirect()->route('teacher.login');
         $attach = $this->attachRepository->getAttachWithStudentsAndTeacher($id);
         if (count($attach) < 1) return back()->with('attach_error',1);
         $payments = $this->monthlyPaymentRepository->monthPaymentsBySubjectId($id);
         $payments_success = $this->monthlyPaymentRepository->getPaidPaymentsByMonth($id);
-        return view('teacher.subject_detail',['attachs' => $attach, 'payments' => $payments,'payments_success' => $payments_success]);
+        return view('teacher.subject_detail',['subjects' => $subjects,'attachs' => $attach, 'payments' => $payments,'payments_success' => $payments_success]);
     }
 
     public function payment_details(Request $request){
@@ -335,6 +336,13 @@ class TeacherController extends Controller
         $res = $this->smsService->sendSmsSubject($students, $request->message);
         if($res['status'] == 'success') return back()->with('success',1);
         else return back()->with('error',1);
+    }
+
+    public function move(Request $request){
+        $request->validate([
+            'attach_id' => 'required|numeric',
+        ]);
+        return $request;
     }
 
 

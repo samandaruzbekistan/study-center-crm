@@ -96,6 +96,10 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="mb-3 col">
+                                    <label class="form-label">Izox</label>
+                                    <input type="text" class="form-control" required name="comment"  value="_">
+                                </div>
                                 <div class="row">
                                     <div class="mb-3 col">
                                         <label class="form-label">Summa</label>

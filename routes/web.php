@@ -24,7 +24,7 @@ Route::view('/admin', 'admin.login')->name('admin.login');
 Route::redirect('/', 'teacher');
 Route::view('/access-403', 'access')->name('access');
 
-Route::middleware(['access'])->group(function () {
+Route::middleware(['access','admin_blocked'])->group(function () {
     Route::view('/cashier', 'cashier.login')->name('cashier.login');
     Route::post('cashier/auth', [CashierController::class, 'auth'])->name('cashier.auth');
 
@@ -49,6 +49,7 @@ Route::prefix('admin')->group(function () {
         Route::get('cashiers',[AdminController::class, 'cashiers'])->name('admin.cashiers');
         Route::post('cashier-add',[AdminController::class, 'add_cashier'])->name('admin.new.cashier');
         Route::post('update-cashier',[AdminController::class, 'update_cashier'])->name('admin.update.cashier');
+        Route::get('system-lock', [AdminController::class, 'system_lock'])->name('admin.system.lock');
 
 
 //        Payment manage
@@ -99,6 +100,7 @@ Route::middleware(['teacher_auth'])->group(function () {
         Route::get('students', [TeacherController::class, 'students'])->name('teacher.students');
         Route::get('student-add-to-subject/{student_id?}', [TeacherController::class, 'add_to_subject'])->name('teacher.add_to_subject');
         Route::post('attach-to-group', [TeacherController::class, 'attach'])->name('teacher.attach');
+        Route::post('move-student', [TeacherController::class, 'move'])->name('teacher.move.student');
 
         Route::get('payments',[TeacherController::class,'payments'])->name('teacher.payments');
         Route::get('payments-month',[TeacherController::class,'payments_by_month'])->name('teacher.payment.month');
@@ -119,7 +121,7 @@ Route::middleware(['teacher_auth'])->group(function () {
 
 
 Route::prefix('cashier')->group(function () {
-    Route::middleware(['cashier_auth','access'])->group(function () {
+    Route::middleware(['cashier_auth','access', 'admin_blocked'])->group(function () {
         Route::get('home', [CashierController::class, 'home'])->name('cashier.home');
         Route::get('payment_home', [CashierController::class, 'payment_home'])->name('cashier.payment_home');
         Route::get('logout', [CashierController::class, 'logout'])->name('cashier.logout');

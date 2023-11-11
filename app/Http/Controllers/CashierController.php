@@ -415,14 +415,14 @@ class CashierController extends Controller
         if (!$payment) return back()->with('payment_error',1);
         if ($request->has('status')){
             $amount = $request->amount + $payment->amount_paid;
-            $this->monthlyPaymentRepository->payment($payment->id, 0, $amount,$request->type, 1);
+            $this->monthlyPaymentRepository->payment($payment->id, 0, $amount,$request->type, 1,$request->comment);
         }
         elseif ($request->amount == $payment->amount){
             $amount = $request->amount + $payment->amount_paid;
-            $this->monthlyPaymentRepository->payment($payment->id, 0, $amount,$request->type, 1);
+            $this->monthlyPaymentRepository->payment($payment->id, 0, $amount,$request->type, 1,$request->comment);
         }
         else{
-            $this->monthlyPaymentRepository->addPayment($payment->attach_id, $payment->student_id,$payment->subject_id, $payment->teacher_id,0,$payment->month, $request->amount, $request->type);
+            $this->monthlyPaymentRepository->addPayment($payment->attach_id, $payment->student_id,$payment->subject_id, $payment->teacher_id,0,$payment->month, $request->amount, $request->type,$request->comment);
             $amount = $payment->amount - $request->amount;
             $this->monthlyPaymentRepository->updatePayment($payment->id, $amount);
 //            $amount_paid = $request->amount + $payment->amount_paid;

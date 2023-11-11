@@ -23,12 +23,12 @@ class TimeBasedAccess
         $endTime = '20:00';
 
         // Check if the current time is within the allowed range
-        if ($currentTime >= $startTime && $currentTime <= $endTime) {
-            // If the current time is within the allowed range, proceed with the request
+//        if ($currentTime >= $startTime && $currentTime <= $endTime) {
+//            // If the current time is within the allowed range, proceed with the request
             return $next($request);
-        }
-        else{
-            return redirect(route('access'));
-        }
+//        }
+//        else{
+//            return redirect(route('access'));
+//        }
     }
 }

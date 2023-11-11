@@ -97,7 +97,7 @@ class MonthlyPaymentRepository
         return MonthlyPayment::with('student','attach')->where('date', $date)->latest()->get();
     }
 
-    public function addPayment($attach_id,$student_id, $subject_id, $teacher_id, $amount,$month, $amount_paid, $type){
+    public function addPayment($attach_id,$student_id, $subject_id, $teacher_id, $amount,$month, $amount_paid, $type,$comment){
         $payment = new MonthlyPayment;
         $payment->attach_id = $attach_id;
         $payment->student_id = $student_id;
@@ -109,6 +109,7 @@ class MonthlyPaymentRepository
         $payment->date = date('Y-m-d');
         $payment->amount_paid = $amount_paid;
         $payment->type = $type;
+        $payment->comment = $comment;
         $payment->save();
     }
 
@@ -119,7 +120,7 @@ class MonthlyPaymentRepository
         $payment->save();
     }
 
-    public function payment($id,$amount,$amount_paid,$type,$status){
+    public function payment($id,$amount,$amount_paid,$type,$status, $comment){
         $currentDateTime = Carbon::now('Asia/Tashkent');
         MonthlyPayment::where('id', $id)
             ->update([
@@ -129,7 +130,8 @@ class MonthlyPaymentRepository
                 'status' => $status,
                 'date' => date('Y-m-d'),
                 'paid_cashier_id' => session('id'),
-                'created_at' => $currentDateTime
+                'created_at' => $currentDateTime,
+                'comment' => $comment
             ]);
     }
 

@@ -19,7 +19,9 @@ use App\Repositories\StudentRepository;
 use App\Repositories\SubjectRepository;
 use App\Repositories\TeacherRepository;
 use App\Services\SmsService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -207,7 +209,13 @@ class AdminController extends Controller
         return back()->with('change',2);
     }
 
+    public function system_lock(){
+        $newTimestamp = Carbon::tomorrow()->setTime(0, 0, 0); // Set time to midnight
 
+        DB::table('status_system')->where('id',1)->update(['close_timestamp' => $newTimestamp]);
+
+        return back()->with('system_locked',1);
+    }
 
 
 //    Payment control
