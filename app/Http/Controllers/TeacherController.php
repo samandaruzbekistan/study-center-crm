@@ -278,7 +278,7 @@ class TeacherController extends Controller
                 'attendance_id' => $attendance_id
             ];
         }
-        $this->smsService->NotifyNotComeStudentParents($students, $subject);
+        $this->smsService->NotifyNotComeStudentParents($students);
         $this->notComeDaysRepository->add($inserted_row);
         return back()->with('success',1);
     }

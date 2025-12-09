@@ -2,315 +2,376 @@
 
 namespace App\Services;
 
-use App\Models\SmsConfig;
-use Carbon\Carbon;
-use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 
 class SmsService
 {
-    protected string $email;
-    protected string $password;
+    protected string $baseUrl;
+    protected string $apiKey;
 
     public function __construct()
     {
-        $this->email = env('ESKIZ_EMAIL');
-        $this->password = env('ESKIZ_PASSWORD');
+        $this->baseUrl = env('SMS_API_BASE_URL', 'https://api.ideal-study.uz');
+        $this->apiKey = env('SMS_API_KEY', '');
     }
 
-    public function sendStudent($number, $message){
+    /**
+     * Get API headers with authentication
+     */
+    protected function getHeaders(): array
+    {
+        return [
+            'X-API-Key' => $this->apiKey,
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
+        ];
+    }
+
+    /**
+     * Get HTTP client with SSL verification disabled
+     */
+    protected function getHttpClient()
+    {
+        return Http::withoutVerifying();
+    }
+
+    /**
+     * Send single SMS
+     */
+    public function sendStudent($number, $message)
+    {
         $number = preg_replace('/\D/', '', $number);
-        $token = SmsConfig::find(1);
-        $current_date = Carbon::now();
-        $token_expiry_date = Carbon::parse($token->updated_at)->addMonth();
-        if($current_date->greaterThan($token_expiry_date)){
-            $re = $this->getToken();
-            if ($re['message'] == 'error') return response()->json(['message'=> 'error'], 200);
-        }
-        $token = $token->token;
-        $user = new Client();
-        $headers = [
-            'Authorization' => "Bearer {$token}"
-        ];
-        $options1 = [
-            'multipart' => [
-                [
-                    'name' => 'mobile_phone',
-                    'contents' => "{$number}"
-                ],
-                [
-                    'name' => 'message',
-                    'contents' => "{$message}"
-                ],
-                [
-                    'name' => 'from',
-                    'contents' => '4546'
-                ],
-                [
-                    'name' => 'callback_url',
-                    'contents' => 'http://0000.uz/test.php'
-                ]
-            ]];
-        $request = new \GuzzleHttp\Psr7\Request('POST', 'notify.eskiz.uz/api/message/sms/send', $headers);
-        $res = $user->sendAsync($request,$options1)->wait()->getBody()->getContents();;
-        return $res;
-    }
-
-    protected function getToken(){
-        $client = new Client();
-        $options = [
-            'multipart' => [
-                [
-                    'name' => 'email',
-                    'contents' => $this->email
-                ],
-                [
-                    'name' => 'password',
-                    'contents' => $this->password
-                ]
-            ]];
-        $request = new \GuzzleHttp\Psr7\Request('POST', 'notify.eskiz.uz/api/auth/login');
-        $res = $client->sendAsync($request, $options)->wait();
-        $respon =  $res->getBody()->getContents();
-        // $dt = $respon['data'];
-        $dt = json_decode($respon, true);
-        if ($dt['message'] == "token_generated"){
-            SmsConfig::where('id', 1)
-                ->update([
-                    'token' => $dt['data']['token']
-                ]);
-            return ['message' => "token_updated"];
-        }
-        else{
-            return ['message' => "error"];
-        }
-    }
-
-    public function sendSMS($users, $message){
-        $token = SmsConfig::find(1);
-        $current_date = Carbon::now();
-        $token_expiry_date = Carbon::parse($token->updated_at)->addMonth();
-        if($current_date->greaterThan($token_expiry_date)){
-            $re = $this->getToken();
-            if ($re['message'] == 'error') return response()->json(['message'=> 'error'], 200);
-        }
-        $token = $token->token;
-        $messages = [];
-        foreach ($users as $index => $number) {
-            $messages[] = [
-                "user_sms_id" => "sms" . ($index + 1),
-                "to" => $number->phone,
-                "text" => $message,
-            ];
+        // Ensure number starts with country code
+        if (!str_starts_with($number, '998')) {
+            $number = '998' . ltrim($number, '0');
         }
 
-        $data = [
-            "messages" => $messages,
-            "from" => "4546",
-            "dispatch_id" => 123
-        ];
-//        dd(json_encode($data));
-        $response = Http::withToken($token)
-            ->withHeaders(['Content-Type' => 'application/json'])
-            ->post('https://notify.eskiz.uz/api/message/sms/send-batch', $data);
-        // Check if the request was successful
+        $response = $this->getHttpClient()
+            ->withHeaders($this->getHeaders())
+            ->post($this->baseUrl . '/api/sms/send', [
+                'phone' => $number,
+                'message' => $message,
+                'from' => '4546'
+            ]);
+
         if ($response->successful()) {
-            // Return the response JSON or extract specific data as needed
             return $response->json();
-        } else {
-            // Return an error message or handle the failed request
-            return json_decode($response->body(), true);
         }
+
+        return [
+            'success' => false,
+            'message' => 'SMS yuborishda xatolik',
+            'error' => $response->json()
+        ];
     }
 
-    public function sendReceip($number,$name, $summa, $date, $group, $month){
+    /**
+     * Send receipt SMS
+     */
+    public function sendReceip($number, $name, $summa, $date, $month, $id)
+    {
         $number = preg_replace('/\D/', '', $number);
-        $token = SmsConfig::find(1);
-        $current_date = Carbon::now();
-        $token_expiry_date = Carbon::parse($token->updated_at)->addMonth();
-        if($current_date->greaterThan($token_expiry_date)){
-            $re = $this->getToken();
-            if ($re['message'] == 'error') return response()->json(['message'=> 'error'], 200);
+        // Ensure number starts with country code
+        if (!str_starts_with($number, '998')) {
+            $number = '998' . ltrim($number, '0');
         }
-        $token = $token->token;
-        $user = new Client();
-        $message = "{$name}ning {$group} guruhiga {$month} o'quv oyi uchun {$summa} so'm to'lov qabul qilindi. Sana {$date}";
-        $headers = [
-            'Authorization' => "Bearer {$token}"
+
+        $message = "{$name} ga {$month} oyi uchun {$summa} so'm to'lov qabul qilindi. Sana {$date}";
+
+        $response = $this->getHttpClient()
+            ->withHeaders($this->getHeaders())
+            ->post($this->baseUrl . '/api/sms/send', [
+                'phone' => $number,
+                'message' => $message,
+                'from' => '4546'
+            ]);
+
+        if ($response->successful()) {
+            return $response->json();
+        }
+
+        return [
+            'success' => false,
+            'message' => 'SMS yuborishda xatolik',
+            'error' => $response->json()
         ];
-        $options1 = [
-            'multipart' => [
-                [
-                    'name' => 'mobile_phone',
-                    'contents' => "{$number}"
-                ],
-                [
-                    'name' => 'message',
-                    'contents' => "{$message}"
-                ],
-                [
-                    'name' => 'from',
-                    'contents' => '4546'
-                ],
-                [
-                    'name' => 'callback_url',
-                    'contents' => 'http://0000.uz/test.php'
-                ]
-            ]];
-        $request = new \GuzzleHttp\Psr7\Request('POST', 'notify.eskiz.uz/api/message/sms/send', $headers);
-        $res = $user->sendAsync($request,$options1)->wait()->getBody()->getContents();;
-        return $res;
     }
 
-    public function sendSMSparents($users, $message){
-        $token = SmsConfig::find(1);
-        $current_date = Carbon::now();
-        $token_expiry_date = Carbon::parse($token->updated_at)->addMonth();
-        if($current_date->greaterThan($token_expiry_date)){
-            $re = $this->getToken();
-            if ($re['message'] == 'error') return response()->json(['message'=> 'error'], 200);
-        }
-        $token = $token->token;
+    /**
+     * Send SMS to multiple users (batch)
+     */
+    public function sendSMS($users, $message)
+    {
         $messages = [];
-        foreach ($users as $index => $number) {
+        foreach ($users as $index => $user) {
+            $phone = preg_replace('/\D/', '', $user->phone ?? $user);
+            // Ensure number starts with country code
+            if (!str_starts_with($phone, '998')) {
+                $phone = '998' . ltrim($phone, '0');
+            }
+
             $messages[] = [
                 "user_sms_id" => "sms" . ($index + 1),
-                "to" => $number->parents_phone,
+                "to" => $phone,
                 "text" => $message,
+            ];
+        }
+
+        if (empty($messages)) {
+            return [
+                'success' => false,
+                'message' => 'Yuborish uchun xabar topilmadi'
             ];
         }
 
         $data = [
             "messages" => $messages,
             "from" => "4546",
-            "dispatch_id" => 123
+            "dispatch_id" => time()
         ];
-//        dd(json_encode($data));
-        $response = Http::withToken($token)
-            ->withHeaders(['Content-Type' => 'application/json'])
-            ->post('https://notify.eskiz.uz/api/message/sms/send-batch', $data);
-        // Check if the request was successful
+
+        $response = $this->getHttpClient()
+            ->withHeaders($this->getHeaders())
+            ->post($this->baseUrl . '/api/sms/send-batch', $data);
+
         if ($response->successful()) {
-            // Return the response JSON or extract specific data as needed
-            return $response->json();
-        } else {
-            // Return an error message or handle the failed request
-            return json_decode($response->body(), true);
+            $result = $response->json();
+            return [
+                'status' => $result['success'] ? 'success' : 'error',
+                'message' => $result['message'] ?? 'SMS yuborildi',
+                'data' => $result['data'] ?? null
+            ];
         }
+
+        return [
+            'status' => 'error',
+            'message' => 'SMS yuborishda xatolik',
+            'error' => $response->json()
+        ];
     }
 
-    public function sendSmsSubject($users, $message){
-        $token = SmsConfig::find(1);
-        $current_date = Carbon::now();
-        $token_expiry_date = Carbon::parse($token->updated_at)->addMonth();
-        if($current_date->greaterThan($token_expiry_date)){
-            $re = $this->getToken();
-            if ($re['message'] == 'error') return response()->json(['message'=> 'error'], 200);
-        }
-        $token = $token->token;
+    /**
+     * Send SMS to parents
+     */
+    public function sendSMSparents($users, $message)
+    {
         $messages = [];
-        foreach ($users as $index => $number) {
+        foreach ($users as $index => $user) {
+            $phone = preg_replace('/\D/', '', $user->parents_phone ?? $user->phone ?? $user);
+            // Ensure number starts with country code
+            if (!str_starts_with($phone, '998')) {
+                $phone = '998' . ltrim($phone, '0');
+            }
+
             $messages[] = [
                 "user_sms_id" => "sms" . ($index + 1),
-                "to" => $number->student->phone,
+                "to" => $phone,
                 "text" => $message,
+            ];
+        }
+
+        if (empty($messages)) {
+            return [
+                'success' => false,
+                'message' => 'Yuborish uchun xabar topilmadi'
             ];
         }
 
         $data = [
             "messages" => $messages,
             "from" => "4546",
-            "dispatch_id" => 123
+            "dispatch_id" => time()
         ];
-//        dd(json_encode($data));
-        $response = Http::withToken($token)
-            ->withHeaders(['Content-Type' => 'application/json'])
-            ->post('https://notify.eskiz.uz/api/message/sms/send-batch', $data);
-        // Check if the request was successful
+
+        $response = $this->getHttpClient()
+            ->withHeaders($this->getHeaders())
+            ->post($this->baseUrl . '/api/sms/send-batch', $data);
+
         if ($response->successful()) {
-            // Return the response JSON or extract specific data as needed
-            return $response->json();
-        } else {
-            // Return an error message or handle the failed request
-            return json_decode($response->body(), true);
+            $result = $response->json();
+            return [
+                'status' => $result['success'] ? 'success' : 'error',
+                'message' => $result['message'] ?? 'SMS yuborildi',
+                'data' => $result['data'] ?? null
+            ];
         }
+
+        return [
+            'status' => 'error',
+            'message' => 'SMS yuborishda xatolik',
+            'error' => $response->json()
+        ];
     }
 
-    public function NotifyNotComeStudentParents($students, $subject){
-        $token = SmsConfig::find(1);
-        $current_date = Carbon::now();
-        $token_expiry_date = Carbon::parse($token->updated_at)->addMonth();
-        if($current_date->greaterThan($token_expiry_date)){
-            $re = $this->getToken();
-            if ($re['message'] == 'error') return response()->json(['message'=> 'error'], 200);
+    /**
+     * Send SMS to students by subject/class
+     */
+    public function sendSmsSubject($users, $message)
+    {
+        $messages = [];
+        foreach ($users as $index => $user) {
+            // Handle both direct phone and student object
+            $phone = null;
+            if (is_object($user) && isset($user->student)) {
+                $phone = $user->student->phone ?? null;
+            } elseif (is_object($user) && isset($user->phone)) {
+                $phone = $user->phone;
+            } elseif (is_string($user)) {
+                $phone = $user;
+            }
+
+            if (!$phone) {
+                continue;
+            }
+
+            $phone = preg_replace('/\D/', '', $phone);
+            // Ensure number starts with country code
+            if (!str_starts_with($phone, '998')) {
+                $phone = '998' . ltrim($phone, '0');
+            }
+
+            $messages[] = [
+                "user_sms_id" => "sms" . ($index + 1),
+                "to" => $phone,
+                "text" => $message,
+            ];
         }
-        $token = $token->token;
+
+        if (empty($messages)) {
+            return [
+                'status' => 'error',
+                'message' => 'Yuborish uchun xabar topilmadi'
+            ];
+        }
+
+        $data = [
+            "messages" => $messages,
+            "from" => "4546",
+            "dispatch_id" => time()
+        ];
+
+        $response = $this->getHttpClient()
+            ->withHeaders($this->getHeaders())
+            ->post($this->baseUrl . '/api/sms/send-batch', $data);
+
+        if ($response->successful()) {
+            $result = $response->json();
+            return [
+                'status' => $result['success'] ? 'success' : 'error',
+                'message' => $result['message'] ?? 'SMS yuborildi',
+                'data' => $result['data'] ?? null
+            ];
+        }
+
+        return [
+            'status' => 'error',
+            'message' => 'SMS yuborishda xatolik',
+            'error' => $response->json()
+        ];
+    }
+
+    /**
+     * Notify parents about absent students
+     */
+    public function NotifyNotComeStudentParents($students)
+    {
         $messages = [];
         $date = date('d.m.Y');
-        foreach ($students as $index => $number) {
+
+        foreach ($students as $index => $student) {
+            $phone = preg_replace('/\D/', '', $student->parents_phone ?? $student->phone ?? '');
+            if (empty($phone)) {
+                continue;
+            }
+
+            // Ensure number starts with country code
+            if (!str_starts_with($phone, '998')) {
+                $phone = '998' . ltrim($phone, '0');
+            }
+
+            $message = "Farzandingiz {$student->name} {$date} sanasida maktabga kelmadi. Ideal Study NTM";
+
             $messages[] = [
                 "user_sms_id" => "sms" . ($index + 1),
-                "to" => $number->parents_phone,
-                "text" => "Farzandingiz {$number->name} {$date} sanasidagi {$subject->name} darsiga kelmadi. Ideal Study o'quv markazi",
+                "to" => $phone,
+                "text" => $message,
+            ];
+        }
+
+        if (empty($messages)) {
+            return [
+                'success' => false,
+                'message' => 'Yuborish uchun xabar topilmadi'
             ];
         }
 
         $data = [
             "messages" => $messages,
             "from" => "4546",
-            "dispatch_id" => 123
+            "dispatch_id" => time()
         ];
-//        dd(json_encode($data));
-        $response = Http::withToken($token)
-            ->withHeaders(['Content-Type' => 'application/json'])
-            ->post('https://notify.eskiz.uz/api/message/sms/send-batch', $data);
-        // Check if the request was successful
+
+        $response = $this->getHttpClient()
+            ->withHeaders($this->getHeaders())
+            ->post($this->baseUrl . '/api/sms/send-batch', $data);
+
         if ($response->successful()) {
-            // Return the response JSON or extract specific data as needed
             return $response->json();
-        } else {
-            // Return an error message or handle the failed request
-            return json_decode($response->body(), true);
         }
-    }
 
-    public function apiSMS($number, $code){
-        $number = preg_replace('/\D/', '', $number);
-        $token = SmsConfig::find(1);
-        $current_date = Carbon::now();
-        $token_expiry_date = Carbon::parse($token->updated_at)->addMonth();
-        if($current_date->greaterThan($token_expiry_date)){
-            $re = $this->getToken();
-            if ($re['message'] == 'error') return response()->json(['message'=> 'error'], 200);
-        }
-        $token = $token->token;
-        $user = new Client();
-        $headers = [
-            'Authorization' => "Bearer {$token}"
+        return [
+            'success' => false,
+            'message' => 'SMS yuborishda xatolik',
+            'error' => $response->json()
         ];
-        $options1 = [
-            'multipart' => [
-                [
-                    'name' => 'mobile_phone',
-                    'contents' => "{$number}"
-                ],
-                [
-                    'name' => 'message',
-                    'contents' => "MyTok dasturida tasdiqlash kodi: {$code}"
-                ],
-                [
-                    'name' => 'from',
-                    'contents' => '4546'
-                ],
-                [
-                    'name' => 'callback_url',
-                    'contents' => 'http://0000.uz/test.php'
-                ]
-            ]];
-        $request = new \GuzzleHttp\Psr7\Request('POST', 'notify.eskiz.uz/api/message/sms/send', $headers);
-        $res = $user->sendAsync($request,$options1)->wait()->getBody()->getContents();;
-        return $res;
     }
 
+    /**
+     * Get SMS status
+     */
+    public function getSmsStatus($smsId)
+    {
+        $response = $this->getHttpClient()
+            ->withHeaders($this->getHeaders())
+            ->get($this->baseUrl . '/api/sms/status/' . $smsId);
+
+        if ($response->successful()) {
+            return $response->json();
+        }
+
+        return [
+            'success' => false,
+            'message' => 'Status olishda xatolik',
+            'error' => $response->json()
+        ];
+    }
+
+    /**
+     * Get token info
+     */
+    public function getTokenInfo()
+    {
+        $response = $this->getHttpClient()
+            ->withHeaders($this->getHeaders())
+            ->get($this->baseUrl . '/api/sms/token-info');
+
+        if ($response->successful()) {
+            return $response->json();
+        }
+
+        return [
+            'success' => false,
+            'message' => 'Token ma\'lumotlarini olishda xatolik',
+            'error' => $response->json()
+        ];
+    }
+
+    /**
+     * Send SMS via API (for backward compatibility)
+     */
+    public function apiSMS($number, $code)
+    {
+        $message = "MyTok dasturida tasdiqlash kodi: {$code}";
+        return $this->sendStudent($number, $message);
+    }
 }

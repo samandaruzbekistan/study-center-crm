@@ -429,7 +429,7 @@ class CashierController extends Controller
 //            $amount = $payment->amount - $request->amount;
 //            $this->monthlyPaymentRepository->payment($payment->id, $amount, $amount_paid,$request->type, 0);
         }
-        $this->smsService->sendReceip($student->parents_phone,$student->name, $request->amount, date('d.m.Y'), $subject->name, Carbon::parse($payment->month)->format('F Y'));
+        $this->smsService->sendReceip($student->parents_phone, $student->name, $request->amount, date('d.m.Y'), Carbon::parse($payment->month)->format('F Y'), $payment->id);
         return redirect()->route('cashier.home')->with('success',1);;
     }
 
