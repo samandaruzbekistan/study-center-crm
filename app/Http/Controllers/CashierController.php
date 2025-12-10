@@ -143,13 +143,10 @@ class CashierController extends Controller
             'name' => 'required|string|max:255',
             'phone' => 'required|numeric|digits:9',
             'phone2' => 'required|numeric|digits:9',
-            'region_id' => 'required|numeric',
-            'quarter_id' => 'required|numeric',
-            'district_id' => 'required|numeric',
         ]);
         $student = $this->studentRepository->getStudentByName($request->name);
         if (!empty($student)) return back()->with('username_error',1);
-        $student_id = $this->studentRepository->addStudentCashier($request->name, $request->phone,$request->phone2,$request->region_id, $request->district_id,$request->quarter_id);
+        $student_id = $this->studentRepository->addStudentCashier($request->name, $request->phone,$request->phone2);
         return redirect()->route('cashier.student', ['id' => $student_id])->with('success',1);
     }
 

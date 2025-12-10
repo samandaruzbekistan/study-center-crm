@@ -21,12 +21,12 @@ class StudentRepository
         return Student::where('name', $name)->first();
     }
 
-    public function addStudentCashier($name, $phone, $phone2,$r_id,$d_id,$q_id){
+    public function addStudentCashier($name, $phone, $phone2){
         $st = new Student;
         $st->name = $name;
-        $st->region_id = $r_id;
-        $st->district_id = $d_id;
-        $st->quarter_id = $q_id;
+        $st->region_id = null;
+        $st->district_id = null;
+        $st->quarter_id = null;
         $st->phone = '998'.$phone;
         $st->parents_phone = '998'.$phone2;
         $st->cashier_id = session('id');
@@ -34,12 +34,12 @@ class StudentRepository
         return $st->id;
     }
 
-    public function addStudentTeacher($name, $phone, $phone2,$r_id,$d_id,$q_id){
+    public function addStudentTeacher($name, $phone, $phone2){
         $st = new Student;
         $st->name = $name;
-        $st->region_id = $r_id;
-        $st->district_id = $d_id;
-        $st->quarter_id = $q_id;
+        $st->region_id = null;
+        $st->district_id = null;
+        $st->quarter_id = null;
         $st->phone = '998'.$phone;
         $st->parents_phone = '998'.$phone2;
         $st->teacher_id = session('id');
