@@ -410,7 +410,10 @@ class CashierController extends Controller
         $subject = $this->subjectRepository->getSubject($payment->subject_id);
         if ($request->amount > $payment->amount) return back()->with('amount_error',1);
         if (!$payment) return back()->with('payment_error',1);
-        if ($request->has('status')){
+        if($request->has('old_month')){
+            $this->monthlyPaymentRepository->addPayment($payment->attach_id, $payment->student_id,$payment->subject_id, $payment->teacher_id,0,$payment->month, $request->amount, $request->type,$request->comment);
+        }
+        elseif ($request->has('status')){
             $amount = $request->amount + $payment->amount_paid;
             $this->monthlyPaymentRepository->payment($payment->id, 0, $amount,$request->type, 1,$request->comment);
         }

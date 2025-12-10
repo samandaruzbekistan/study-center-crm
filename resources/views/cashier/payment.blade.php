@@ -125,12 +125,21 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-check m-0">
-                                        <input type="checkbox" name="status" value="1" class="form-check-input">
-                                        <span class="form-check-label">To'liq to'landi</span>
-                                    </label>
+                                <div class="row">
+                                    <div class="mb-3 col">
+                                        <label class="form-check m-0">
+                                            <input type="checkbox" name="status" value="1" class="form-check-input">
+                                            <span class="form-check-label">To'liq to'landi</span>
+                                        </label>
+                                    </div>
+                                    <div class="mb-3 col">
+                                        <label class="form-check m-0">
+                                            <input type="checkbox" name="old_month" value="1" class="form-check-input">
+                                            <span class="form-check-label">Avvalgi oy uchun to'lov</span>
+                                        </label>
+                                    </div>
                                 </div>
+
                                 <button type="button" id="fake-btn" class="btn btn-primary">Qabul qilish</button>
                                 <button type="submit" id="submit-btn" class="d-none">Qabul qilish</button>
                             </form>
