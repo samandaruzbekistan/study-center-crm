@@ -33,13 +33,14 @@ class OutlayRepository
         $outlay->save();
     }
 
-    public function addOutlay($type_id, $amount, $date, $cashier_id, $description){
+    public function addOutlay($type_id, $amount, $date, $cashier_id, $description, $type){
         $o = new Outlay;
         $o->type_id = $type_id;
         $o->amount = $amount;
         $o->date = $date;
         $o->cashier_id = $cashier_id;
         $o->description = $description;
+        $o->type = $type;
         $o->save();
     }
 
@@ -47,8 +48,18 @@ class OutlayRepository
         return OutlayType::all();
     }
 
-    public function get_outlays($type_id){
-        return Outlay::with('types')->where('type_id', $type_id)->latest()->get();
+    public function get_outlays($type_id, $type = null){
+        $query = Outlay::with('types');
+
+        if($type_id != 'all'){
+            $query->where('type_id', $type_id);
+        }
+
+        if($type && $type != 'all'){
+            $query->where('type', $type);
+        }
+
+        return $query->latest()->get();
     }
 
     public function get_outlays100(){

@@ -63,6 +63,15 @@
                                     </div>
                                 </div>
                                 <div class="mb-3">
+                                    <label class="form-label">To'lov turi</label>
+                                    <select class="form-select" name="type" required>
+                                        <option value="">Tanlang</option>
+                                        <option value="cash">Naqd</option>
+                                        <option value="click">Kartadan</option>
+                                        <option value="transfer">Bank o'tkazma</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
                                     <label class="form-label">Izox</label>
                                     <textarea class="form-control" rows="3" name="description">.</textarea>
                                 </div>
@@ -96,6 +105,12 @@
                                         <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
                                     @endforeach
                                 </select>
+                                <select class="form-select mb-3" style="width: auto; display: inline-block" id="payment_type">
+                                    <option value="all">To'lov turi</option>
+                                    <option value="cash">Naqd</option>
+                                    <option value="click">Kartadan</option>
+                                    <option value="transfer">Bank o'tkazma</option>
+                                </select>
                                 <button class="btn btn-info add ms-2">+ Xarajat turi</button>
                                 <button class="btn btn-danger text-white new ms-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up-circle align-middle"><circle cx="12" cy="12" r="10"></circle><polyline points="16 12 12 8 8 12"></polyline><line x1="12" y1="16" x2="12" y2="8"></line></svg> Xarajat</button>
                             </div>
@@ -107,6 +122,7 @@
                             <th>#</th>
                             <th>Turi</th>
                             <th>Summa</th>
+                            <th>To'lov turi</th>
                             <th>Sana</th>
                             <th>Izox</th>
                         </tr>
@@ -118,7 +134,18 @@
                                 <td>
                                     {{ $outlay->types->name }}
                                 </td>
-                                <td>{{ $outlay->amount }}</td>
+                                <td>{{ number_format($outlay->amount, 0, '.', ' ') }}</td>
+                                <td>
+                                    @if($outlay->type == 'cash')
+                                        <span class="badge bg-success">Naqd</span>
+                                    @elseif($outlay->type == 'click')
+                                        <span class="badge bg-primary">Kartadan</span>
+                                    @elseif($outlay->type == 'transfer')
+                                        <span class="badge bg-info">Bank o'tkazma</span>
+                                    @else
+                                        {{ $outlay->type ?? '-' }}
+                                    @endif
+                                </td>
                                 <td>{{ $outlay->date }}</td>
                                 <td>{{ $outlay->description }}</td>
                             </tr>
@@ -137,26 +164,49 @@
     <script>
 
         $(document).on('change', '#teacher', function() {
-            let selectedId = $(this).val();
-            if(selectedId === 'all'){
+            filterOutlays();
+        });
+
+        $(document).on('change', '#payment_type', function() {
+            filterOutlays();
+        });
+
+        function filterOutlays() {
+            let selectedId = $('#teacher').val();
+            let paymentType = $('#payment_type').val();
+
+            if(selectedId === 'all' && paymentType === 'all'){
                 window.location = "{{ route('cashier.outlays') }}";
+                return;
             }
+
             $("#tbody").empty();
 
             $.ajax({
                 url: '{{ route('cashier.outlays.get') }}/' + selectedId,
                 method: 'GET',
+                data: { type: paymentType },
                 success: function(data) {
                     const tableBody = $("#tbody");
                     let countdown = 0;
                     data.forEach(outlay => {
-                        console.log(data)
                         countdown++;
+                        let typeBadge = '';
+                        if(outlay.type == 'naqd'){
+                            typeBadge = '<span class="badge bg-success">Naqd</span>';
+                        } else if(outlay.type == 'click'){
+                            typeBadge = '<span class="badge bg-primary">Click</span>';
+                        } else if(outlay.type == 'bank o\'tkazma'){
+                            typeBadge = '<span class="badge bg-info">Bank o\'tkazma</span>';
+                        } else {
+                            typeBadge = outlay.type || '-';
+                        }
                         const newRow = `
                             <tr>
                                 <td>${countdown}</td>
                                 <td><b>${outlay.types.name}</b></td>
                                 <td>${outlay.amount}</td>
+                                <td>${typeBadge}</td>
                                 <td>${outlay.date}</td>
                                 <td>${outlay.description}</td>
                             </tr>
@@ -166,7 +216,7 @@
 
                 }
             });
-        });
+        }
 
         @if($errors->any())
         const notyf = new Notyf();

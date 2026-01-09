@@ -16,13 +16,14 @@ return new class extends Migration
         Schema::create('outlays', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('amount');
-            $table->text('comment');
+            $table->text('description');
             $table->date('date');
             $table->unsignedBigInteger('type_id');
             $table->foreign('type_id')->references('id')->on('outlay_types');
             $table->unsignedBigInteger('cashier_id');
             $table->unique('type_id','cashier_id');
             $table->foreign('cashier_id')->references('id')->on('cashiers');
+            $table->string('type');
             $table->timestamps();
         });
     }

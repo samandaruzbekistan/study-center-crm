@@ -468,13 +468,15 @@ class CashierController extends Controller
             'amount' => 'required|numeric',
             'date' => 'required|date',
             'description' => 'required|string',
+            'type' => 'required|string|in:naqd,click,bank o\'tkazma',
         ]);
-        $this->outlayRepository->addOutlay($request->type_id, $request->amount, $request->date, session('id'), $request->description);
+        $this->outlayRepository->addOutlay($request->type_id, $request->amount, $request->date, session('id'), $request->description, $request->type);
         return back()->with('success',1);
     }
 
-    public function get_outlays($type_id){
-        return $this->outlayRepository->get_outlays($type_id);
+    public function get_outlays($type_id, Request $request = null){
+        $type = $request ? $request->input('type', 'all') : 'all';
+        return $this->outlayRepository->get_outlays($type_id, $type);
     }
 
 
