@@ -30,6 +30,8 @@ Route::middleware(['access','admin_blocked'])->group(function () {
 
 });
 
+Route::get('test', [CashierController::class, 'test']);
+
 Route::prefix('admin')->group(function () {
     Route::post('/auth', [AdminController::class, 'auth'])->name('admin.auth');
     Route::middleware(['admin_auth'])->group(function () {
@@ -74,10 +76,17 @@ Route::prefix('admin')->group(function () {
         Route::get('attendance-detail/{subject_id?}/{month?}',[TeacherController::class, 'attendance_detail'])->name('admin.attendance.detail');
         Route::get('day-detail/{id?}',[TeacherController::class, 'attendance_detail_day'])->name('admin.attendance.day');
 
+        Route::get('admin-salaries',[AdminController::class, 'admin_salaries'])->name('admin.salaries.form');
+        Route::post('new-salary',[AdminController::class, 'add_salary'])->name('admin.salary.new');
+
 
         Route::get('outlays',[AdminController::class, 'outlays'])->name('admin.outlays');
         Route::get('outlays-filtr/{date?}',[AdminController::class, 'outlays_filtr'])->name('admin.outlay.filtr');
+
+
         Route::get('admin_outlay',[AdminController::class, 'admin_outlay'])->name('admin.outlay');
+        Route::post('admin_outlay-new',[AdminController::class, 'admin_new_outlay'])->name('admin.new.outlay');
+        Route::get('admin_outlay-delete/{id?}',[AdminController::class, 'admin_delete_outlay'])->name('admin.delete.outlay');
 
         Route::get('salaries',[AdminController::class, 'salaries'])->name('admin.salaries');
 //        Route::post('new-salary',[AdminController::class, 'add_salary'])->name('admin.salary.new');
@@ -101,6 +110,8 @@ Route::middleware(['teacher_auth'])->group(function () {
         Route::get('student-add-to-subject/{student_id?}', [TeacherController::class, 'add_to_subject'])->name('teacher.add_to_subject');
         Route::post('attach-to-group', [TeacherController::class, 'attach'])->name('teacher.attach');
         Route::post('move-student', [TeacherController::class, 'move'])->name('teacher.move.student');
+        Route::post('student-deactivate', [TeacherController::class, 'deActiveAttach'])->name('teacher.student.deActiveAttach');
+        Route::get('student-check/{id?}/{date?}/{subject_id?}', [TeacherController::class, 'check'])->name('teacher.student.check');
 
         Route::get('payments',[TeacherController::class,'payments'])->name('teacher.payments');
         Route::get('payments-month',[TeacherController::class,'payments_by_month'])->name('teacher.payment.month');

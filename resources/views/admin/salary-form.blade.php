@@ -1,9 +1,9 @@
-@extends('cashier.header')
+@extends('admin.header')
 
 @push('css')
     <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
 @endpush
-@section('salaries')
+@section('admin-salaries')
     active
 @endsection
 @section('section')
@@ -18,7 +18,7 @@
                             <h5 class="card-title mb-0">Yangi oylik qoshish</h5>
                         </div>
                         <div class="card-body h-100">
-                            <form action="{{ route('cashier.salary.new') }}" method="post">
+                            <form action="{{ route('admin.salary.new') }}" method="post">
                                 @csrf
                                 <div class="row">
                                     <div class="mb-3 col-6">

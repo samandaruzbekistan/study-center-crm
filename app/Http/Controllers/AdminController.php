@@ -9,6 +9,7 @@ use App\Exports\TeacherPaymentExport;
 use App\Http\Requests\LoginRequest;
 use App\Repositories\AdminRepository;
 use App\Repositories\AttachRepository;
+use App\Repositories\AdminOutlayRepository;
 use App\Repositories\AttendanceRepository;
 use App\Repositories\CashierRepository;
 use App\Repositories\MonthlyPaymentRepository;
@@ -40,6 +41,7 @@ class AdminController extends Controller
         protected NotComeDaysRepository $notComeDaysRepository,
         protected SmsService $smsService,
         protected SalariesRepository $salariesRepository,
+        protected AdminOutlayRepository $adminOutlayRepository
     )
     {
     }
@@ -118,6 +120,15 @@ class AdminController extends Controller
         return back()->with('success_photo',1);
     }
 
+
+    public function admin_salaries(){
+        return view('admin.salary-form',['salaries' => $this->salariesRepository->getSalaries(), 'teachers' => $this->teacherRepository->getTeachers()]);
+    }
+
+    public function add_salary(Request $request){
+        $this->salariesRepository->add($request->teacher_id, $request->month, $request->amount, $request->date, $request->description, null);
+        return back()->with('success',1);
+    }
 
 
 
@@ -399,7 +410,18 @@ class AdminController extends Controller
 
 
     public function admin_outlay(){
+        $outlay = $this->adminOutlayRepository->getOutlays();
+        return view('admin.adminOutlay', ['outlays' => $outlay]);
+    }
 
+    public function admin_new_outlay(Request $request){
+        $this->adminOutlayRepository->add($request->amount, $request->description,$request->date);
+        return back()->with('success',1);
+    }
+
+    public function admin_delete_outlay($id){
+        $this->adminOutlayRepository->delete_outlay($id);
+        return back()->with('delete',1);
     }
 //    public function add_salary(Request $request){
 //        $this->salariesRepository->add($request->teacher_id, $request->month, $request->amount, $request->date, $request->description, );

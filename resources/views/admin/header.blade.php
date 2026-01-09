@@ -85,6 +85,13 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-grid align-middle"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg> <span class="align-middle">Guruhlar</span>
                     </a>
                 </li>
+                
+                 <li class="sidebar-item @yield('admin-salaries')">
+                    <a class="sidebar-link" href="{{ route('admin.salaries.form') }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-share align-middle me-2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg> <span class="align-middle">Oldindan oylik berish
+                        </span>
+                    </a>
+                </li>
 
                 <li class="sidebar-item @yield('attendance')">
                     <a class="sidebar-link" href="{{ route('admin.attendance.subjects') }}">
@@ -110,11 +117,11 @@
                     </a>
                 </li>
 
-                <li class="sidebar-item @yield('salaries')">
-                    <a class="sidebar-link" href="{{ route('admin.salaries') }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-share align-middle me-2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg> <span class="align-middle">Oldindan oylik</span>
-                    </a>
-                </li>
+               <!--  <li class="sidebar-item @yield('salaries')">
+                   <a class="sidebar-link" href="{{ route('admin.salaries') }}">
+                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-share align-middle me-2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg> <span class="align-middle">Oldindan oylik</span>
+                   </a>
+               </li> -->
                 <li class="sidebar-item @yield('filter')">
                     <a class="sidebar-link" href="{{ route('export.filter') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-filter align-middle me-2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>Filter</span>

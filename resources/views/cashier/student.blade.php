@@ -84,6 +84,13 @@
                                                 <input type="text" class="form-control" id="inputFirstName" placeholder="Ismi" value="{{ $student->name }}">
                                             </div>
                                             <div class="mb-3">
+                                                <label class="form-label" for="inputLastName">Ota onasi telefoni</label>
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text">+998</span>
+                                                    <input type="number" readonly maxlength="9" value="{{ substr($student->parents_phone, 3, 12) }}" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
                                                 <label class="form-label" for="inputLastName">Telefon</label>
                                                 <div class="input-group mb-3">
                                                     <span class="input-group-text">+998</span>
@@ -125,7 +132,7 @@
                         </div>
                     </div>
                         <div class="tab-pane fade" id="payments" role="tabpanel">
-                            <div class="card col-8">
+                            <div class="card col-12">
                                 <div class="card-header">
                                     <div class="row justify-content-between">
                                         <h5 class="card-title mb-0 col">Profil malumotlari</h5>
@@ -145,6 +152,8 @@
                                                 <th>Oy</th>
                                                 <th>Summa</th>
                                                 <th>Sana</th>
+                                                <th>Turi</th>
+                                                <th>Izox</th>
                                                 <th>Print</th>
                                             </tr>
                                         </thead>
@@ -155,7 +164,18 @@
                                                     <td>{{ $payment->attach->subject_name }}</td>
                                                     <td>{{ \Carbon\Carbon::parse($payment->month)->format('F Y') }}</td>
                                                     <td>{{ number_format($payment->amount_paid, 0, '.', ' ') }}</td>
-                                                    <td>{{ $payment->date  }}</td>
+                                                    <td>{{ $payment->date  }} | {{ \Carbon\Carbon::parse($payment->updated_at)->format('H:m') }}</td>
+                                                    @if($payment->type == 'cash')
+                                                        <td class=""><a href="#" class="badge bg-success me-1 my-1">Naqd</a></td>
+                                                    @elseif($payment->type == 'credit_card')
+                                                        <td class=""><a href="#" class="badge bg-warning text-dark me-1 my-1">Karta</a></td>
+                                                    @elseif($payment->type == 'click')
+                                                        <td class=""><a href="#" class="badge bg-info me-1 my-1">Click</a></td>
+                                                    @else
+                                                        <td class=""><a href="#" class="badge bg-danger me-1 my-1">Bank</a></td>
+                                                    @endif
+                                                    <td>{{ $payment->comment  }}</td>
+                                                    
                                                     <td class=""><button type="button" class="btn btn-success"><i class="align-middle" data-feather="printer"></i></button></td>
                                                 </tr>
                                             @endif

@@ -59,7 +59,7 @@
                                     </div>
                                     <div class="mb-3 col-6">
                                         <label class="form-label">Sana</label>
-                                        <input required name="date" type="date" max="{{ date('Y-m-d') }}" value="{{ date('Y-m-d') }}" class="form-control" placeholder="">
+                                        <input required name="date" type="date" readonly value="{{ date('Y-m-d') }}" class="form-control" placeholder="">
                                     </div>
                                 </div>
                                 <div class="mb-3">

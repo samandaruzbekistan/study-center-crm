@@ -139,7 +139,7 @@
                                         </label>
                                     </div>
                                 </div>
-
+                                
                                 <button type="button" id="fake-btn" class="btn btn-primary">Qabul qilish</button>
                                 <button type="submit" id="submit-btn" class="d-none">Qabul qilish</button>
                             </form>

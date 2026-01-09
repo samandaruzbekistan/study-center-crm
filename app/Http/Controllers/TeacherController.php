@@ -342,5 +342,43 @@ class TeacherController extends Controller
         return $request;
     }
 
+    public function check($id, $date,$subject_id){
+        $attach = $this->attachRepository->getAttach($id, $subject_id);
+        $newDate = Carbon::createFromFormat('Y-m-d', $date)
+            ->startOfMonth()
+            ->format('Y-m-d');
+        $carbonDate = Carbon::parse($date);
+        $payment = $this->monthlyPaymentRepository->getPaymentByMonth($id, $newDate,$subject_id);
+        if (!$payment) return 'month_error';
+        if ($payment->status == 0){
+            if ($carbonDate->day > 6){
+                return 'payment_error';
+            }
+            else{
+                return 'true';
+            }
+        }
+        return 'true';
+    }
+
+    public function deActiveAttach(Request $request){
+        $attach = $this->attachRepository->getAttach($request->student_id, $request->subject_id);
+        $newDate = Carbon::createFromFormat('Y-m-d', $request->date)
+            ->startOfMonth()
+            ->format('Y-m-d');
+        $carbonDate = Carbon::parse($request->date);
+        $payment = $this->monthlyPaymentRepository->getPaymentByMonth($request->student_id, $newDate,$request->subject_id);
+        if (($payment->status == 0) and ($carbonDate->day < 6)){
+            $this->monthlyPaymentRepository->deleteNowAndNextPayments($newDate, $attach->id);
+            $this->attachRepository->deActiveAttach($attach->id);
+            return back()->with('deActivated',1);
+        }
+        if ($payment->status == 1){
+            $this->monthlyPaymentRepository->deleteNextPayments($newDate, $attach->id);
+            $this->attachRepository->deActiveAttach($attach->id);
+            return back()->with('deActivated',1);
+        }
+    }
+
 
 }
