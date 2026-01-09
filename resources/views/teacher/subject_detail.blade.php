@@ -199,7 +199,7 @@
 
     <main class="content teachers">
         <div class="container-fluid p-0">
-            <div class="col-12 col-xl-12">
+            <div class="col-12 col-xl-12" id="datas">
                 <div class="card">
                     <div class="card-header">
                         <h5 class="card-title mb-3"><span class="text-danger">{{ $attachs[0]->subject_name }}</span>
@@ -482,7 +482,7 @@
             $('#attach_id').val(id);
             $('#st_name').text(ism);
             $('.edit-forma').show();
-            $('.teachers').hide();
+            $('#datas').hide();
             $('#tekshirish').hide();
             $('#natija').hide();
         });
@@ -490,12 +490,11 @@
         $(".cancel1").on("click", function() {
             event.stopPropagation();
             $('.edit-forma').hide();
-            $('.teachers').show();
+            $('#datas').show();
         });
 
         $(document).on('click', '.canc1', function() {
-            $('.teachers').show();
-            $('.edit-forma').hide();
+            $('#datas').show();
             $('#tekshirish').hide();
             $('#natija').hide();
         });
@@ -505,8 +504,7 @@
             let stuentName = $(this).attr('name');
             $('#ismi').val(stuentName);
             $('#studentID').val(stuentId);
-            $('.teachers').hide();
-            $('.edit-forma').hide();
+            $('#datas').hide();
             $('#tekshirish').show();
         });
 
