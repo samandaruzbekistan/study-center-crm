@@ -27,6 +27,12 @@ class OutlayRepository
         return $receiptsData->sum('amount');
     }
 
+    public function filterByTwoDateSumByType($start, $end, $type){
+        return Outlay::whereBetween('date', [$start, $end])
+            ->where('type', $type)
+            ->sum('amount');
+    }
+
     public function addType($name){
         $outlay = new OutlayType;
         $outlay->name = $name;

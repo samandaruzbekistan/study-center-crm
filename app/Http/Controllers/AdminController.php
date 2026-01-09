@@ -368,10 +368,12 @@ class AdminController extends Controller
         $payments_card = $this->monthlyPaymentRepository->filterByTwoDateSumCard($request->start, $request->end);
         $payments_bank = $this->monthlyPaymentRepository->filterByTwoDateSumBank($request->start, $request->end);
         $payments_click = $this->monthlyPaymentRepository->filterByTwoDateSumClick($request->start, $request->end);
-        $outlay = $this->outlayRepository->filterByTwoDateSum($request->start, $request->end);
+        $outlay_cash = $this->outlayRepository->filterByTwoDateSumByType($request->start, $request->end, 'cash');
+        $outlay_click = $this->outlayRepository->filterByTwoDateSumByType($request->start, $request->end, 'click');
+        $outlay_transfer = $this->outlayRepository->filterByTwoDateSumByType($request->start, $request->end, 'transfer');
         $salary = $this->salariesRepository->filterByTwoDateSum($request->start, $request->end);
 
-        return view('admin.filter', ['end'=> $request->end,'start'=> $request->start,'payments_click' => $payments_click, 'payments_bank' => $payments_bank,'payments_cash' => $payments_cash,'payments_card' => $payments_card, 'outlay' => $outlay, 'salary' => $salary]);
+        return view('admin.filter', ['end'=> $request->end,'start'=> $request->start,'payments_click' => $payments_click, 'payments_bank' => $payments_bank,'payments_cash' => $payments_cash,'payments_card' => $payments_card, 'outlay_cash' => $outlay_cash, 'outlay_click' => $outlay_click, 'outlay_transfer' => $outlay_transfer, 'salary' => $salary]);
     }
 
     public function filter_cashier(Request $request){
@@ -383,10 +385,12 @@ class AdminController extends Controller
         $payments_card = $this->monthlyPaymentRepository->filterByTwoDateSumCard($request->start, $request->end);
         $payments_bank = $this->monthlyPaymentRepository->filterByTwoDateSumBank($request->start, $request->end);
         $payments_click = $this->monthlyPaymentRepository->filterByTwoDateSumClick($request->start, $request->end);
-        $outlay = $this->outlayRepository->filterByTwoDateSum($request->start, $request->end);
+        $outlay_cash = $this->outlayRepository->filterByTwoDateSumByType($request->start, $request->end, 'cash');
+        $outlay_click = $this->outlayRepository->filterByTwoDateSumByType($request->start, $request->end, 'click');
+        $outlay_transfer = $this->outlayRepository->filterByTwoDateSumByType($request->start, $request->end, 'transfer');
         $salary = $this->salariesRepository->filterByTwoDateSum($request->start, $request->end);
 
-        return view('cashier.filter', ['end'=> $request->end,'start'=> $request->start,'payments_click' => $payments_click, 'payments_bank' => $payments_bank,'payments_cash' => $payments_cash,'payments_card' => $payments_card, 'outlay' => $outlay, 'salary' => $salary]);
+        return view('cashier.filter', ['end'=> $request->end,'start'=> $request->start,'payments_click' => $payments_click, 'payments_bank' => $payments_bank,'payments_cash' => $payments_cash,'payments_card' => $payments_card, 'outlay_cash' => $outlay_cash, 'outlay_click' => $outlay_click, 'outlay_transfer' => $outlay_transfer, 'salary' => $salary]);
     }
 
     public function filter_teacher(Request $request){

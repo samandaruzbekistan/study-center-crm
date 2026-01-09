@@ -176,19 +176,63 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col mt-0">
-                                    <h5 class="card-title">Xarajat</h5>
+                                    <h5 class="card-title">Xarajat - Naqd</h5>
+                                </div>
+
+                                <div class="col-auto">
+                                    <div class="stat text-success">
+                                        <i class="align-middle" data-feather="dollar-sign"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <h1 class="mt-1 mb-3">{{ number_format($outlay_cash, 0, '.', ' ') }}</h1>
+                            <div class="mb-0">
+                                <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i>Naqd</span>
+                                <span class="text-muted"> xarajatlar</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col mt-0">
+                                    <h5 class="card-title">Xarajat - Kartadan</h5>
                                 </div>
 
                                 <div class="col-auto">
                                     <div class="stat text-primary">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-shopping-cart align-middle"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                                        <i class="align-middle" data-feather="credit-card"></i>
                                     </div>
                                 </div>
                             </div>
-                            <h1 class="mt-1 mb-3">{{ number_format($outlay, 0, '.', ' ') }}</h1>
+                            <h1 class="mt-1 mb-3">{{ number_format($outlay_click, 0, '.', ' ') }}</h1>
                             <div class="mb-0">
-                                <span class="text-danger"> <i class="mdi mdi-arrow-bottom-right"></i>Xarajatlar</span>
-                                <span class="text-muted"> summasi</span>
+                                <span class="text-primary"> <i class="mdi mdi-arrow-bottom-right"></i>Kartadan</span>
+                                <span class="text-muted"> xarajatlar</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col mt-0">
+                                    <h5 class="card-title">Xarajat - Bank o'tkazma</h5>
+                                </div>
+
+                                <div class="col-auto">
+                                    <div class="stat text-info">
+                                        <i class="align-middle" data-feather="repeat"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <h1 class="mt-1 mb-3">{{ number_format($outlay_transfer, 0, '.', ' ') }}</h1>
+                            <div class="mb-0">
+                                <span class="text-info"> <i class="mdi mdi-arrow-bottom-right"></i>Bank o'tkazma</span>
+                                <span class="text-muted"> xarajatlar</span>
                             </div>
                         </div>
                     </div>
