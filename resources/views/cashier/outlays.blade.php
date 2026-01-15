@@ -192,12 +192,12 @@
                     data.forEach(outlay => {
                         countdown++;
                         let typeBadge = '';
-                        if(outlay.type == 'naqd'){
+                        if(outlay.type == 'cash'){
                             typeBadge = '<span class="badge bg-success">Naqd</span>';
                         } else if(outlay.type == 'click'){
                             typeBadge = '<span class="badge bg-primary">Click</span>';
-                        } else if(outlay.type == 'bank o\'tkazma'){
-                            typeBadge = '<span class="badge bg-info">Bank o\'tkazma</span>';
+                        } else if(outlay.type == 'transfer'){
+                            typeBadge = '<span class="badge bg-info">Bank otkazma</span>';
                         } else {
                             typeBadge = outlay.type || '-';
                         }
