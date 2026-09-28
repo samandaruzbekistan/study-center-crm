@@ -19,3 +19,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('sendSms', [\App\Http\Controllers\ApiController::class, 'sendSms']);
+
+Route::post('check-payment', [\App\Http\Controllers\ApiController::class, 'checkPayment']);

@@ -231,7 +231,7 @@ class CashierController extends Controller
         $daysInMonth = $carbonDate->daysInMonth;
 //        $firstMonthPrice = ceil(($price - (($price / $daysInMonth) * ($carbonDate->day - 1))) / 1000) * 1000;
         $rowsToInsert = [];
-        if ($currentMonth > 8){
+        if ($currentMonth >= 8){
 //            $countdown = 0;
             for ($month = $currentMonth; $month <= 12; $month++){
 //                $countdown++;
@@ -259,7 +259,7 @@ class CashierController extends Controller
                 $rowsToInsert[] = $row;
             }
         }
-        elseif ($currentMonth <= 8){
+        elseif ($currentMonth <= 7){
             $countdown = 0;
             for ($month = $currentMonth; $month <= 8; $month++){
 //                $countdown++;

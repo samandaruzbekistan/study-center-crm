@@ -22,12 +22,14 @@ class MonthlyPaymentRepository
 
     public function deleteNowAndNextPayments($monthToDelete,$attach_id){
         MonthlyPayment::where('month', '>=', $monthToDelete)
+            ->where('status', 0)
             ->where('attach_id',$attach_id)
             ->delete();
     }
 
     public function deleteNextPayments($monthToDelete,$attach_id){
         MonthlyPayment::where('month', '>', $monthToDelete)
+            ->where('status', 0)
             ->where('attach_id',$attach_id)
             ->delete();
     }

@@ -34,7 +34,7 @@
                                         <label class="form-label">O'quv oyi</label>
                                         <select class="form-select mb-3" required name="month">
                                             <option hidden selected disabled>Tanglang...</option>
-                                            <option>Avgust 2024</option>
+                                            <option>Avgust 2026</option>
                                             <option>Yanvar</option>
                                             <option>Fevral</option>
                                             <option>Mart</option>
@@ -42,7 +42,7 @@
                                             <option>May</option>
                                             <option>Iyun</option>
                                             <option>Iyul</option>
-                                            <option>Avgust 2025</option>
+                                            <option>Avgust 2027</option>
                                             <option>Sentabr</option>
                                             <option>Oktabr</option>
                                             <option>Noyabr</option>
