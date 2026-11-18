@@ -8,6 +8,7 @@ use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CashierController;
+use App\Http\Controllers\DebtTableController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -127,6 +128,9 @@ Route::middleware(['teacher_auth'])->group(function () {
         Route::post('attendances-check',[TeacherController::class, 'attendance_check'])->name('teacher.attendances.check');
 
         Route::get('salaries',[TeacherController::class, 'salaries'])->name('teacher.salaries');
+
+        Route::get('debt-table', [DebtTableController::class, 'teacherIndex'])->name('teacher.debt.table');
+        Route::get('debt-table/export', [DebtTableController::class, 'teacherExport'])->name('teacher.debt.table.export');
     });
 });
 
@@ -166,6 +170,8 @@ Route::prefix('cashier')->group(function () {
         Route::get('month-payment/{subject_id}',[CashierController::class, 'month_payment'])->name('cashier.month.payments');
         Route::get('payment-details',[CashierController::class, 'payment_details'])->name('cashier.payment.details');
         Route::get('payment-filtr/{date?}',[CashierController::class, 'payment_filtr'])->name('cashier.payment.filtr');
+        Route::get('debt-table', [DebtTableController::class, 'cashierIndex'])->name('cashier.debt.table');
+        Route::get('debt-table/export', [DebtTableController::class, 'cashierExport'])->name('cashier.debt.table.export');
 
 
 //        Attach control

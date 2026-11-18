@@ -13,3 +13,6 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
+
+# Production data fixes (names, payments) - not for the public repo
+/database/fixes/
